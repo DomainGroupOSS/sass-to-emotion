@@ -1,0 +1,15 @@
+{
+  "name": "sass-to-cssnext",
+  "version": "1.0.0",
+  "description": "",
+  "bin": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "lodash": "^4.17.5",
+    "postcss": "^6.0.21"
+  }
+}
