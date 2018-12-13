@@ -36,7 +36,7 @@ describe('transform', () => {
           color: $fe-brary-colour-primary-dark;
 
           .bar {
-            font-weight: $fe-brary-button-font-weight;
+            font-size: $fe-brary-font-h6-font-size;
           }
         }`,
       ),
