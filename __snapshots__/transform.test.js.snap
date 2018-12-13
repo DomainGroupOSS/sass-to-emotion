@@ -1,0 +1,24 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`transform nested class no vars 1`] = `
+"import { styles } from 'emotion';
+    
+export const button = styles\`
+          display: inline-flex
+          align-items: center
+          justify-content: center
+          ddddd: black\`
+export const foo = styles\`
+          ddddd: black\`
+  "
+`;
+
+exports[`transform simple class no vars 1`] = `
+"import { styles } from 'emotion';
+    
+export const button = styles\`
+          display: inline-flex
+          align-items: center
+          justify-content: center\`
+  "
+`;
