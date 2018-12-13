@@ -1,5 +1,5 @@
 {
-  "name": "sass-to-cssnext",
+  "name": "sass-to-emotion",
   "version": "1.0.0",
   "description": "",
   "bin": "index.js",
@@ -9,7 +9,13 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "lodash": "^4.17.5",
-    "postcss": "^6.0.21"
+    "lodash": "^4.17.11",
+    "postcss": "^7.0.6",
+    "postcss-scss": "^2.0.0"
+  },
+  "devDependencies": {
+    "eslint": "^5.10.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.14.0"
   }
 }
