@@ -4,12 +4,32 @@ exports[`transform nested class no vars 1`] = `
 "import { styles } from 'emotion';
     
 export const button = styles\`
-          display: inline-flex
+          display: flex
           align-items: center
           justify-content: center
-          ddddd: black\`
+          display: block\`
 export const foo = styles\`
-          ddddd: black\`
+          display: block\`
+  "
+`;
+
+exports[`transform placeholder 1`] = `
+"import { styles } from 'emotion';
+    
+export const placeholderExample = styles\`
+          display: inline-block\`
+  "
+`;
+
+exports[`transform sass vars to import 1`] = `
+"import { styles } from 'emotion';
+    import { variables } from '@domain-group/fe-brary';
+    
+export const button = styles\`
+          color: \${variables.colour.primaryDark}
+          font-weight: \${variables.button.fontWeight}\`
+export const bar = styles\`
+          font-weight: \${variables.button.fontWeight}\`
   "
 `;
 

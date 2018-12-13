@@ -17,14 +17,38 @@ describe('transform', () => {
     expect(
       await transform(
         `.button {
-          display: inline-flex;
+          display: flex;
           align-items: center;
           justify-content: center;
 
           .foo {
-            ddddd: black;
+            display: block;
           }
         }`,
+      ),
+    ).toMatchSnapshot();
+  });
+
+  it('sass vars to import', async () => {
+    expect(
+      await transform(
+        `.button {
+          color: $fe-brary-colour-primary-dark;
+
+          .bar {
+            font-weight: $fe-brary-button-font-weight;
+          }
+        }`,
+      ),
+    ).toMatchSnapshot();
+  });
+
+  it.only('placeholder', async () => {
+    expect(
+      await transform(
+        `%placeholderExample {
+            display: inline-block;
+      }`,
       ),
     ).toMatchSnapshot();
   });

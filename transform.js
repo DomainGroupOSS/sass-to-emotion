@@ -6,6 +6,7 @@ const { camelCase } = require('lodash');
 
 const noSassplugin = postcss.plugin('no-sass', () => (root) => {
   root.classes = new Map();
+  root.usesVars = false;
 
   root.walkRules((rule) => {
     // .email-share__form-group => .formGroup
@@ -13,16 +14,22 @@ const noSassplugin = postcss.plugin('no-sass', () => (root) => {
     const selector = `${camelCase(postfix || prefix)}`;
 
     rule.walkDecls((decl) => {
-      // console.log('decl.prop:', decl.prop);
-      // // color: $fe-brary-colour-neutral-400; => color: var(--fe-brary-colour-neutral-400);
-      // if (decl.value[0] === '$') {
-      //   decl.value = `var(--${decl.value.slice(1)})`;
-      // }
+      let { value } = decl;
+      const isASassVar = value[0] === '$';
+
+      if (isASassVar) {
+        root.usesVars = true;
+
+        const [, name] = value.split('$fe-brary-');
+        const [field, ...varNameSegs] = name.split(('-'));
+        const varName = camelCase(varNameSegs.join('-'));
+        value = `\${variables.${field}.${varName}}`;
+      }
 
       root.classes.set(
         selector,
         `${root.classes.get(selector) || ''}
-          ${decl.prop}: ${decl.value}`,
+          ${decl.prop}: ${value}`,
       );
     });
   });
@@ -36,11 +43,13 @@ const noSassplugin = postcss.plugin('no-sass', () => (root) => {
 module.exports = async (cssString, filePath) => {
   const result = await postcss([noSassplugin])
     .process(cssString, { from: filePath, syntax: postcssScss });
+  const { root } = result;
 
-  const emotionExports = Array.from(result.root.classes.entries())
+  const emotionExports = Array.from(root.classes.entries())
     .reduce((acc, [name, values]) => `${acc}\nexport const ${name} = styles\`${values}\``, '');
 
-  return `import { styles } from 'emotion';
+  return `import { styles } from 'emotion';${root.usesVars ? `
+    import { variables } from '@domain-group/fe-brary';` : ''}
     ${emotionExports}
   `;
 };
