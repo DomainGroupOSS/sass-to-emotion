@@ -2,11 +2,7 @@
 /* eslint-disable no-param-reassign, no-console */
 const postcss = require('postcss');
 const postcssScss = require('postcss-scss');
-const fs = require('fs');
-const { promisify } = require('util');
-
-const readFileAsync = promisify(fs.readFile);
-const writeFileAsync = promisify(fs.writeFile);
+const fs = require('fs').promises;
 const { camelCase } = require('lodash');
 
 const noSassplugin = postcss.plugin('no-sass', () => (root) => {
@@ -14,6 +10,10 @@ const noSassplugin = postcss.plugin('no-sass', () => (root) => {
     // .email-share__form-group => .formGroup
     const [prefix, postfix] = rule.selector.split('__');
     rule.selector = `.${camelCase(postfix || prefix)}`;
+
+    rule.walkComments((comment) => {
+      console.log('comment:', comment);
+    });
 
     rule.walkDecls((decl) => {
       console.log('decl.prop:', decl.prop);
@@ -34,12 +34,14 @@ const noSassplugin = postcss.plugin('no-sass', () => (root) => {
   const files = process.argv.slice(2);
 
   const transformFiles = files.map(async (filePath) => {
-    const fileString = await readFileAsync(filePath);
+    const fileString = await fs.readFile(filePath);
 
     const lazyResult = await postcss([noSassplugin])
       .process(fileString, { from: filePath, syntax: postcssScss });
 
-    await writeFileAsync(filePath, lazyResult.css);
+    console.log('lazyResult:', lazyResult);
+
+    await fs.writeFile(filePath, lazyResult.css);
   });
 
 
