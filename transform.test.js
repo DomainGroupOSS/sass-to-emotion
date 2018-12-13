@@ -43,7 +43,7 @@ describe('transform', () => {
     ).toMatchSnapshot();
   });
 
-  it.only('placeholder', async () => {
+  it('placeholder', async () => {
     expect(
       await transform(
         `%placeholderExample {

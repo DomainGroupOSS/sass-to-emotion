@@ -28,8 +28,7 @@ const noSassplugin = postcss.plugin('no-sass', () => (root) => {
 
       root.classes.set(
         selector,
-        `${root.classes.get(selector) || ''}
-          ${decl.prop}: ${value}`,
+        `${root.classes.get(selector) || ''}\n  ${decl.prop}: ${value};`,
       );
     });
   });
@@ -46,10 +45,7 @@ module.exports = async (cssString, filePath) => {
   const { root } = result;
 
   const emotionExports = Array.from(root.classes.entries())
-    .reduce((acc, [name, values]) => `${acc}\nexport const ${name} = styles\`${values}\``, '');
+    .reduce((acc, [name, values]) => `${acc}\nexport const ${name} = styles\`${values}\n\`;\n`, '');
 
-  return `import { styles } from 'emotion';${root.usesVars ? `
-    import { variables } from '@domain-group/fe-brary';` : ''}
-    ${emotionExports}
-  `;
+  return `import { styles } from 'emotion';${root.usesVars ? '\nimport { variables } from \'@domain-group/fe-brary\';' : ''}\n${emotionExports}`;
 };

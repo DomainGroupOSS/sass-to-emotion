@@ -7,16 +7,17 @@ const transform = require('./transform');
   const files = process.argv.slice(2);
 
   const transformFiles = files.map(async (filePath) => {
-    const fileString = await fs.readFile(filePath);
+    const css = await fs.readFile(filePath);
 
-    const css = await transform(fileString, filePath);
-
-    await fs.writeFile(filePath, css);
+    const js = await transform(css, filePath);
+    console.log('filePath:', filePath);
+    await fs.writeFile(`${filePath.split('.scss')[0]}.js`, js);
   });
 
 
   await Promise.all(transformFiles);
 
   console.log('Finished successfully!');
+
   process.exit();
 })();
