@@ -112,11 +112,11 @@ module.exports = async (cssString, filePath) => {
   const emotionExports = Array.from(root.classes.entries())
     .reduce((acc, [name, { contents, type }]) => {
       if (type === 'mixin') {
-        return `${acc}\nfunction ${name} {\n  return styles\`${contents}\n  \`;\n}\n`;
+        return `${acc}\nfunction ${name} {\n  return css\`${contents}\n  \`;\n}\n`;
       }
 
-      return `${acc}\n${type === 'class' ? 'export ' : ''}const ${name} = styles\`${contents}\n\`;\n`;
+      return `${acc}\n${type === 'class' ? 'export ' : ''}const ${name} = css\`${contents}\n\`;\n`;
     }, '');
 
-  return `import { styles } from 'emotion';${root.usesVars ? '\nimport { variables as vars } from \'@domain-group/fe-brary\';' : ''}\n${emotionExports}`;
+  return `import { css } from 'emotion';${root.usesVars ? '\nimport { variables as vars } from \'@domain-group/fe-brary\';' : ''}\n${emotionExports}`;
 };
