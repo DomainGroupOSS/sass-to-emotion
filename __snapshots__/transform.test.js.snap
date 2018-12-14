@@ -2,11 +2,13 @@
 
 exports[`transform mixins 1`] = `
 "import { styles } from 'emotion';
+import { variables as vars } from '@domain-group/fe-brary';
 
 function adExact(width, height) {
   return styles\`
     width: \${width};
     height: \${height};
+    color: \${{vars.colour.primaryDark}};
   \`;
 }
 

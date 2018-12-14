@@ -70,6 +70,7 @@ describe('transform', () => {
         `@mixin ad-exact($width, $height) {
           width: $width;
           height: $height;
+          color: $fe-brary-colour-primary-dark;
         }
 
         .bar {

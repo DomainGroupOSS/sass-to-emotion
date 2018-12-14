@@ -4,6 +4,8 @@ const postcss = require('postcss');
 const postcssScss = require('postcss-scss');
 const { camelCase } = require('lodash');
 
+const FE_BRARY_PREFIX = '$fe-brary-';
+
 function placeHolderToVar(str) {
   return camelCase(str.slice(1));
 }
@@ -11,6 +13,19 @@ function placeHolderToVar(str) {
 function mixinParamsToFunc(str) {
   const [funcName, inputs] = str.split('(');
   return `${camelCase(funcName)}(${inputs.replace(/\$/g, '')}`;
+}
+
+function handleSassVar(value, root) {
+  if (value.startsWith(FE_BRARY_PREFIX)) {
+    root.usesVars = true;
+
+    const [, name] = value.split(FE_BRARY_PREFIX);
+    const [field, ...varNameSegs] = name.split(('-'));
+    const varName = camelCase(varNameSegs.join('-'));
+    value = `\${vars.${field}.${varName}}`;
+  }
+
+  return value;
 }
 
 const noSassplugin = postcss.plugin('no-sass', () => (root) => {
@@ -32,17 +47,8 @@ const noSassplugin = postcss.plugin('no-sass', () => (root) => {
 
       atRule.walkDecls((decl) => {
         let { value } = decl;
-        const isAFeBrarySassVar = value.startsWith('$fe-brary-');
 
-        // TODO dry
-        if (isAFeBrarySassVar) {
-          root.usesVars = true;
-          console.log('value:', value);
-          const [, name] = value.split('$fe-brary-');
-          const [field, ...varNameSegs] = name.split(('-'));
-          const varName = camelCase(varNameSegs.join('-'));
-          value = `\${variables.${field}.${varName}}`;
-        }
+        value = handleSassVar(value, root);
 
         root.classes.get(
           selector,
@@ -88,17 +94,8 @@ const noSassplugin = postcss.plugin('no-sass', () => (root) => {
 
     rule.walkDecls((decl) => {
       let { value } = decl;
-      const isAFeBrarySassVar = value.startsWith('$fe-brary-');
 
-      // TODO dry
-      if (isAFeBrarySassVar) {
-        root.usesVars = true;
-
-        const [, name] = value.split('$fe-brary-');
-        const [field, ...varNameSegs] = name.split(('-'));
-        const varName = camelCase(varNameSegs.join('-'));
-        value = `\${vars.${field}.${varName}}`;
-      }
+      value = handleSassVar(value, root);
 
       root.classes.get(
         selector,
