@@ -63,4 +63,20 @@ describe('transform', () => {
       ),
     ).toMatchSnapshot();
   });
+
+  it('mixins', async () => {
+    expect(
+      await transform(
+        `@mixin ad-exact($width, $height) {
+          width: $width;
+          height: $height;
+        }
+
+        .bar {
+          color: blue;
+          @include ad-exact(125px, 700px);
+        }`,
+      ),
+    ).toMatchSnapshot();
+  });
 });

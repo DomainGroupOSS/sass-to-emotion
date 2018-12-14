@@ -1,5 +1,22 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`transform mixins 1`] = `
+"import { styles } from 'emotion';
+
+function adExact(width, height) {
+  return styles\`
+    width: \${width};
+    height: \${height};
+  \`;
+}
+
+export const bar = styles\`
+  \${adExact('125px', '700px')};
+  color: blue;
+\`;
+"
+`;
+
 exports[`transform nested class no vars 1`] = `
 "import { styles } from 'emotion';
 
