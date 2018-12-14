@@ -10,7 +10,7 @@ const transform = require('./transform');
     const css = await fs.readFile(filePath);
 
     const js = await transform(css, filePath);
-    console.log('filePath:', filePath);
+    console.log('Transforming:', filePath);
     await fs.writeFile(`${filePath.split('.scss')[0]}.js`, js);
   });
 

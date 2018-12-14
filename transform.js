@@ -4,14 +4,42 @@ const postcss = require('postcss');
 const postcssScss = require('postcss-scss');
 const { camelCase } = require('lodash');
 
+function placeHolderToVar(str) {
+  return camelCase(str.slice(1));
+}
+
 const noSassplugin = postcss.plugin('no-sass', () => (root) => {
   root.classes = new Map();
   root.usesVars = false;
 
   root.walkRules((rule) => {
-    // .email-share__form-group => .formGroup
-    const [prefix, postfix] = rule.selector.split('__');
-    const selector = `${camelCase(postfix || prefix)}`;
+    let selector;
+
+    const isPlaceHolder = rule.selector[0] === '%';
+
+    if (isPlaceHolder) {
+      selector = placeHolderToVar(rule.selector);
+    } else {
+      // .email-share__form-group => .formGroup
+      const [prefix, postfix] = rule.selector.split('__');
+      selector = `${camelCase(postfix || prefix)}`;
+    }
+
+    root.classes.set(
+      selector,
+      {
+        type: isPlaceHolder ? 'placeholder' : 'class',
+        contents: '',
+      },
+    );
+
+    rule.walkAtRules((atRule) => {
+      if (atRule.name === 'extend') {
+        root.classes.get(
+          selector,
+        ).contents = `${root.classes.get(selector).contents}\n  \${${placeHolderToVar(atRule.params)}};`;
+      }
+    });
 
     rule.walkDecls((decl) => {
       let { value } = decl;
@@ -26,10 +54,9 @@ const noSassplugin = postcss.plugin('no-sass', () => (root) => {
         value = `\${variables.${field}.${varName}}`;
       }
 
-      root.classes.set(
+      root.classes.get(
         selector,
-        `${root.classes.get(selector) || ''}\n  ${decl.prop}: ${value};`,
-      );
+      ).contents = `${root.classes.get(selector).contents}\n  ${decl.prop}: ${value};`;
     });
   });
 
@@ -45,7 +72,7 @@ module.exports = async (cssString, filePath) => {
   const { root } = result;
 
   const emotionExports = Array.from(root.classes.entries())
-    .reduce((acc, [name, values]) => `${acc}\nexport const ${name} = styles\`${values}\n\`;\n`, '');
+    .reduce((acc, [name, { contents, type }]) => `${acc}\n${type === 'class' ? 'export ' : ''}const ${name} = styles\`${contents}\n\`;\n`, '');
 
   return `import { styles } from 'emotion';${root.usesVars ? '\nimport { variables } from \'@domain-group/fe-brary\';' : ''}\n${emotionExports}`;
 };

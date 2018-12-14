@@ -19,8 +19,19 @@ export const foo = styles\`
 exports[`transform placeholder 1`] = `
 "import { styles } from 'emotion';
 
-export const placeholderExample = styles\`
-  display: inline-block;
+const messageShared = styles\`
+  border: 1px solid #ccc;
+  padding: 10px;
+  color: #333;
+\`;
+
+export const message = styles\`
+  \${messageShared};
+\`;
+
+export const success = styles\`
+  \${messageShared};
+  border-color: green;
 \`;
 "
 `;
