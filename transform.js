@@ -22,7 +22,11 @@ function handleSassVar(value, root) {
     const [, name] = value.split(FE_BRARY_PREFIX);
     const [field, ...varNameSegs] = name.split(('-'));
     const varName = camelCase(varNameSegs.join('-'));
-    value = `\${vars.${field}.${varName}}`;
+    return `\${vars.${field}.${varName}}`;
+  }
+
+  if (value.startsWith('$')) {
+    return `\${${value.slice(1)}}`;
   }
 
   return value;
@@ -32,29 +36,25 @@ const noSassplugin = postcss.plugin('no-sass', () => (root) => {
   root.classes = new Map();
   root.usesVars = false;
 
-  root.walkAtRules((atRule) => {
-    if (atRule.name === 'mixin') {
-      const { params } = atRule;
-      const selector = mixinParamsToFunc(params);
+  root.walkAtRules('mixin', (atRule) => {
+    const { params } = atRule;
+    const selector = mixinParamsToFunc(params);
 
-      root.classes.set(
+    root.classes.set(
+      selector,
+      {
+        type: 'mixin',
+        contents: '',
+      },
+    );
+
+    atRule.walkDecls((decl) => {
+      const value = handleSassVar(decl.value, root);
+
+      root.classes.get(
         selector,
-        {
-          type: 'mixin',
-          contents: '',
-        },
-      );
-
-      atRule.walkDecls((decl) => {
-        let { value } = decl;
-
-        value = handleSassVar(value, root);
-
-        root.classes.get(
-          selector,
-        ).contents = `${root.classes.get(selector).contents}\n    ${decl.prop}: \${${value.slice(1)}};`;
-      });
-    }
+      ).contents = `${root.classes.get(selector).contents}\n    ${decl.prop}: ${value};`;
+    });
   });
 
   root.walkRules((rule) => {
@@ -78,18 +78,18 @@ const noSassplugin = postcss.plugin('no-sass', () => (root) => {
       },
     );
 
-    rule.walkAtRules((atRule) => {
-      if (atRule.name === 'extend') {
-        root.classes.get(
-          selector,
-        ).contents = `${root.classes.get(selector).contents}\n  \${${placeHolderToVar(atRule.params)}};`;
-      } else if (atRule.name === 'include') {
-        const [funcName, inputs] = atRule.params.split('(');
-        const funcCall = `${camelCase(funcName)}('${inputs.slice(0, -1).split(', ').join("', '")}')`;
-        root.classes.get(
-          selector,
-        ).contents = `${root.classes.get(selector).contents}\n  \${${funcCall}};`;
-      }
+    rule.walkAtRules('extend', (atRule) => {
+      root.classes.get(
+        selector,
+      ).contents = `${root.classes.get(selector).contents}\n  \${${placeHolderToVar(atRule.params)}};`;
+    });
+
+    rule.walkAtRules('include', (atRule) => {
+      const [funcName, inputs] = atRule.params.split('(');
+      const funcCall = `${camelCase(funcName)}('${inputs.slice(0, -1).split(', ').join("', '")}')`;
+      root.classes.get(
+        selector,
+      ).contents = `${root.classes.get(selector).contents}\n  \${${funcCall}};`;
     });
 
     rule.walkDecls((decl) => {
@@ -102,11 +102,6 @@ const noSassplugin = postcss.plugin('no-sass', () => (root) => {
       ).contents = `${root.classes.get(selector).contents}\n  ${decl.prop}: ${value};`;
     });
   });
-
-  // root.walkAtRules('extend', (rule) => {
-  //   rule.name = 'apply';
-  //   rule.params = `--${rule.params.split('%')[1]}`;
-  // });
 });
 
 module.exports = async (cssString, filePath) => {

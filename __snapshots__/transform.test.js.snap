@@ -8,11 +8,11 @@ function adExact(width, height) {
   return styles\`
     width: \${width};
     height: \${height};
-    color: \${{vars.colour.primaryDark}};
+    color: \${vars.colour.primaryDark};
   \`;
 }
 
-export const bar = styles\`
+export const adspot468X60728X90Pos1Container = styles\`
   \${adExact('125px', '700px')};
   color: blue;
 \`;

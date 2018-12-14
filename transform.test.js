@@ -73,7 +73,7 @@ describe('transform', () => {
           color: $fe-brary-colour-primary-dark;
         }
 
-        .bar {
+        .adspot-468x60_728x90-pos-1-container {
           color: blue;
           @include ad-exact(125px, 700px);
         }`,
