@@ -97,7 +97,7 @@ const noSassplugin = postcss.plugin('no-sass', () => (root) => {
         const [, name] = value.split('$fe-brary-');
         const [field, ...varNameSegs] = name.split(('-'));
         const varName = camelCase(varNameSegs.join('-'));
-        value = `\${variables.${field}.${varName}}`;
+        value = `\${vars.${field}.${varName}}`;
       }
 
       root.classes.get(
@@ -126,5 +126,5 @@ module.exports = async (cssString, filePath) => {
       return `${acc}\n${type === 'class' ? 'export ' : ''}const ${name} = styles\`${contents}\n\`;\n`;
     }, '');
 
-  return `import { styles } from 'emotion';${root.usesVars ? '\nimport { variables } from \'@domain-group/fe-brary\';' : ''}\n${emotionExports}`;
+  return `import { styles } from 'emotion';${root.usesVars ? '\nimport { variables as vars } from \'@domain-group/fe-brary\';' : ''}\n${emotionExports}`;
 };

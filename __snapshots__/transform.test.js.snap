@@ -55,15 +55,15 @@ export const success = styles\`
 
 exports[`transform sass vars to import 1`] = `
 "import { styles } from 'emotion';
-import { variables } from '@domain-group/fe-brary';
+import { variables as vars } from '@domain-group/fe-brary';
 
 export const button = styles\`
-  color: \${variables.colour.primaryDark};
-  font-size: \${variables.font.h6FontSize};
+  color: \${vars.colour.primaryDark};
+  font-size: \${vars.font.h6FontSize};
 \`;
 
 export const bar = styles\`
-  font-size: \${variables.font.h6FontSize};
+  font-size: \${vars.font.h6FontSize};
 \`;
 "
 `;
