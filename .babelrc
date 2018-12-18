@@ -1,6 +1,0 @@
-{
-  "parserOpts": {
-    "plugins": ["jsx"],
-  },
-  "plugins": ["./plugin.js"]
-}
