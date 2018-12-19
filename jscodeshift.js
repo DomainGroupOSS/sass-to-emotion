@@ -1,5 +1,7 @@
 /* eslint-disable no-param-reassign, no-console */
-const { camelCase } = require('lodash');
+const selectorToLiteral = require('./selector-to-literal');
+
+// TODO make CLI option
 
 const STYLES_IMPORT_NAME = 'styles';
 
@@ -55,8 +57,7 @@ module.exports = (file, api) => {
 
       const selector = path.value.value.value;
 
-      const [prefix, postfix] = selector.split('__');
-      const identifier = `${camelCase(postfix || prefix)}`;
+      const identifier = selectorToLiteral(selector);
 
       path.value.value = j.jsxExpressionContainer(
         j.memberExpression(j.identifier(STYLES_IMPORT_NAME), j.identifier(identifier)),
@@ -64,7 +65,12 @@ module.exports = (file, api) => {
     });
 
   // import styles
-  const moduleName = `../style/${file.path.split('src/js/')[1]}`;
+  const pathToFileFromStyleFolder = file.path.split('src/js/')[1];
+
+  // count the .. needed
+  const dotDots = pathToFileFromStyleFolder.split('/').length;
+
+  const moduleName = `${'../'.repeat(dotDots)}style/${file.path.split('src/js/')[1]}`;
 
   const collection = root.find(j.ImportDeclaration);
 

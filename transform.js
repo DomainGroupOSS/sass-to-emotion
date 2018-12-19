@@ -3,7 +3,9 @@
 const postcss = require('postcss');
 const postcssScss = require('postcss-scss');
 const { camelCase } = require('lodash');
+const selectorToLiteral = require('./selector-to-literal');
 
+// TODO make CLI option
 const FE_BRARY_PREFIX = '$fe-brary-';
 
 function placeHolderToVar(str) {
@@ -48,6 +50,7 @@ const noSassplugin = postcss.plugin('no-sass', () => (root) => {
       },
     );
 
+    // TODO nested media queries
     atRule.walkDecls((decl) => {
       const value = handleSassVar(decl.value, root);
 
@@ -65,9 +68,7 @@ const noSassplugin = postcss.plugin('no-sass', () => (root) => {
     if (isPlaceHolder) {
       selector = placeHolderToVar(rule.selector);
     } else {
-      // .email-share__form-group => .formGroup
-      const [prefix, postfix] = rule.selector.split('__');
-      selector = `${camelCase(postfix || prefix)}`;
+      selector = selectorToLiteral(rule.selector);
     }
 
     root.classes.set(
