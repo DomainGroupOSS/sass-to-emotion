@@ -37,6 +37,7 @@ const processRoot = (root) => {
   root.classes = new Map();
   root.usesVars = false;
 
+  // idea walk rules that start with % or . using regexp
   root.walkRules((rule) => {
     let selector;
 
@@ -56,6 +57,7 @@ const processRoot = (root) => {
       },
     );
 
+    // move all three below to global scope and use stringify
     rule.walkAtRules('extend', (atRule) => {
       root.classes.get(
         selector,
@@ -92,6 +94,8 @@ const processRoot = (root) => {
 
     let contents = '';
     postcss.stringify(atRule, (string, node, startOrEnd) => {
+      // if node.type === decl skip when doing this above
+      console.log('node && node.type:', node && node.type);
       // stops first and last part entering the string e.g "@mixin ad-exact($width, $height) {"
       if (node && node === atRule && startOrEnd) return;
 
