@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 /* eslint-disable no-param-reassign, no-console */
-const postcss = require('postcss');
 const postcssScss = require('postcss-scss');
 const { camelCase } = require('lodash');
 const selectorToLiteral = require('./selector-to-literal');
@@ -34,7 +33,7 @@ function handleSassVar(value, root) {
   return value;
 }
 
-const noSassplugin = postcss.plugin('no-sass', () => (root) => {
+const processRoot = (root) => {
   root.classes = new Map();
   root.usesVars = false;
 
@@ -103,12 +102,18 @@ const noSassplugin = postcss.plugin('no-sass', () => (root) => {
       ).contents = `${root.classes.get(selector).contents}\n  ${decl.prop}: ${value};`;
     });
   });
-});
+};
 
 module.exports = async (cssString, filePath) => {
-  const result = await postcss([noSassplugin])
-    .process(cssString, { from: filePath, syntax: postcssScss });
-  const { root } = result;
+  const root = postcssScss.parse(cssString, { from: filePath, syntax: postcssScss });
+
+  processRoot(root);
+
+  // let result = '';
+  // postcss.stringify(root, (i) => {
+  //   result += i;
+  // });
+  // console.log(result);
 
   const emotionExports = Array.from(root.classes.entries())
     .reduce((acc, [name, { contents, type }]) => {

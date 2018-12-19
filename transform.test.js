@@ -46,7 +46,8 @@ describe('transform', () => {
   it('placeholder', async () => {
     expect(
       await transform(
-        `%message-shared {
+        `// this comment would cause issues using the postcss parser vs postcss-scss
+        %message-shared {
           border: 1px solid #ccc;
           padding: 10px;
           color: #333;
