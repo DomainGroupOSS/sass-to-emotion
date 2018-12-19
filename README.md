@@ -18,3 +18,5 @@ The JS part uses [jscodeshift](https://github.com/facebook/jscodeshift). Clone t
 ```sh
 jscodeshift --parser flow -t ../sass-to-emotion/jscodeshift.js ./src/js
 ```
+
+For example *src/js/components/ads/ad-spot-boilerplate.js* will add a `import styles from '../../../components/ads/ad-spot-boilerplate.js'` and change a BEM like classname from `className="baz-whizz__foo-bar"` to `className={styles.fooBar}`.
