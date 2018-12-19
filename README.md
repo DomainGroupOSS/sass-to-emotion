@@ -16,6 +16,7 @@ sass-to-emotion ./src/scss/**/*.scss
 The JS part uses [jscodeshift](https://github.com/facebook/jscodeshift). Clone this repo and link to the transform at `sass-to-emotion/jscodeshift` when using the `jscodeshift` CLI. For example:
 
 ```sh
+yarn global add jscodeshift
 jscodeshift --parser flow -t ../sass-to-emotion/jscodeshift.js ./src/js
 ```
 
