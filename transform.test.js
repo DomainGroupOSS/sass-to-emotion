@@ -81,4 +81,28 @@ describe('transform', () => {
       ),
     ).toMatchSnapshot();
   });
+
+  it.only('mixins nested', async () => {
+    expect(
+      await transform(
+        `@mixin ad-exact($width, $height) {
+          width: $width;
+          height: $height;
+
+          .bar {
+            color: $fe-brary-colour-primary-dark;
+            display: flex;
+            align-items: center;
+
+            .foo {
+              display: black;
+              align-items: start;
+            }
+          }
+
+          display: block;
+        }`,
+      ),
+    ).toMatchSnapshot();
+  });
 });

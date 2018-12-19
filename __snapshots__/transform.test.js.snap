@@ -2,20 +2,60 @@
 
 exports[`transform mixins 1`] = `
 "import { css } from 'emotion';
-import { variables as vars } from '@domain-group/fe-brary';
-
-function adExact(width, height) {
-  return css\`
-    width: \${width};
-    height: \${height};
-    color: \${vars.colour.primaryDark};
-  \`;
-}
 
 export const adspot468X60728X90Pos1Container = css\`
   \${adExact('125px', '700px')};
   color: blue;
 \`;
+
+function adExact(width, height) {
+  return css\`@mixin ad-exact($width, $height) {
+          width: $width;
+          height: $height;
+          color: $fe-brary-colour-primary-dark;
+        }
+  \`;
+}
+"
+`;
+
+exports[`transform mixins nested 1`] = `
+"import { css } from 'emotion';
+import { variables as vars } from '@domain-group/fe-brary';
+
+export const bar = css\`
+  color: \${vars.colour.primaryDark};
+  display: flex;
+  align-items: center;
+  display: black;
+  align-items: start;
+\`;
+
+export const foo = css\`
+  display: black;
+  align-items: start;
+\`;
+
+function adExact(width, height) {
+  return css\`
+          width: \${width};
+          height: \${height};
+
+          .bar {
+            color: \${vars.colour.primaryDark};
+            display: flex;
+            align-items: center;
+
+            .foo {
+              display: black;
+              align-items: start;
+            }
+          }
+
+          display: block;
+        
+  \`;
+}
 "
 `;
 

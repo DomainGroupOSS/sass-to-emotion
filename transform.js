@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /* eslint-disable no-param-reassign, no-console */
-const postcssScss = require('postcss-scss');
+const postcss = require('postcss-scss');
 const { camelCase } = require('lodash');
 const selectorToLiteral = require('./selector-to-literal');
 
@@ -36,28 +36,6 @@ function handleSassVar(value, root) {
 const processRoot = (root) => {
   root.classes = new Map();
   root.usesVars = false;
-
-  root.walkAtRules('mixin', (atRule) => {
-    const { params } = atRule;
-    const selector = mixinParamsToFunc(params);
-
-    root.classes.set(
-      selector,
-      {
-        type: 'mixin',
-        contents: '',
-      },
-    );
-
-    // TODO nested media queries
-    atRule.walkDecls((decl) => {
-      const value = handleSassVar(decl.value, root);
-
-      root.classes.get(
-        selector,
-      ).contents = `${root.classes.get(selector).contents}\n    ${decl.prop}: ${value};`;
-    });
-  });
 
   root.walkRules((rule) => {
     let selector;
@@ -102,18 +80,38 @@ const processRoot = (root) => {
       ).contents = `${root.classes.get(selector).contents}\n  ${decl.prop}: ${value};`;
     });
   });
+
+
+  root.walkAtRules('mixin', (atRule) => {
+    const { params } = atRule;
+    const selector = mixinParamsToFunc(params);
+
+    atRule.walkDecls((decl) => {
+      decl.value = handleSassVar(decl.value, root);
+    });
+
+    let contents = '';
+    postcss.stringify(atRule, (string, node, startOrEnd) => {
+      // stops first and last part entering the string e.g "@mixin ad-exact($width, $height) {"
+      if (node && node === atRule && startOrEnd) return;
+
+      contents += string;
+    });
+
+    root.classes.set(
+      selector,
+      {
+        type: 'mixin',
+        contents,
+      },
+    );
+  });
 };
 
 module.exports = async (cssString, filePath) => {
-  const root = postcssScss.parse(cssString, { from: filePath, syntax: postcssScss });
+  const root = postcss.parse(cssString, { from: filePath });
 
   processRoot(root);
-
-  // let result = '';
-  // postcss.stringify(root, (i) => {
-  //   result += i;
-  // });
-  // console.log(result);
 
   const emotionExports = Array.from(root.classes.entries())
     .reduce((acc, [name, { contents, type }]) => {
