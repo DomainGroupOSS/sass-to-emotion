@@ -82,7 +82,7 @@ describe('transform', () => {
     ).toMatchSnapshot();
   });
 
-  it.only('mixins nested', async () => {
+  it('mixins nested', async () => {
     expect(
       await transform(
         `@mixin ad-exact($width, $height) {

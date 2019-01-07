@@ -2,6 +2,7 @@
 
 exports[`transform mixins 1`] = `
 "import { css } from 'emotion';
+import { variables as vars } from '@domain-group/fe-brary';
 
 export const adspot468X60728X90Pos1Container = css\`
   \${adExact('125px', '700px')};
@@ -9,11 +10,11 @@ export const adspot468X60728X90Pos1Container = css\`
 \`;
 
 function adExact(width, height) {
-  return css\`@mixin ad-exact($width, $height) {
-          width: $width;
-          height: $height;
-          color: $fe-brary-colour-primary-dark;
-        }
+  return css\`
+          width: \${width};
+          height: \${height};
+          color: \${vars.colour.primaryDark};
+        
   \`;
 }
 "
