@@ -106,4 +106,55 @@ describe('transform', () => {
       ),
     ).toMatchSnapshot();
   });
+
+
+  it('non classname', async () => {
+    expect(
+      await transform(
+        `.listing-details__description {
+            margin-bottom: 24px;
+
+            ::hover {
+              color: pink;
+            }
+
+            .foo {
+              margin-bottom: 100px;
+            }
+
+            p {
+              margin-bottom: 55px;
+            }
+          }`,
+      ),
+    ).toMatchSnapshot();
+  });
+
+  it('vanilla css media query', async () => {
+    expect(
+      await transform(
+        `.search-results__auctions-label {
+           display: none;
+
+           @media(min-width: 100px) {
+             display: inline;
+           }
+        }`,
+      ),
+    ).toMatchSnapshot();
+  });
+
+  it.skip('custom sass include-media media query', async () => {
+    expect(
+      await transform(
+        `.search-results__auctions-label {
+           display: none;
+
+           @include media('>=desktop') {
+             display: inline;
+           }
+        }`,
+      ),
+    ).toMatchSnapshot();
+  });
 });

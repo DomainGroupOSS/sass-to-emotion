@@ -60,14 +60,29 @@ export const foo = css\`
 "
 `;
 
-exports[`transform placeholder 1`] = `
+exports[`transform non classname 1`] = `
 "import { css } from 'emotion';
 
-const messageShared = css\`
-  border: 1px solid #ccc;
-  padding: 10px;
-  color: #333;
+export const description = css\`
+  margin-bottom: 24px;
+
+  ::hover {
+    color: pink;
+  }
+
+  p {
+    margin-bottom: 55px;
+  }
 \`;
+
+export const foo = css\`
+  margin-bottom: 100px;
+\`;
+"
+`;
+
+exports[`transform placeholder 1`] = `
+"import { css } from 'emotion';
 
 export const message = css\`
   \${messageShared};
@@ -103,6 +118,19 @@ export const button = css\`
   display: inline-flex;
   align-items: center;
   justify-content: center;
+\`;
+"
+`;
+
+exports[`transform vanilla css media query 1`] = `
+"import { css } from 'emotion';
+
+export const auctionsLabel = css\`
+  display: none;
+
+  @media (min-width: 100px) {
+    display: inline;
+  }
 \`;
 "
 `;
