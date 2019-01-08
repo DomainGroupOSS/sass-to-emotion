@@ -37,7 +37,22 @@ const processRoot = (root) => {
   root.classes = new Map();
   root.usesVars = false;
 
-  // idea walk rules that start with % or . using regexp
+  // move all three below to global scope and use stringify
+  root.walkAtRules('extend', (atRule) => {
+    atRule.params = `\${${placeHolderToVar(atRule.params)}};`;
+  });
+
+  root.walkAtRules('include', (atRule) => {
+    const [funcName, inputs] = atRule.params.split('(');
+    const funcCall = `${camelCase(funcName)}('${inputs.slice(0, -1).split(', ').join("', '")}')`;
+    atRule.params = `\${${funcCall}};`;
+  });
+
+  root.walkDecls((decl) => {
+    decl.value = handleSassVar(decl.value, root);
+  });
+
+  // flattens nested rules
   root.walkRules((rule) => {
     let selector;
 
@@ -49,38 +64,39 @@ const processRoot = (root) => {
       selector = selectorToLiteral(rule.selector);
     }
 
+    let nestedMixin = false;
+    let parentNode = rule.parent;
+    do {
+      if (parentNode !== root && parentNode.type === 'atrule' && parentNode.name === 'mixin') {
+        nestedMixin = true;
+      }
+      parentNode = parentNode.parent;
+    } while (parentNode && parentNode !== root && !nestedMixin);
+
+    if (nestedMixin) return;
+
+    let contents = '';
+    postcss.stringify(rule, (string, node, startOrEnd) => {
+      if (!string) return;
+      if (startOrEnd) return;
+      if (node && node.parent !== rule) return;
+
+      if (node && node.type === 'atrule') {
+        contents += `${node.params}\n`;
+        return;
+      }
+
+      contents += string;
+    });
+
     root.classes.set(
       selector,
       {
         type: isPlaceHolder ? 'placeholder' : 'class',
-        contents: '',
+        contents,
+        node: rule,
       },
     );
-
-    // move all three below to global scope and use stringify
-    rule.walkAtRules('extend', (atRule) => {
-      root.classes.get(
-        selector,
-      ).contents = `${root.classes.get(selector).contents}\n  \${${placeHolderToVar(atRule.params)}};`;
-    });
-
-    rule.walkAtRules('include', (atRule) => {
-      const [funcName, inputs] = atRule.params.split('(');
-      const funcCall = `${camelCase(funcName)}('${inputs.slice(0, -1).split(', ').join("', '")}')`;
-      root.classes.get(
-        selector,
-      ).contents = `${root.classes.get(selector).contents}\n  \${${funcCall}};`;
-    });
-
-    rule.walkDecls((decl) => {
-      let { value } = decl;
-
-      value = handleSassVar(value, root);
-
-      root.classes.get(
-        selector,
-      ).contents = `${root.classes.get(selector).contents}\n  ${decl.prop}: ${value};`;
-    });
   });
 
 
@@ -88,14 +104,9 @@ const processRoot = (root) => {
     const { params } = atRule;
     const selector = mixinParamsToFunc(params);
 
-    atRule.walkDecls((decl) => {
-      decl.value = handleSassVar(decl.value, root);
-    });
-
     let contents = '';
     postcss.stringify(atRule, (string, node, startOrEnd) => {
       // if node.type === decl skip when doing this above
-      console.log('node && node.type:', node && node.type);
       // stops first and last part entering the string e.g "@mixin ad-exact($width, $height) {"
       if (node && node === atRule && startOrEnd) return;
 
@@ -107,6 +118,7 @@ const processRoot = (root) => {
       {
         type: 'mixin',
         contents,
+        node: atRule,
       },
     );
   });
@@ -118,6 +130,7 @@ module.exports = async (cssString, filePath) => {
   processRoot(root);
 
   const emotionExports = Array.from(root.classes.entries())
+    .sort(([, { node: a }], [, { node: b }]) => a.source.start.line - b.source.start.line)
     .reduce((acc, [name, { contents, type }]) => {
       if (type === 'mixin') {
         return `${acc}\nfunction ${name} {\n  return css\`${contents}\n  \`;\n}\n`;

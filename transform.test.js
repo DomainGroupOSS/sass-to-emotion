@@ -34,6 +34,7 @@ describe('transform', () => {
       await transform(
         `.button {
           color: $fe-brary-colour-primary-dark;
+          display: flex;
 
           .bar {
             font-size: $fe-brary-font-h6-font-size;

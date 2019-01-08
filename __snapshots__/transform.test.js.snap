@@ -5,8 +5,10 @@ exports[`transform mixins 1`] = `
 import { variables as vars } from '@domain-group/fe-brary';
 
 export const adspot468X60728X90Pos1Container = css\`
-  \${adExact('125px', '700px')};
-  color: blue;
+          color: blue;
+          \${adExact('125px', '700px')};
+
+        
 \`;
 
 function adExact(width, height) {
@@ -23,19 +25,6 @@ function adExact(width, height) {
 exports[`transform mixins nested 1`] = `
 "import { css } from 'emotion';
 import { variables as vars } from '@domain-group/fe-brary';
-
-export const bar = css\`
-  color: \${vars.colour.primaryDark};
-  display: flex;
-  align-items: center;
-  display: black;
-  align-items: start;
-\`;
-
-export const foo = css\`
-  display: black;
-  align-items: start;
-\`;
 
 function adExact(width, height) {
   return css\`
@@ -64,14 +53,19 @@ exports[`transform nested class no vars 1`] = `
 "import { css } from 'emotion';
 
 export const button = css\`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  display: block;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          
+            
+          
+        
 \`;
 
 export const foo = css\`
-  display: block;
+            display: block;
+          
 \`;
 "
 `;
@@ -80,18 +74,23 @@ exports[`transform placeholder 1`] = `
 "import { css } from 'emotion';
 
 const messageShared = css\`
-  border: 1px solid #ccc;
-  padding: 10px;
-  color: #333;
+          border: 1px solid #ccc;
+          padding: 10px;
+          color: #333;
+        
 \`;
 
 export const message = css\`
-  \${messageShared};
+          \${messageShared};
+
+        
 \`;
 
 export const success = css\`
-  \${messageShared};
-  border-color: green;
+          \${messageShared};
+
+          border-color: green;
+        
 \`;
 "
 `;
@@ -101,12 +100,18 @@ exports[`transform sass vars to import 1`] = `
 import { variables as vars } from '@domain-group/fe-brary';
 
 export const button = css\`
-  color: \${vars.colour.primaryDark};
-  font-size: \${vars.font.h6FontSize};
+          color: \${vars.colour.primaryDark};
+          display: flex;
+
+          
+            
+          
+        
 \`;
 
 export const bar = css\`
-  font-size: \${vars.font.h6FontSize};
+            font-size: \${vars.font.h6FontSize};
+          
 \`;
 "
 `;
@@ -115,9 +120,10 @@ exports[`transform simple class no vars 1`] = `
 "import { css } from 'emotion';
 
 export const button = css\`
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+        
 \`;
 "
 `;
