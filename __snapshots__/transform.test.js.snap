@@ -4,21 +4,18 @@ exports[`transform mixins 1`] = `
 "import { css } from 'emotion';
 import { variables as vars } from '@domain-group/fe-brary';
 
-export const adspot468X60728X90Pos1Container = css\`
-          color: blue;
-          \${adExact('125px', '700px')};
-
-        
-\`;
-
 function adExact(width, height) {
   return css\`
-          width: \${width};
-          height: \${height};
-          color: \${vars.colour.primaryDark};
-        
+    width: \${width};
+    height: \${height};
+    color: \${vars.colour.primaryDark};
   \`;
 }
+
+export const adspot468X60728X90Pos1Container = css\`
+  color: blue;
+  \${adExact('125px', '700px')};
+\`;
 "
 `;
 
@@ -28,22 +25,21 @@ import { variables as vars } from '@domain-group/fe-brary';
 
 function adExact(width, height) {
   return css\`
-          width: \${width};
-          height: \${height};
+    width: \${width};
+    height: \${height};
 
-          .bar {
-            color: \${vars.colour.primaryDark};
-            display: flex;
-            align-items: center;
+    .bar {
+      color: \${vars.colour.primaryDark};
+      display: flex;
+      align-items: center;
 
-            .foo {
-              display: black;
-              align-items: start;
-            }
-          }
+      .foo {
+        display: black;
+        align-items: start;
+      }
+    }
 
-          display: block;
-        
+    display: block;
   \`;
 }
 "
@@ -53,19 +49,13 @@ exports[`transform nested class no vars 1`] = `
 "import { css } from 'emotion';
 
 export const button = css\`
-          display: flex;
-          align-items: center;
-          justify-content: center;
-
-          
-            
-          
-        
+  display: flex;
+  align-items: center;
+  justify-content: center;
 \`;
 
 export const foo = css\`
-            display: block;
-          
+  display: block;
 \`;
 "
 `;
@@ -74,23 +64,19 @@ exports[`transform placeholder 1`] = `
 "import { css } from 'emotion';
 
 const messageShared = css\`
-          border: 1px solid #ccc;
-          padding: 10px;
-          color: #333;
-        
+  border: 1px solid #ccc;
+  padding: 10px;
+  color: #333;
 \`;
 
 export const message = css\`
-          \${messageShared};
-
-        
+  \${messageShared};
 \`;
 
 export const success = css\`
-          \${messageShared};
+  \${messageShared};
 
-          border-color: green;
-        
+  border-color: green;
 \`;
 "
 `;
@@ -100,18 +86,12 @@ exports[`transform sass vars to import 1`] = `
 import { variables as vars } from '@domain-group/fe-brary';
 
 export const button = css\`
-          color: \${vars.colour.primaryDark};
-          display: flex;
-
-          
-            
-          
-        
+  color: \${vars.colour.primaryDark};
+  display: flex;
 \`;
 
 export const bar = css\`
-            font-size: \${vars.font.h6FontSize};
-          
+  font-size: \${vars.font.h6FontSize};
 \`;
 "
 `;
@@ -120,10 +100,9 @@ exports[`transform simple class no vars 1`] = `
 "import { css } from 'emotion';
 
 export const button = css\`
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-        
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 \`;
 "
 `;

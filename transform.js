@@ -2,6 +2,7 @@
 /* eslint-disable no-param-reassign, no-console */
 const postcss = require('postcss-scss');
 const { camelCase } = require('lodash');
+const format = require('prettier-eslint');
 const selectorToLiteral = require('./selector-to-literal');
 
 // TODO make CLI option
@@ -124,7 +125,7 @@ const processRoot = (root) => {
   });
 };
 
-module.exports = async (cssString, filePath) => {
+module.exports = (cssString, filePath) => {
   const root = postcss.parse(cssString, { from: filePath });
 
   processRoot(root);
@@ -139,5 +140,7 @@ module.exports = async (cssString, filePath) => {
       return `${acc}\n${type === 'class' ? 'export ' : ''}const ${name} = css\`${contents}\n\`;\n`;
     }, '');
 
-  return `import { css } from 'emotion';${root.usesVars ? '\nimport { variables as vars } from \'@domain-group/fe-brary\';' : ''}\n${emotionExports}`;
+  const js = `import { css } from 'emotion';${root.usesVars ? '\nimport { variables as vars } from \'@domain-group/fe-brary\';' : ''}\n${emotionExports}`;
+
+  return format({ text: js, filePath, prettierOptions: { parser: 'babylon' } });
 };
