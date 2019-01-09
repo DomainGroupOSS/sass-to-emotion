@@ -1,5 +1,47 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`transform custom include-media max-width 1`] = `
+"import { css } from 'emotion';
+
+export const auctionsLabel = css\`
+             display: none;
+
+             @media media(max-width: \${vars.global.desktopMinWidth - 1}) {
+               display: inline;
+             }
+          
+\`;
+"
+`;
+
+exports[`transform custom include-media min-width 1`] = `
+"import { css } from 'emotion';
+
+export const auctionsLabel = css\`
+             display: none;
+
+             @media media(min-width: \${vars.global.desktopMinWidth}) {
+               display: inline;
+             }
+          
+\`;
+"
+`;
+
+exports[`transform custom include-media normal 1`] = `
+"import { css } from 'emotion';
+
+export const auctionsLabel = css\`
+             display: none;
+
+             @media media(min-width: \${vars.global.desktopMinWidth}) {
+               display: inline;
+             }
+          
+\`;
+"
+`;
+
 exports[`transform mixins 1`] = `
 "import { css } from 'emotion';
 import { variables as vars } from '@domain-group/fe-brary';

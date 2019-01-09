@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/* eslint-disable no-param-reassign, no-console */
+/* eslint-disable no-param-reassign, no-console, no-template-curly-in-string */
 const postcss = require('postcss-scss');
 const { camelCase } = require('lodash');
 const format = require('prettier-eslint');
@@ -44,7 +44,75 @@ const processRoot = (root) => {
   });
 
   root.walkAtRules('include', (atRule) => {
-    if (atRule.nodes && atRule.nodes.length && !atRule.params.startsWith('media(')) throw Error();
+    // check for https://github.com/eduardoboucas/include-media
+    if (atRule.nodes && atRule.nodes.length && atRule.params.startsWith('media(')) {
+      atRule.name = 'media';
+
+      // $breakpoints: (
+      //   'mobile': 320px,
+      //   'tablet': $fe-brary-global-tablet-min-width,
+      //   'desktop': $fe-brary-global-desktop-min-width,
+      //   'lrg-desktop': $fe-brary-global-desktop-max-width
+      // );
+
+      // $fe-brary-global-lrg-desktop-min-width: 1441px;
+      // $fe-brary-global-desktop-max-width: 1440px;
+      // $fe-brary-global-desktop-min-width: 1021px;
+      // $fe-brary-global-tablet-max-width: 1020px;
+      // $fe-brary-global-tablet-min-width: 624px;
+      // $fe-brary-global-mobile-max-width: 623px;
+      // $fe-brary-global-mobile-min-width: 0px;
+
+      // https://github.com/eduardoboucas/include-media/blob/master/tests/parse-expression.scss
+
+      let newParam;
+      switch (atRule.params) {
+        case "media('>tablet')":
+          newParam = 'media(min-width: ${vars.global.tabletMinWidth + 1})';
+          break;
+        case "media('>=tablet')":
+          newParam = 'media(min-width: ${vars.global.tabletMinWidth})';
+          break;
+        case "media('>desktop')":
+          newParam = 'media(min-width: ${vars.global.desktopMinWidth + 1})';
+          break;
+        case "media('>=desktop')":
+          newParam = 'media(min-width: ${vars.global.desktopMinWidth})';
+          break;
+        case "media('>lrg-desktop')":
+          newParam = 'media(min-width: ${vars.global.desktopMaxWidth + 1})';
+          break;
+        case "media('>=lrg-desktop')":
+          newParam = 'media(min-width: ${vars.global.desktopMaxWidth})';
+          break;
+
+        case "media('<tablet')":
+          newParam = 'media(max-width: ${vars.global.tabletMinWidth - 1})';
+          break;
+        case "media('<=tablet')":
+          newParam = 'media(max-width: ${vars.global.tabletMinWidth})';
+          break;
+        case "media('<desktop')":
+          newParam = 'media(max-width: ${vars.global.desktopMinWidth - 1})';
+          break;
+        case "media('<=desktop')":
+          newParam = 'media(max-width: ${vars.global.desktopMinWidth})';
+          break;
+        case "media('<lrg-desktop')":
+          newParam = 'media(max-width: ${vars.global.desktopMaxWidth - 1})';
+          break;
+        case "media('<=lrg-desktop')":
+          newParam = 'media(max-width: ${vars.global.desktopMaxWidth})';
+          break;
+        default:
+          throw new Error('Found an unrecognised `@include media(..)`, please change it to a vanilla CSS media query that uses fe-brary Sass vars then try this transformer again');
+      }
+
+      atRule.params = newParam;
+
+      return;
+    }
+
 
     const [funcName, inputs] = atRule.params.split('(');
     const funcCall = `${camelCase(funcName)}('${inputs
@@ -61,7 +129,6 @@ const processRoot = (root) => {
   // flattens nested rules
   root.walkRules(/^\./, (rule) => {
     let selector;
-
     const isPlaceHolder = rule.selector[0] === '%';
 
     if (isPlaceHolder) {

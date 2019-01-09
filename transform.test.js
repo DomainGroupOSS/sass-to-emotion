@@ -1,9 +1,9 @@
 const transform = require('./transform');
 
 describe('transform', () => {
-  it('simple class no vars', async () => {
+  it('simple class no vars', () => {
     expect(
-      await transform(
+      transform(
         `.button {
           display: inline-flex;
           align-items: center;
@@ -13,9 +13,9 @@ describe('transform', () => {
     ).toMatchSnapshot();
   });
 
-  it('nested class no vars', async () => {
+  it('nested class no vars', () => {
     expect(
-      await transform(
+      transform(
         `.button {
           display: flex;
           align-items: center;
@@ -29,9 +29,9 @@ describe('transform', () => {
     ).toMatchSnapshot();
   });
 
-  it('sass vars to import', async () => {
+  it('sass vars to import', () => {
     expect(
-      await transform(
+      transform(
         `.button {
           color: $fe-brary-colour-primary-dark;
           display: flex;
@@ -44,9 +44,9 @@ describe('transform', () => {
     ).toMatchSnapshot();
   });
 
-  it('placeholder', async () => {
+  it('placeholder', () => {
     expect(
-      await transform(
+      transform(
         `// this comment would cause issues using the postcss parser vs postcss-scss
         %message-shared {
           border: 1px solid #ccc;
@@ -66,9 +66,9 @@ describe('transform', () => {
     ).toMatchSnapshot();
   });
 
-  it('mixins', async () => {
+  it('mixins', () => {
     expect(
-      await transform(
+      transform(
         `@mixin ad-exact($width, $height) {
           width: $width;
           height: $height;
@@ -83,9 +83,9 @@ describe('transform', () => {
     ).toMatchSnapshot();
   });
 
-  it('mixins nested', async () => {
+  it('mixins nested', () => {
     expect(
-      await transform(
+      transform(
         `@mixin ad-exact($width, $height) {
           width: $width;
           height: $height;
@@ -108,9 +108,9 @@ describe('transform', () => {
   });
 
 
-  it('non classname', async () => {
+  it('non classname', () => {
     expect(
-      await transform(
+      transform(
         `.listing-details__description {
             margin-bottom: 24px;
 
@@ -130,9 +130,9 @@ describe('transform', () => {
     ).toMatchSnapshot();
   });
 
-  it('vanilla css media query', async () => {
+  it('vanilla css media query', () => {
     expect(
-      await transform(
+      transform(
         `.search-results__auctions-label {
            display: none;
 
@@ -144,17 +144,47 @@ describe('transform', () => {
     ).toMatchSnapshot();
   });
 
-  it.skip('custom sass include-media media query', async () => {
-    expect(
-      await transform(
-        `.search-results__auctions-label {
-           display: none;
+  describe('custom include-media', () => {
+    it('min-width', () => {
+      expect(
+        transform(
+          `.search-results__auctions-label {
+             display: none;
 
-           @include media('>=desktop') {
-             display: inline;
-           }
-        }`,
-      ),
-    ).toMatchSnapshot();
+             @include media('>=desktop') {
+               display: inline;
+             }
+          }`,
+        ),
+      ).toMatchSnapshot();
+    });
+    it('max-width', () => {
+      expect(
+        transform(
+          `.search-results__auctions-label {
+             display: none;
+
+             @include media('<desktop') {
+               display: inline;
+             }
+          }`,
+        ),
+      ).toMatchSnapshot();
+    });
+    it('unrecognised', () => {
+      expect(
+        () => {
+          transform(
+            `.search-results__auctions-label {
+             display: none;
+
+             @include media('>=desktop', 'landscape') {
+               display: inline;
+             }
+          }`,
+          );
+        },
+      ).toThrow();
+    });
   });
 });
