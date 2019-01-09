@@ -70,16 +70,17 @@ const processRoot = (root) => {
       selector = selectorToLiteral(rule.selector);
     }
 
-    let nestedMixin = false;
+    let nestedInMixin = false;
     let parentNode = rule.parent;
     do {
       if (parentNode !== root && parentNode.type === 'atrule' && parentNode.name === 'mixin') {
-        nestedMixin = true;
+        nestedInMixin = true;
       }
       parentNode = parentNode.parent;
-    } while (parentNode && parentNode !== root && !nestedMixin);
+    } while (parentNode && parentNode !== root && !nestedInMixin);
 
-    if (nestedMixin) return;
+    if (nestedInMixin) return;
+
 
     let contents = '';
     postcss.stringify(rule, (string, node, startOrEnd) => {
