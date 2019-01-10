@@ -155,7 +155,7 @@ describe('transform', () => {
     ).toMatchSnapshot();
   });
 
-  it.only('custom vars in include', () => {
+  it('custom vars in include', () => {
     expect(
       transform(
         `.listing-details__map-marker {
@@ -167,6 +167,38 @@ describe('transform', () => {
             }
           }`,
       ),
+    ).toMatchSnapshot();
+  });
+
+  it('ssdfsdfsdfsdfsdf', () => {
+    expect(
+      transform(`
+        .listing-details__button-copy {
+          background: none;
+          border: 0;
+
+          &:focus,
+          &:hover {
+            outline: 0;
+          }
+
+          .domain-icon {
+            width: 14px;
+            height: 14px;
+          }
+        }
+
+        .listing-details__copy-text {
+          display: flex;
+
+          &:hover {
+            .listing-details__button-copy {
+              opacity: 1;
+              transform: translateX(0);
+            }
+          }
+        }
+      `),
     ).toMatchSnapshot();
   });
 

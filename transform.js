@@ -1,9 +1,10 @@
 #!/usr/bin/env node
-/* eslint-disable no-param-reassign, no-template-curly-in-string */
+/* eslint-disable no-param-reassign */
 const postcss = require('postcss-scss');
 const { camelCase } = require('lodash');
 const format = require('prettier-eslint');
 const selectorToLiteral = require('./selector-to-literal');
+const includeMedia = require('./include-media');
 
 // TODO make CLI option
 const FE_BRARY_PREFIX = '$fe-brary-';
@@ -11,7 +12,6 @@ const FE_BRARY_PREFIX = '$fe-brary-';
 function placeHolderToVar(str) {
   return camelCase(str.slice(1));
 }
-
 
 function isNestedInMixin(root, node) {
   let nestedInMixin = false;
@@ -28,7 +28,7 @@ function isNestedInMixin(root, node) {
 
 function handleSassVar(decl, root) {
   if (decl.value.startsWith(FE_BRARY_PREFIX)) {
-    if (root && !root.usesFeBraryVars) {
+    if (!root.usesFeBraryVars) {
       root.usesFeBraryVars = true;
     }
 
@@ -41,11 +41,12 @@ function handleSassVar(decl, root) {
   if (decl.value.startsWith('$')) {
     const varName = camelCase(decl.value.slice(1));
 
-    if (root && isNestedInMixin(root, decl)) {
+    if (isNestedInMixin(root, decl)) {
+      // TODO could be refering to global var
       return `\${${varName}}`;
     }
 
-    if (root && !root.usesCustomVars) {
+    if (!root.usesCustomVars) {
       root.usesCustomVars = true;
     }
 
@@ -53,6 +54,28 @@ function handleSassVar(decl, root) {
   }
 
   return decl.value;
+}
+
+function handleSassVarUnescaped(value) {
+  if (value.startsWith(FE_BRARY_PREFIX)) {
+    const [, name] = value.split(FE_BRARY_PREFIX);
+    const [field, ...varNameSegs] = name.split('-');
+    const varName = camelCase(varNameSegs.join('-'));
+    return `vars.${field}.${varName}`;
+  }
+
+  if (value.startsWith('$')) {
+    const varName = camelCase(value.slice(1));
+    return `customVars.${varName}`;
+  }
+
+  const isWrappedInQuotes = ['"', "'"].includes(value[0]);
+  if (isWrappedInQuotes) {
+    return value;
+  }
+
+  // wrap in string quotes, e.g 100px => '100px'
+  return `'${value}'`;
 }
 
 function mixinParamsToFunc(str) {
@@ -70,87 +93,18 @@ const processRoot = (root) => {
 
   root.walkAtRules('include', (atRule) => {
     // check for https://github.com/eduardoboucas/include-media
-    if (atRule.nodes && atRule.nodes.length && atRule.params.startsWith('media(')) {
+    if (atRule.nodes && atRule.nodes.length && atRule.params.trim().startsWith('media(')) {
       atRule.name = 'media';
-      // $breakpoints: (
-      //   'mobile': 320px,
-      //   'tablet': $fe-brary-global-tablet-min-width,
-      //   'desktop': $fe-brary-global-desktop-min-width,
-      //   'lrg-desktop': $fe-brary-global-desktop-max-width
-      // );
-
-      // $fe-brary-global-lrg-desktop-min-width: 1441px;
-      // $fe-brary-global-desktop-max-width: 1440px;
-      // $fe-brary-global-desktop-min-width: 1021px;
-      // $fe-brary-global-tablet-max-width: 1020px;
-      // $fe-brary-global-tablet-min-width: 624px;
-      // $fe-brary-global-mobile-max-width: 623px;
-      // $fe-brary-global-mobile-min-width: 0px;
-
-      // https://github.com/eduardoboucas/include-media/blob/master/tests/parse-expression.scss
-
-      let newParam;
-      switch (atRule.params) {
-        case "media('>mobile')":
-          newParam = 'media(min-width: 321px)';
-          break;
-        case "media('>=mobile')":
-          newParam = 'media(min-width: 320px)';
-          break;
-        case "media('>tablet')":
-          newParam = 'media(min-width: ${vars.global.tabletMinWidth + 1})';
-          break;
-        case "media('>=tablet')":
-          newParam = 'media(min-width: ${vars.global.tabletMinWidth})';
-          break;
-        case "media('>desktop')":
-          newParam = 'media(min-width: ${vars.global.desktopMinWidth + 1})';
-          break;
-        case "media('>=desktop')":
-          newParam = 'media(min-width: ${vars.global.desktopMinWidth})';
-          break;
-        case "media('>lrg-desktop')":
-          newParam = 'media(min-width: ${vars.global.desktopMaxWidth + 1})';
-          break;
-        case "media('>=lrg-desktop')":
-          newParam = 'media(min-width: ${vars.global.desktopMaxWidth})';
-          break;
-
-        case "media('<mobile')":
-          newParam = 'media(max-width: 319px)';
-          break;
-        case "media('<=mobile')":
-          newParam = 'media(max-width: 320px)';
-          break;
-        case "media('<tablet')":
-          newParam = 'media(max-width: ${vars.global.tabletMinWidth - 1})';
-          break;
-        case "media('<=tablet')":
-          newParam = 'media(max-width: ${vars.global.tabletMinWidth})';
-          break;
-        case "media('<desktop')":
-          newParam = 'media(max-width: ${vars.global.desktopMinWidth - 1})';
-          break;
-        case "media('<=desktop')":
-          newParam = 'media(max-width: ${vars.global.desktopMinWidth})';
-          break;
-        case "media('<lrg-desktop')":
-          newParam = 'media(max-width: ${vars.global.desktopMaxWidth - 1})';
-          break;
-        case "media('<=lrg-desktop')":
-          newParam = 'media(max-width: ${vars.global.desktopMaxWidth})';
-          break;
-        default:
-          throw new Error('Found an unrecognised `@include media(..)`, please change it to a vanilla CSS media query that uses fe-brary Sass vars then try this transformer again');
-      }
-      atRule.params = newParam;
+      atRule.params = includeMedia(atRule.params);
+      if (atRule.params.includes('vars.')) root.usesFeBraryVars = true;
+      return;
     }
 
     const [funcName, inputs] = atRule.params.split('(');
     const inputsWithoutBraces = inputs.slice(0, -1);
-    const args = inputsWithoutBraces.split(',').map(arg => handleSassVar({ value: arg.trim() }));
+    const args = inputsWithoutBraces.split(',').map(arg => handleSassVarUnescaped(arg.trim()));
 
-    atRule.params = `${camelCase(funcName.trim())} (${args.join(', ')})`;
+    atRule.params = `\${${camelCase(funcName.trim())} (${args.join(', ')})}`;
   });
 
   root.walkDecls((decl) => {

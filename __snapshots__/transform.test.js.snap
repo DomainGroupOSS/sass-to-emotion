@@ -2,6 +2,7 @@
 
 exports[`transform custom include-media max-width 1`] = `
 "import { css } from 'emotion';
+import { variables as vars } from '@domain-group/fe-brary';
 
 export const auctionsLabel = css\`
              display: none;
@@ -9,13 +10,14 @@ export const auctionsLabel = css\`
              @media media(max-width: \${vars.global.desktopMinWidth - 1}) {
                display: inline;
              }
-
+          
 \`;
 "
 `;
 
 exports[`transform custom include-media min-width 1`] = `
 "import { css } from 'emotion';
+import { variables as vars } from '@domain-group/fe-brary';
 
 export const auctionsLabel = css\`
              display: none;
@@ -23,7 +25,7 @@ export const auctionsLabel = css\`
              @media media(min-width: \${vars.global.desktopMinWidth}) {
                display: inline;
              }
-
+          
 \`;
 "
 `;
@@ -47,9 +49,12 @@ export const mapMarker = css\`
             $map-marker-arrow-size: 8px;
 
             &::after {
-              simpleArrow (\${customVars.mapMarkerArrowSize}, \${
-  customVars.mapMarkerArrowSize
-}, 'down', \${vars.colour.white})
+              \${simpleArrow(
+    customVars.mapMarkerArrowSize,
+    customVars.mapMarkerArrowSize,
+    'down',
+    vars.colour.white,
+  )}
 
               margin-left: \${customVars.mapMarkerArrowSize};
             }
@@ -72,7 +77,7 @@ function adExact(width, height) {
 
 export const adspot468X60728X90Pos1Container = css\`
   color: blue;
-  \${adExact('125px', '700px')};
+  \${adExact('125px', '700px')}
 \`;
 "
 `;
@@ -176,6 +181,28 @@ export const button = css\`
   display: inline-flex;
   align-items: center;
   justify-content: center;
+\`;
+"
+`;
+
+exports[`transform ssdfsdfsdfsdfsdf 1`] = `
+"import { css } from 'emotion';
+
+export const domainIcon = css\`
+  width: 14px;
+  height: 14px;
+\`;
+
+export const copyText = css\`
+  display: flex;
+
+  &:hover {
+  }
+\`;
+
+export const buttonCopy = css\`
+  opacity: 1;
+  transform: translateX(0);
 \`;
 "
 `;
