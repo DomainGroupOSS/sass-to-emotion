@@ -144,6 +144,17 @@ describe('transform', () => {
     ).toMatchSnapshot();
   });
 
+  it('custom vars', () => {
+    expect(
+      transform(
+        `.search-results__auctions-label {
+           display: none;
+           color: $foo-bar-baz-whizz;
+        }`,
+      ),
+    ).toMatchSnapshot();
+  });
+
   describe('custom include-media', () => {
     it('min-width', () => {
       expect(

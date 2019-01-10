@@ -17,26 +17,51 @@ function mixinParamsToFunc(str) {
   return `${camelCase(funcName)}(${inputs.replace(/\$/g, '')}`;
 }
 
-function handleSassVar(value, root) {
-  if (value.startsWith(FE_BRARY_PREFIX)) {
-    root.usesVars = true;
+function isNestedInMixin(root, node) {
+  let nestedInMixin = false;
+  let parentNode = node.parent;
+  do {
+    if (parentNode !== root && parentNode.type === 'atrule' && parentNode.name === 'mixin') {
+      nestedInMixin = true;
+    }
+    parentNode = parentNode.parent;
+  } while (parentNode && parentNode !== root && !nestedInMixin);
 
-    const [, name] = value.split(FE_BRARY_PREFIX);
+  return nestedInMixin;
+}
+
+function handleSassVar(decl, root) {
+  if (decl.value.startsWith(FE_BRARY_PREFIX)) {
+    if (!root.usesFeBraryVars) {
+      root.usesFeBraryVars = true;
+    }
+
+    const [, name] = decl.value.split(FE_BRARY_PREFIX);
     const [field, ...varNameSegs] = name.split('-');
     const varName = camelCase(varNameSegs.join('-'));
     return `\${vars.${field}.${varName}}`;
   }
 
-  if (value.startsWith('$')) {
-    return `\${${value.slice(1)}}`;
+  if (decl.value.startsWith('$')) {
+    const varName = camelCase(decl.value.slice(1));
+
+    if (isNestedInMixin(root, decl)) {
+      return `\${${varName}}`;
+    }
+
+    if (!root.usesCustomVars) {
+      root.usesCustomVars = true;
+    }
+
+    return `\${customVars.${varName}}`;
   }
 
-  return value;
+  return decl.value;
 }
 
 const processRoot = (root) => {
   root.classes = new Map();
-  root.usesVars = false;
+  root.usesFeBraryVars = false;
 
   // move all three below to global scope and use stringify
   root.walkAtRules('extend', (atRule) => {
@@ -67,6 +92,12 @@ const processRoot = (root) => {
 
       let newParam;
       switch (atRule.params) {
+        case "media('>mobile')":
+          newParam = 'media(min-width: 321px)';
+          break;
+        case "media('>=mobile')":
+          newParam = 'media(min-width: 320px)';
+          break;
         case "media('>tablet')":
           newParam = 'media(min-width: ${vars.global.tabletMinWidth + 1})';
           break;
@@ -86,6 +117,12 @@ const processRoot = (root) => {
           newParam = 'media(min-width: ${vars.global.desktopMaxWidth})';
           break;
 
+        case "media('<mobile')":
+          newParam = 'media(max-width: 319px)';
+          break;
+        case "media('<=mobile')":
+          newParam = 'media(max-width: 320px)';
+          break;
         case "media('<tablet')":
           newParam = 'media(max-width: ${vars.global.tabletMinWidth - 1})';
           break;
@@ -123,7 +160,7 @@ const processRoot = (root) => {
   });
 
   root.walkDecls((decl) => {
-    decl.value = handleSassVar(decl.value, root);
+    decl.value = handleSassVar(decl, root);
   });
 
   // flattens nested rules
@@ -137,17 +174,7 @@ const processRoot = (root) => {
       selector = selectorToLiteral(rule.selector);
     }
 
-    let nestedInMixin = false;
-    let parentNode = rule.parent;
-    do {
-      if (parentNode !== root && parentNode.type === 'atrule' && parentNode.name === 'mixin') {
-        nestedInMixin = true;
-      }
-      parentNode = parentNode.parent;
-    } while (parentNode && parentNode !== root && !nestedInMixin);
-
-    if (nestedInMixin) return;
-
+    if (isNestedInMixin(root, rule)) return;
 
     let contents = '';
     postcss.stringify(rule, (string, node, startOrEnd) => {
@@ -214,9 +241,14 @@ module.exports = (cssString, filePath) => {
       return `${acc}\n${type === 'class' ? 'export ' : ''}const ${name} = css\`${contents}\n\`;\n`;
     }, '');
 
-  const js = `import { css } from 'emotion';${
-    root.usesVars ? "\nimport { variables as vars } from '@domain-group/fe-brary';" : ''
-  }\n${emotionExports}`;
+  const js = `import { css } from 'emotion';\n${
+    root.usesFeBraryVars ? "import { variables as vars } from '@domain-group/fe-brary';\n" : ''
+  }${
+    root.usesCustomVars ? "import customVars from '../variables';\n" : ''
+  }${
+    emotionExports
+  }
+`;
 
   return format({ text: js, filePath, prettierOptions: { parser: 'babylon' } });
 };

@@ -1,21 +1,28 @@
 #!/usr/bin/env node
 /* eslint-disable no-param-reassign, no-console */
-const fs = require('fs').promises;
+const fs = require('fs');
+const path = require('path');
 const transform = require('./transform');
 
-(async () => {
+(() => {
   const files = process.argv.slice(2);
 
-  const transformFiles = files.map(async (filePath) => {
-    const css = await fs.readFile(filePath);
+  const processedFiles = files.map((filePath) => {
+    const css = fs.readFileSync(filePath);
 
-    const js = await transform(css, filePath);
     console.log('Transforming:', filePath);
-    await fs.writeFile(`${filePath.split('.scss')[0]}.js`, js);
+    const js = transform(css, filePath);
+
+    return [filePath, js];
   });
 
+  console.log('Processed all files without errors, writing to disk');
 
-  await Promise.all(transformFiles);
+  processedFiles.forEach(([filePath, js]) => {
+    const newFilePath = `${filePath.replace('/scss/', '/style/').split('.scss')[0]}.js`;
+    fs.mkdirSync(path.dirname(newFilePath), { recursive: true });
+    fs.writeFileSync(newFilePath, js);
+  });
 
   console.log('Finished successfully!');
 

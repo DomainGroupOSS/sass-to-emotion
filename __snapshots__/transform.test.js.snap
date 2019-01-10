@@ -28,16 +28,13 @@ export const auctionsLabel = css\`
 "
 `;
 
-exports[`transform custom include-media normal 1`] = `
+exports[`transform custom vars 1`] = `
 "import { css } from 'emotion';
+import customVars from '../variables';
 
 export const auctionsLabel = css\`
-             display: none;
-
-             @media media(min-width: \${vars.global.desktopMinWidth}) {
-               display: inline;
-             }
-          
+  display: none;
+  color: \${customVars.fooBarBazWhizz};
 \`;
 "
 `;
