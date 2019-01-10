@@ -155,6 +155,21 @@ describe('transform', () => {
     ).toMatchSnapshot();
   });
 
+  it.only('custom vars in include', () => {
+    expect(
+      transform(
+        `.listing-details__map-marker {
+            $map-marker-arrow-size: 8px;
+
+            &::after {
+              @include simple-arrow($map-marker-arrow-size, $map-marker-arrow-size, 'down', $fe-brary-colour-white);
+              margin-left: $map-marker-arrow-size;
+            }
+          }`,
+      ),
+    ).toMatchSnapshot();
+  });
+
   describe('custom include-media', () => {
     it('min-width', () => {
       expect(

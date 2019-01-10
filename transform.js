@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/* eslint-disable no-param-reassign, no-console, no-template-curly-in-string */
+/* eslint-disable no-param-reassign, no-template-curly-in-string */
 const postcss = require('postcss-scss');
 const { camelCase } = require('lodash');
 const format = require('prettier-eslint');
@@ -12,10 +12,6 @@ function placeHolderToVar(str) {
   return camelCase(str.slice(1));
 }
 
-function mixinParamsToFunc(str) {
-  const [funcName, inputs] = str.split('(');
-  return `${camelCase(funcName)}(${inputs.replace(/\$/g, '')}`;
-}
 
 function isNestedInMixin(root, node) {
   let nestedInMixin = false;
@@ -32,7 +28,7 @@ function isNestedInMixin(root, node) {
 
 function handleSassVar(decl, root) {
   if (decl.value.startsWith(FE_BRARY_PREFIX)) {
-    if (!root.usesFeBraryVars) {
+    if (root && !root.usesFeBraryVars) {
       root.usesFeBraryVars = true;
     }
 
@@ -45,11 +41,11 @@ function handleSassVar(decl, root) {
   if (decl.value.startsWith('$')) {
     const varName = camelCase(decl.value.slice(1));
 
-    if (isNestedInMixin(root, decl)) {
+    if (root && isNestedInMixin(root, decl)) {
       return `\${${varName}}`;
     }
 
-    if (!root.usesCustomVars) {
+    if (root && !root.usesCustomVars) {
       root.usesCustomVars = true;
     }
 
@@ -59,10 +55,14 @@ function handleSassVar(decl, root) {
   return decl.value;
 }
 
+function mixinParamsToFunc(str) {
+  const [funcName, inputs] = str.split('(');
+  return `${camelCase(funcName)}(${inputs.replace(/\$/g, '')}`;
+}
+
 const processRoot = (root) => {
   root.classes = new Map();
   root.usesFeBraryVars = false;
-
   // move all three below to global scope and use stringify
   root.walkAtRules('extend', (atRule) => {
     atRule.params = `\${${placeHolderToVar(atRule.params)}};`;
@@ -72,7 +72,6 @@ const processRoot = (root) => {
     // check for https://github.com/eduardoboucas/include-media
     if (atRule.nodes && atRule.nodes.length && atRule.params.startsWith('media(')) {
       atRule.name = 'media';
-
       // $breakpoints: (
       //   'mobile': 320px,
       //   'tablet': $fe-brary-global-tablet-min-width,
@@ -144,19 +143,14 @@ const processRoot = (root) => {
         default:
           throw new Error('Found an unrecognised `@include media(..)`, please change it to a vanilla CSS media query that uses fe-brary Sass vars then try this transformer again');
       }
-
       atRule.params = newParam;
-
-      return;
     }
 
-
     const [funcName, inputs] = atRule.params.split('(');
-    const funcCall = `${camelCase(funcName)}('${inputs
-      .slice(0, -1)
-      .split(', ')
-      .join("', '")}')`;
-    atRule.params = `\${${funcCall}};`;
+    const inputsWithoutBraces = inputs.slice(0, -1);
+    const args = inputsWithoutBraces.split(',').map(arg => handleSassVar({ value: arg.trim() }));
+
+    atRule.params = `${camelCase(funcName.trim())} (${args.join(', ')})`;
   });
 
   root.walkDecls((decl) => {

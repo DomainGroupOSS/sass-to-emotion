@@ -9,7 +9,7 @@ export const auctionsLabel = css\`
              @media media(max-width: \${vars.global.desktopMinWidth - 1}) {
                display: inline;
              }
-          
+
 \`;
 "
 `;
@@ -23,7 +23,7 @@ export const auctionsLabel = css\`
              @media media(min-width: \${vars.global.desktopMinWidth}) {
                display: inline;
              }
-          
+
 \`;
 "
 `;
@@ -35,6 +35,25 @@ import customVars from '../variables';
 export const auctionsLabel = css\`
   display: none;
   color: \${customVars.fooBarBazWhizz};
+\`;
+"
+`;
+
+exports[`transform custom vars in include 1`] = `
+"import { css } from 'emotion';
+import customVars from '../variables';
+
+export const mapMarker = css\`
+            $map-marker-arrow-size: 8px;
+
+            &::after {
+              simpleArrow (\${customVars.mapMarkerArrowSize}, \${
+  customVars.mapMarkerArrowSize
+}, 'down', \${vars.colour.white})
+
+              margin-left: \${customVars.mapMarkerArrowSize};
+            }
+          
 \`;
 "
 `;
