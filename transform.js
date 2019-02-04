@@ -121,9 +121,22 @@ const processRoot = (root) => {
 
   root.walkDecls((decl) => {
     if (decl.parent && decl.parent === root) {
+      let isUsedInFile = false;
+      // search all decl values for ref
+      root.walkDecls((declSearch) => {
+        if (declSearch === decl) return;
+        if (
+          declSearch.value
+          && declSearch.value.includes(decl.prop)
+          && declSearch.parent !== root
+        ) {
+          isUsedInFile = true;
+        }
+      });
       root.classes.set(decl.prop, {
         type: 'constVar',
         node: decl,
+        isUsedInFile,
       });
       return;
     }
@@ -204,16 +217,23 @@ module.exports = (cssString, filePath) => {
   const root = postcss.parse(cssString, { from: filePath });
 
   processRoot(root);
+  let fileIsJustVarExports = true;
 
   const emotionExports = Array.from(root.classes.entries())
     .sort(([, { node: a }], [, { node: b }]) => a.source.start.line - b.source.start.line)
-    .reduce((acc, [name, { contents, type, node }]) => {
+    .reduce((acc, [name, {
+      contents, type, node, isUsedInFile,
+    }]) => {
+      if (type !== 'constVar') {
+        fileIsJustVarExports = false;
+      }
+
       if (type === 'mixin') {
         return `${acc}\nfunction ${name} {\n  return css\`${contents}\n  \`;\n}\n`;
       }
 
       if (type === 'constVar') {
-        return `${acc}\nconst ${placeHolderToVar(node.prop)} = ${
+        return `${acc}\n${isUsedInFile ? '' : 'export '}const ${placeHolderToVar(node.prop)} = ${
           node.value.includes("'")
             ? `"${node.value.replace('\n', ' ')}"`
             : `'${node.value.replace('\n', ' ')}'`
@@ -223,7 +243,7 @@ module.exports = (cssString, filePath) => {
       return `${acc}\n${type === 'class' ? 'export ' : ''}const ${name} = css\`${contents}\n\`;\n`;
     }, '');
 
-  const js = `import { css } from 'emotion';\n${
+  const js = `${fileIsJustVarExports ? '' : "import { css } from 'emotion'"};\n${
     root.usesFeBraryVars ? "import { variables as vars } from '@domain-group/fe-brary';\n" : ''
   }${root.usesCustomVars ? "import customVars from '../variables';\n" : ''}${emotionExports}
 `;
