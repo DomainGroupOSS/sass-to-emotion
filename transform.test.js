@@ -107,7 +107,6 @@ describe('transform', () => {
     ).toMatchSnapshot();
   });
 
-
   it('non classname', () => {
     expect(
       transform(
@@ -170,36 +169,45 @@ describe('transform', () => {
     ).toMatchSnapshot();
   });
 
-  it('ssdfsdfsdfsdfsdf', () => {
-    expect(
-      transform(`
-        .listing-details__button-copy {
-          background: none;
-          border: 0;
+  describe('pesudo elements/classes', () => {
+    it('nested', () => {
+      expect(
+        transform(`
+          .listing-details__button-copy {
+            background: none;
+            border: 0;
 
-          &:focus,
-          &:hover {
-            outline: 0;
-          }
+            &:focus,
+            &:hover {
+              outline: 0;
+            }
 
-          .domain-icon {
-            width: 14px;
-            height: 14px;
-          }
-        }
-
-        .listing-details__copy-text {
-          display: flex;
-
-          &:hover {
-            .listing-details__button-copy {
-              opacity: 1;
-              transform: translateX(0);
+            .domain-icon {
+              width: 14px;
+              height: 14px;
             }
           }
-        }
-      `),
-    ).toMatchSnapshot();
+          `),
+      ).toMatchSnapshot();
+    });
+
+    it.skip('nested pseudo', () => {
+      expect(
+        transform(`
+          .listing-details__button-copy {
+            display: flex;
+            cursor: pointer;
+
+            &:hover {
+              .listing-details__button-icon {
+                opacity: 1;
+                transform: translateX(0);
+              }
+            }
+          }
+          `),
+      ).toMatchSnapshot();
+    });
   });
 
   describe('custom include-media', () => {
@@ -230,19 +238,17 @@ describe('transform', () => {
       ).toMatchSnapshot();
     });
     it('unrecognised', () => {
-      expect(
-        () => {
-          transform(
-            `.search-results__auctions-label {
+      expect(() => {
+        transform(
+          `.search-results__auctions-label {
              display: none;
 
              @include media('>=desktop', 'landscape') {
                display: inline;
              }
           }`,
-          );
-        },
-      ).toThrow();
+        );
+      }).toThrow();
     });
   });
 });

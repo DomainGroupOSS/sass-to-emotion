@@ -144,6 +144,44 @@ export const foo = css\`
 "
 `;
 
+exports[`transform pesudo elements/classes nested 1`] = `
+"import { css } from 'emotion';
+
+export const buttonCopy = css\`
+  background: none;
+  border: 0;
+
+  &:focus,
+  &:hover {
+    outline: 0;
+  }
+\`;
+
+export const domainIcon = css\`
+  width: 14px;
+  height: 14px;
+\`;
+"
+`;
+
+exports[`transform pesudo elements/classes nested pseudo 1`] = `
+"import { css } from 'emotion';
+
+export const buttonCopy = css\`
+  display: flex;
+  cursor: pointer;
+
+  &:hover {
+  }
+\`;
+
+export const buttonIcon = css\`
+  opacity: 1;
+  transform: translateX(0);
+\`;
+"
+`;
+
 exports[`transform placeholder 1`] = `
 "import { css } from 'emotion';
 
@@ -181,28 +219,6 @@ export const button = css\`
   display: inline-flex;
   align-items: center;
   justify-content: center;
-\`;
-"
-`;
-
-exports[`transform ssdfsdfsdfsdfsdf 1`] = `
-"import { css } from 'emotion';
-
-export const domainIcon = css\`
-  width: 14px;
-  height: 14px;
-\`;
-
-export const copyText = css\`
-  display: flex;
-
-  &:hover {
-  }
-\`;
-
-export const buttonCopy = css\`
-  opacity: 1;
-  transform: translateX(0);
 \`;
 "
 `;
