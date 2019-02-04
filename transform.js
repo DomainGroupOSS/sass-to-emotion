@@ -29,7 +29,6 @@ function isNestedInMixin(root, node) {
 function isNestedInPseudo(root, node) {
   let nestedInPseudo = false;
   let parentNode = node.parent;
-  console.log('parentNode.type:', parentNode.type);
   do {
     if (parentNode !== root && parentNode.type === 'rule' && parentNode.selector.startsWith('&:')) {
       nestedInPseudo = true;
@@ -122,6 +121,14 @@ const processRoot = (root) => {
   });
 
   root.walkDecls((decl) => {
+    if (decl.parent && decl.parent === root) {
+      root.classes.set(decl.prop, {
+        type: 'constVar',
+        node: decl,
+      });
+      return;
+    }
+
     decl.value = handleSassVar(decl, root);
   });
 
@@ -201,9 +208,13 @@ module.exports = (cssString, filePath) => {
 
   const emotionExports = Array.from(root.classes.entries())
     .sort(([, { node: a }], [, { node: b }]) => a.source.start.line - b.source.start.line)
-    .reduce((acc, [name, { contents, type }]) => {
+    .reduce((acc, [name, { contents, type, node }]) => {
       if (type === 'mixin') {
         return `${acc}\nfunction ${name} {\n  return css\`${contents}\n  \`;\n}\n`;
+      }
+
+      if (type === 'constVar') {
+        return `${acc}\nconst ${placeHolderToVar(node.prop)} = '${node.value}'`;
       }
 
       return `${acc}\n${type === 'class' ? 'export ' : ''}const ${name} = css\`${contents}\n\`;\n`;

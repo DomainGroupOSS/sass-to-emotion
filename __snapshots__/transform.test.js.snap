@@ -230,6 +230,13 @@ export const button = css\`
 "
 `;
 
+exports[`transform top level vars 1`] = `
+"import { css } from 'emotion';
+
+const fooBarBaz = '42px';
+"
+`;
+
 exports[`transform vanilla css media query 1`] = `
 "import { css } from 'emotion';
 

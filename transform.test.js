@@ -251,4 +251,12 @@ describe('transform', () => {
       }).toThrow();
     });
   });
+
+  it('top level vars', () => {
+    expect(
+      transform(`
+        $foo-bar-baz: 42px;
+      `),
+    ).toMatchSnapshot();
+  });
 });
