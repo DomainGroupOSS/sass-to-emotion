@@ -54,8 +54,7 @@ function handleSassVar(decl, root) {
   if (decl.value.startsWith('$')) {
     const varName = camelCase(decl.value.slice(1));
 
-    if (isNestedInMixin(root, decl)) {
-      // TODO could be refering to global var
+    if (isNestedInMixin(root, decl) || root.nodes.some(node => node.prop === decl.value)) {
       return `\${${varName}}`;
     }
 
@@ -214,7 +213,11 @@ module.exports = (cssString, filePath) => {
       }
 
       if (type === 'constVar') {
-        return `${acc}\nconst ${placeHolderToVar(node.prop)} = '${node.value}'`;
+        return `${acc}\nconst ${placeHolderToVar(node.prop)} = ${
+          node.value.includes("'")
+            ? `"${node.value.replace('\n', ' ')}"`
+            : `'${node.value.replace('\n', ' ')}'`
+        }`;
       }
 
       return `${acc}\n${type === 'class' ? 'export ' : ''}const ${name} = css\`${contents}\n\`;\n`;
@@ -222,11 +225,7 @@ module.exports = (cssString, filePath) => {
 
   const js = `import { css } from 'emotion';\n${
     root.usesFeBraryVars ? "import { variables as vars } from '@domain-group/fe-brary';\n" : ''
-  }${
-    root.usesCustomVars ? "import customVars from '../variables';\n" : ''
-  }${
-    emotionExports
-  }
+  }${root.usesCustomVars ? "import customVars from '../variables';\n" : ''}${emotionExports}
 `;
 
   return format({ text: js, filePath, prettierOptions: { parser: 'babylon' } });

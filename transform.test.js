@@ -259,4 +259,17 @@ describe('transform', () => {
       `),
     ).toMatchSnapshot();
   });
+
+  it('top level vars ref', () => {
+    expect(
+      transform(`
+        $foo-bar-baz: 42px;
+
+        .foo {
+          height: $foo-bar-baz;
+          width: $external-var;
+        }
+      `),
+    ).toMatchSnapshot();
+  });
 });

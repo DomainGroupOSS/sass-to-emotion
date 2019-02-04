@@ -237,6 +237,18 @@ const fooBarBaz = '42px';
 "
 `;
 
+exports[`transform top level vars ref 1`] = `
+"import { css } from 'emotion';
+import customVars from '../variables';
+
+const fooBarBaz = '42px';
+export const foo = css\`
+  height: \${fooBarBaz};
+  width: \${customVars.externalVar};
+\`;
+"
+`;
+
 exports[`transform vanilla css media query 1`] = `
 "import { css } from 'emotion';
 
