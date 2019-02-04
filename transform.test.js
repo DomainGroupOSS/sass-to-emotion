@@ -191,7 +191,7 @@ describe('transform', () => {
       ).toMatchSnapshot();
     });
 
-    it.skip('nested pseudo', () => {
+    it('nested pseudo', () => {
       expect(
         transform(`
           .listing-details__button-copy {

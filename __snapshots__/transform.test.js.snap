@@ -172,6 +172,7 @@ export const buttonCopy = css\`
   cursor: pointer;
 
   &:hover {
+    \${buttonIcon}
   }
 \`;
 
@@ -184,6 +185,12 @@ export const buttonIcon = css\`
 
 exports[`transform placeholder 1`] = `
 "import { css } from 'emotion';
+
+const messageShared = css\`
+  border: 1px solid #ccc;
+  padding: 10px;
+  color: #333;
+\`;
 
 export const message = css\`
   \${messageShared};

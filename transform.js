@@ -26,6 +26,20 @@ function isNestedInMixin(root, node) {
   return nestedInMixin;
 }
 
+function isNestedInPseudo(root, node) {
+  let nestedInPseudo = false;
+  let parentNode = node.parent;
+  console.log('parentNode.type:', parentNode.type);
+  do {
+    if (parentNode !== root && parentNode.type === 'rule' && parentNode.selector.startsWith('&:')) {
+      nestedInPseudo = true;
+    }
+    parentNode = parentNode.parent;
+  } while (parentNode && parentNode !== root && !nestedInPseudo);
+
+  return nestedInPseudo;
+}
+
 function handleSassVar(decl, root) {
   if (decl.value.startsWith(FE_BRARY_PREFIX)) {
     if (!root.usesFeBraryVars) {
@@ -112,7 +126,7 @@ const processRoot = (root) => {
   });
 
   // flattens nested rules
-  root.walkRules(/^\./, (rule) => {
+  root.walkRules(/^(\.|%)/, (rule) => {
     let selector;
     const isPlaceHolder = rule.selector[0] === '%';
 
@@ -128,8 +142,14 @@ const processRoot = (root) => {
     postcss.stringify(rule, (string, node, startOrEnd) => {
       if (node && node === rule && startOrEnd) return;
 
+      if (node && node.type === 'rule' && startOrEnd === 'start' && isNestedInPseudo(root, node)) {
+        contents += `\${${selectorToLiteral(node.selector)}}`;
+        return;
+      }
+
       // ignore nested classes
       if (node && node.type === 'rule' && node.selector.startsWith('.')) return;
+
       if (
         node
         && node.type === 'decl'
