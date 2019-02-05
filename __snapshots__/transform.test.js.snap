@@ -91,7 +91,21 @@ export const fePaListingDetailsMain = css\`
 "
 `;
 
-exports[`transform mixins 1`] = `
+exports[`transform mixin exported when not refrenced in file 1`] = `
+"import { css } from '@emotion/core';
+import { variables as vars } from '@domain-group/fe-brary';
+
+export function adExact(width, height) {
+  return css\`
+    width: \${width};
+    height: \${height};
+    color: \${vars.colour.primaryDark};
+  \`;
+}
+"
+`;
+
+exports[`transform mixin refrenced does not export 1`] = `
 "import { css } from '@emotion/core';
 import { variables as vars } from '@domain-group/fe-brary';
 
@@ -114,7 +128,7 @@ exports[`transform mixins nested 1`] = `
 "import { css } from '@emotion/core';
 import { variables as vars } from '@domain-group/fe-brary';
 
-function adExact(width, height) {
+export function adExact(width, height) {
   return css\`
     width: \${width};
     height: \${height};

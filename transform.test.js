@@ -66,7 +66,7 @@ describe('transform', () => {
     ).toMatchSnapshot();
   });
 
-  it('mixins', () => {
+  it('mixin refrenced does not export', () => {
     expect(
       transform(
         `@mixin ad-exact($width, $height) {
@@ -78,6 +78,18 @@ describe('transform', () => {
         .adspot-468x60_728x90-pos-1-container {
           color: blue;
           @include ad-exact(125px, 700px);
+        }`,
+      ),
+    ).toMatchSnapshot();
+  });
+
+  it('mixin exported when not refrenced in file', () => {
+    expect(
+      transform(
+        `@mixin ad-exact($width, $height) {
+          width: $width;
+          height: $height;
+          color: $fe-brary-colour-primary-dark;
         }`,
       ),
     ).toMatchSnapshot();

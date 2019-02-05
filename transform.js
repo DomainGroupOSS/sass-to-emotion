@@ -120,6 +120,7 @@ const processRoot = (root) => {
     const inputsWithoutBraces = inputs.slice(0, -1);
     const args = inputsWithoutBraces.split(',').map(arg => handleSassVarUnescaped(arg.trim()));
 
+    atRule.originalParams = atRule.params;
     atRule.params = `\${${camelCase(funcName.trim())} (${args.join(', ')})}`;
   });
 
@@ -159,8 +160,6 @@ const processRoot = (root) => {
       // search to see if placeholder is used
       root.walkAtRules('extend', (atRule) => {
         // note atRule.params has already been modified
-        console.log('atRule.params:', atRule.params);
-        console.log('placeHolderToVarRef(rule.selector):', placeHolderToVarRef(rule.selector));
         if (atRule.params === placeHolderToVarRef(rule.selector)) {
           isPlaceHolderUsedInFile = true;
         }
@@ -220,9 +219,18 @@ const processRoot = (root) => {
       contents += string;
     });
 
+    let isMixinUsedInFile = false;
+    // search to see if mixin is used in file
+    root.walkAtRules('include', (rule) => {
+      if (rule.originalParams.split('(')[0] === params.split('(')[0]) {
+        isMixinUsedInFile = true;
+      }
+    });
+
     root.classes.set(selector, {
       type: 'mixin',
       contents,
+      isMixinUsedInFile,
       node: atRule,
     });
   });
@@ -236,29 +244,37 @@ module.exports = (cssString, filePath) => {
 
   const emotionExports = Array.from(root.classes.entries())
     .sort(([, { node: a }], [, { node: b }]) => a.source.start.line - b.source.start.line)
-    .reduce((acc, [name, {
-      contents, type, node, isUsedInFile, isPlaceHolderUsedInFile,
-    }]) => {
-      if (type !== 'constVar') {
-        fileIsJustVarExports = false;
-      }
+    .reduce(
+      (
+        acc,
+        [name, {
+          contents, type, node, isUsedInFile, isPlaceHolderUsedInFile, isMixinUsedInFile,
+        }],
+      ) => {
+        if (type !== 'constVar') {
+          fileIsJustVarExports = false;
+        }
 
-      if (type === 'mixin') {
-        return `${acc}\nfunction ${name} {\n  return css\`${contents}\n  \`;\n}\n`;
-      }
+        if (type === 'mixin') {
+          return `${
+            isMixinUsedInFile ? '' : 'export '
+          }${acc}\nfunction ${name} {\n  return css\`${contents}\n  \`;\n}\n`;
+        }
 
-      if (type === 'constVar') {
-        return `${acc}\n${isUsedInFile ? '' : 'export '}const ${placeHolderToVar(node.prop)} = ${
-          node.value.includes("'")
-            ? `"${node.value.replace('\n', ' ')}"`
-            : `'${node.value.replace('\n', ' ')}'`
-        }`;
-      }
+        if (type === 'constVar') {
+          return `${acc}\n${isUsedInFile ? '' : 'export '}const ${placeHolderToVar(node.prop)} = ${
+            node.value.includes("'")
+              ? `"${node.value.replace('\n', ' ')}"`
+              : `'${node.value.replace('\n', ' ')}'`
+          }`;
+        }
 
-      return `${acc}\n${
-        type === 'class' || !isPlaceHolderUsedInFile ? 'export ' : ''
-      }const ${name} = css\`${contents}\n\`;\n`;
-    }, '');
+        return `${acc}\n${
+          type === 'class' || !isPlaceHolderUsedInFile ? 'export ' : ''
+        }const ${name} = css\`${contents}\n\`;\n`;
+      },
+      '',
+    );
 
   const js = `${fileIsJustVarExports ? '' : "import { css } from '@emotion/core'"};\n${
     root.usesFeBraryVars ? "import { variables as vars } from '@domain-group/fe-brary';\n" : ''
