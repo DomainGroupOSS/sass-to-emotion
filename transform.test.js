@@ -272,4 +272,34 @@ describe('transform', () => {
       `),
     ).toMatchSnapshot();
   });
+
+  it('does not export placeholder if its being used in the file', () => {
+    expect(
+      transform(`
+        %fe-pa-listing-details-main {
+          padding: 18px 0;
+          flex: 1 1 auto;
+          min-width: 0;
+          width: 100%;
+        }
+
+        .foo {
+          @extend %fe-pa-listing-details-main;
+        }
+      `),
+    ).toMatchSnapshot();
+  });
+
+  it('exports placeholder if its not being used in the file', () => {
+    expect(
+      transform(`
+        %fe-pa-listing-details-main {
+          padding: 18px 0;
+          flex: 1 1 auto;
+          min-width: 0;
+          width: 100%;
+        }
+      `),
+    ).toMatchSnapshot();
+  });
 });

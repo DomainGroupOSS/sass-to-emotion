@@ -90,6 +90,10 @@ function handleSassVarUnescaped(value) {
   return `'${value}'`;
 }
 
+function placeHolderToVarRef(params) {
+  return `\${${placeHolderToVar(params)}};`;
+}
+
 function mixinParamsToFunc(str) {
   const [funcName, inputs] = str.split('(');
   return `${camelCase(funcName)}(${inputs.replace(/\$/g, '')}`;
@@ -100,7 +104,7 @@ const processRoot = (root) => {
   root.usesFeBraryVars = false;
   // move all three below to global scope and use stringify
   root.walkAtRules('extend', (atRule) => {
-    atRule.params = `\${${placeHolderToVar(atRule.params)}};`;
+    atRule.params = placeHolderToVarRef(atRule.params);
   });
 
   root.walkAtRules('include', (atRule) => {
@@ -149,8 +153,18 @@ const processRoot = (root) => {
     let selector;
     const isPlaceHolder = rule.selector[0] === '%';
 
+    let isPlaceHolderUsedInFile = false;
     if (isPlaceHolder) {
       selector = placeHolderToVar(rule.selector);
+      // search to see if placeholder is used
+      root.walkAtRules('extend', (atRule) => {
+        // note atRule.params has already been modified
+        console.log('atRule.params:', atRule.params);
+        console.log('placeHolderToVarRef(rule.selector):', placeHolderToVarRef(rule.selector));
+        if (atRule.params === placeHolderToVarRef(rule.selector)) {
+          isPlaceHolderUsedInFile = true;
+        }
+      });
     } else {
       selector = selectorToLiteral(rule.selector);
     }
@@ -187,6 +201,7 @@ const processRoot = (root) => {
 
     root.classes.set(selector, {
       type: isPlaceHolder ? 'placeholder' : 'class',
+      isPlaceHolderUsedInFile,
       contents,
       node: rule,
     });
@@ -222,7 +237,7 @@ module.exports = (cssString, filePath) => {
   const emotionExports = Array.from(root.classes.entries())
     .sort(([, { node: a }], [, { node: b }]) => a.source.start.line - b.source.start.line)
     .reduce((acc, [name, {
-      contents, type, node, isUsedInFile,
+      contents, type, node, isUsedInFile, isPlaceHolderUsedInFile,
     }]) => {
       if (type !== 'constVar') {
         fileIsJustVarExports = false;
@@ -240,7 +255,9 @@ module.exports = (cssString, filePath) => {
         }`;
       }
 
-      return `${acc}\n${type === 'class' ? 'export ' : ''}const ${name} = css\`${contents}\n\`;\n`;
+      return `${acc}\n${
+        type === 'class' || !isPlaceHolderUsedInFile ? 'export ' : ''
+      }const ${name} = css\`${contents}\n\`;\n`;
     }, '');
 
   const js = `${fileIsJustVarExports ? '' : "import { css } from '@emotion/core'"};\n${

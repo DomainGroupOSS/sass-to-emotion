@@ -63,6 +63,34 @@ export const mapMarker = css\`
 "
 `;
 
+exports[`transform does not export placeholder if its being used in the file 1`] = `
+"import { css } from '@emotion/core';
+
+const fePaListingDetailsMain = css\`
+  padding: 18px 0;
+  flex: 1 1 auto;
+  min-width: 0;
+  width: 100%;
+\`;
+
+export const foo = css\`
+  \${fePaListingDetailsMain};
+\`;
+"
+`;
+
+exports[`transform exports placeholder if its not being used in the file 1`] = `
+"import { css } from '@emotion/core';
+
+export const fePaListingDetailsMain = css\`
+  padding: 18px 0;
+  flex: 1 1 auto;
+  min-width: 0;
+  width: 100%;
+\`;
+"
+`;
+
 exports[`transform mixins 1`] = `
 "import { css } from '@emotion/core';
 import { variables as vars } from '@domain-group/fe-brary';
