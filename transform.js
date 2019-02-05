@@ -243,7 +243,7 @@ module.exports = (cssString, filePath) => {
       return `${acc}\n${type === 'class' ? 'export ' : ''}const ${name} = css\`${contents}\n\`;\n`;
     }, '');
 
-  const js = `${fileIsJustVarExports ? '' : "import { css } from 'emotion'"};\n${
+  const js = `${fileIsJustVarExports ? '' : "import { css } from '@emotion/core'"};\n${
     root.usesFeBraryVars ? "import { variables as vars } from '@domain-group/fe-brary';\n" : ''
   }${root.usesCustomVars ? "import customVars from '../variables';\n" : ''}${emotionExports}
 `;

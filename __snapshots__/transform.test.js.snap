@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`transform custom include-media max-width 1`] = `
-"import { css } from 'emotion';
+"import { css } from '@emotion/core';
 import { variables as vars } from '@domain-group/fe-brary';
 
 export const auctionsLabel = css\`
@@ -16,7 +16,7 @@ export const auctionsLabel = css\`
 `;
 
 exports[`transform custom include-media min-width 1`] = `
-"import { css } from 'emotion';
+"import { css } from '@emotion/core';
 import { variables as vars } from '@domain-group/fe-brary';
 
 export const auctionsLabel = css\`
@@ -31,7 +31,7 @@ export const auctionsLabel = css\`
 `;
 
 exports[`transform custom vars 1`] = `
-"import { css } from 'emotion';
+"import { css } from '@emotion/core';
 import customVars from '../variables';
 
 export const auctionsLabel = css\`
@@ -42,7 +42,7 @@ export const auctionsLabel = css\`
 `;
 
 exports[`transform custom vars in include 1`] = `
-"import { css } from 'emotion';
+"import { css } from '@emotion/core';
 import customVars from '../variables';
 
 export const mapMarker = css\`
@@ -64,7 +64,7 @@ export const mapMarker = css\`
 `;
 
 exports[`transform mixins 1`] = `
-"import { css } from 'emotion';
+"import { css } from '@emotion/core';
 import { variables as vars } from '@domain-group/fe-brary';
 
 function adExact(width, height) {
@@ -83,7 +83,7 @@ export const adspot468X60728X90Pos1Container = css\`
 `;
 
 exports[`transform mixins nested 1`] = `
-"import { css } from 'emotion';
+"import { css } from '@emotion/core';
 import { variables as vars } from '@domain-group/fe-brary';
 
 function adExact(width, height) {
@@ -109,7 +109,7 @@ function adExact(width, height) {
 `;
 
 exports[`transform nested class no vars 1`] = `
-"import { css } from 'emotion';
+"import { css } from '@emotion/core';
 
 export const button = css\`
   display: flex;
@@ -124,7 +124,7 @@ export const foo = css\`
 `;
 
 exports[`transform non classname 1`] = `
-"import { css } from 'emotion';
+"import { css } from '@emotion/core';
 
 export const description = css\`
   margin-bottom: 24px;
@@ -145,7 +145,7 @@ export const foo = css\`
 `;
 
 exports[`transform pesudo elements/classes nested 1`] = `
-"import { css } from 'emotion';
+"import { css } from '@emotion/core';
 
 export const buttonCopy = css\`
   background: none;
@@ -165,7 +165,7 @@ export const domainIcon = css\`
 `;
 
 exports[`transform pesudo elements/classes nested pseudo 1`] = `
-"import { css } from 'emotion';
+"import { css } from '@emotion/core';
 
 export const buttonCopy = css\`
   display: flex;
@@ -184,7 +184,7 @@ export const buttonIcon = css\`
 `;
 
 exports[`transform placeholder 1`] = `
-"import { css } from 'emotion';
+"import { css } from '@emotion/core';
 
 const messageShared = css\`
   border: 1px solid #ccc;
@@ -205,7 +205,7 @@ export const success = css\`
 `;
 
 exports[`transform sass vars to import 1`] = `
-"import { css } from 'emotion';
+"import { css } from '@emotion/core';
 import { variables as vars } from '@domain-group/fe-brary';
 
 export const button = css\`
@@ -220,7 +220,7 @@ export const bar = css\`
 `;
 
 exports[`transform simple class no vars 1`] = `
-"import { css } from 'emotion';
+"import { css } from '@emotion/core';
 
 export const button = css\`
   display: inline-flex;
@@ -236,7 +236,7 @@ exports[`transform top level vars 1`] = `
 `;
 
 exports[`transform top level vars ref 1`] = `
-"import { css } from 'emotion';
+"import { css } from '@emotion/core';
 import customVars from '../variables';
 
 const fooBarBaz = '42px';
@@ -248,7 +248,7 @@ export const foo = css\`
 `;
 
 exports[`transform vanilla css media query 1`] = `
-"import { css } from 'emotion';
+"import { css } from '@emotion/core';
 
 export const auctionsLabel = css\`
   display: none;

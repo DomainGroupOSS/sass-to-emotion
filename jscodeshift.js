@@ -59,6 +59,7 @@ module.exports = (file, api) => {
 
       const identifier = selectorToLiteral(selector);
 
+      path.value.name = 'css';
       path.value.value = j.jsxExpressionContainer(
         j.memberExpression(j.identifier(STYLES_IMPORT_NAME), j.identifier(identifier)),
       );
@@ -114,7 +115,6 @@ module.exports = (file, api) => {
     // this will cause a line break after last import, seems FB strugled with this one too https://github.com/reactjs/react-codemod/blob/96b55a0ea70c7b1a9c64d12b47e523804bb74b22/transforms/__testfixtures__/ReactNative-View-propTypes/default-import-multi-reference.output.js#L4
     j(lastImportTarget).insertAfter(stylesImportStatement);
   }
-
 
   return root.toSource({ quote: 'single', trailingComma: true });
 };
