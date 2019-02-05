@@ -1,6 +1,7 @@
 /* eslint-disable no-param-reassign, no-console */
+const glob = require('glob');
+const path = require('path');
 const selectorToLiteral = require('./selector-to-literal');
-
 // TODO make CLI option
 
 const STYLES_IMPORT_NAME = 'styles';
@@ -44,6 +45,8 @@ module.exports = (file, api) => {
 
   if (!hasClassName) return null;
 
+  let moduleName;
+
   // rename className="foo__bar-baz" => className={styles.barBaz}
   root
     .find(j.JSXAttribute, {
@@ -52,33 +55,44 @@ module.exports = (file, api) => {
         name: 'className',
       },
     })
-    .forEach((path) => {
-      if (path.value.value.type !== 'Literal') return;
+    .forEach((jsxPath) => {
+      if (jsxPath.value.value.type !== 'Literal') return;
 
-      const selector = path.value.value.value;
+      const selector = jsxPath.value.value.value;
 
       const identifier = selectorToLiteral(selector);
 
-      path.value.name = 'css';
-      path.value.value = j.jsxExpressionContainer(
+      const jsEmotionFiles = glob.sync(
+        path.join(file.path.split('/js/')[0], 'style', '**', '*.js'),
+        { absolute: true },
+      );
+
+      const pathToEmotionFile = jsEmotionFiles.find(
+        // eslint-disable-next-line import/no-dynamic-require, global-require
+        jsEmotionFile => !!require(jsEmotionFile)[identifier],
+      );
+
+      if (!pathToEmotionFile) throw new Error();
+
+      if (!moduleName) {
+        moduleName = path.join(
+          path.relative(path.dirname(file.path), path.dirname(pathToEmotionFile)),
+          path.basename(pathToEmotionFile),
+        );
+      }
+
+      jsxPath.value.name = 'css';
+      jsxPath.value.value = j.jsxExpressionContainer(
         j.memberExpression(j.identifier(STYLES_IMPORT_NAME), j.identifier(identifier)),
       );
     });
-
-  // import styles
-  const pathToFileFromStyleFolder = file.path.split('src/js/')[1];
-
-  // count the .. needed
-  const dotDots = pathToFileFromStyleFolder.split('/').length;
-
-  const moduleName = `${'../'.repeat(dotDots)}style/${file.path.split('src/js/')[1]}`;
 
   const collection = root.find(j.ImportDeclaration);
 
   // I'd love to simply add to last import but insertAfter causing a line break after last import
   // and before new styles import so code below gets weird
   // https://github.com/facebook/jscodeshift/issues/185
-  const relativeImports = collection.filter(path => path.value.source.value.startsWith('.'));
+  const relativeImports = collection.filter(importPath => importPath.value.source.value.startsWith('.'));
 
   let lastImportTarget;
 
