@@ -13,15 +13,24 @@ const transform = require('./transform');
     console.log('Transforming:', filePath);
     const js = transform(css, filePath);
 
+    if (!js) return null;
+
     return [filePath, js];
-  });
+  }).filter(Boolean);
 
   console.log('Processed all files without errors, writing to disk');
 
   processedFiles.forEach(([filePath, js]) => {
-    const newFilePath = `${filePath.replace('/scss/', '/style/').split('.scss')[0]}.js`;
-    fs.mkdirSync(path.dirname(newFilePath), { recursive: true });
-    fs.writeFileSync(newFilePath, js);
+    const newFilePath = filePath.replace('/scss/', '/style/').replace('.scss', '.js');
+    const filenewFilePathDir = path.dirname(newFilePath);
+    console.log('filenewFilePathDir:', filenewFilePathDir);
+    const filenewFilePathBase = path.basename(newFilePath);
+
+    // remove the Sass underscore _ (what a silly design decision)
+    const finalFilePath = path.join(filenewFilePathDir, filenewFilePathBase.replace('_', ''));
+
+    fs.mkdirSync(filenewFilePathDir, { recursive: true });
+    fs.writeFileSync(finalFilePath, js);
   });
 
   console.log('Finished successfully!');

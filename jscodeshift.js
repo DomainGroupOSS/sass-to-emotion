@@ -78,7 +78,7 @@ module.exports = (file, api) => {
         moduleName = path.join(
           path.relative(path.dirname(file.path), path.dirname(pathToEmotionFile)),
           path.basename(pathToEmotionFile),
-        );
+        ).replace('.js', '');
       }
 
       jsxPath.value.name = 'css';
@@ -103,7 +103,7 @@ module.exports = (file, api) => {
   }
 
   const stylesImportStatement = j.importDeclaration(
-    [j.importDefaultSpecifier(j.identifier(STYLES_IMPORT_NAME))],
+    [j.importNamespaceSpecifier(j.identifier(STYLES_IMPORT_NAME))],
     j.literal(moduleName),
   );
 

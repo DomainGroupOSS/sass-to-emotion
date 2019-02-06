@@ -241,6 +241,11 @@ module.exports = (cssString, filePath) => {
   const root = postcss.parse(cssString, { from: filePath });
 
   processRoot(root);
+
+  // e.g styles.scss
+  const isJustSassImports = root.nodes.every(node => node.type === 'atrule' && node.name === 'import');
+  if (isJustSassImports) return null;
+
   let fileIsJustVarExports = true;
 
   const emotionExports = Array.from(root.classes.entries())
