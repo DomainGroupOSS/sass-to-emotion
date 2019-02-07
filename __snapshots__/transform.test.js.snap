@@ -91,6 +91,16 @@ export const fePaListingDetailsMain = css\`
 "
 `;
 
+exports[`transform handles multi value var refrences 1`] = `
+"import { css } from '@emotion/core';
+import { variables as vars } from '@domain-group/fe-brary';
+
+export const foo = css\`
+  border-bottom: 1px solid \${vars.colour.neutral300};
+\`;
+"
+`;
+
 exports[`transform mixin exported when not refrenced in file 1`] = `
 "import { css } from '@emotion/core';
 import { variables as vars } from '@domain-group/fe-brary';

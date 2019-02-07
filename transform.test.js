@@ -314,4 +314,14 @@ describe('transform', () => {
       `),
     ).toMatchSnapshot();
   });
+
+  it('handles multi value var refrences', () => {
+    expect(
+      transform(`
+        .foo {
+          border-bottom: 1px solid $fe-brary-colour-neutral-300;
+        }
+      `),
+    ).toMatchSnapshot();
+  });
 });

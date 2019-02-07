@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 /* eslint-disable no-param-reassign */
 const postcss = require('postcss-scss');
+const { list } = require('postcss');
 const { camelCase } = require('lodash');
 const format = require('prettier-eslint');
 const selectorToLiteral = require('./selector-to-literal');
@@ -40,32 +41,46 @@ function isNestedInPseudo(root, node) {
 }
 
 function handleSassVar(decl, root) {
-  if (decl.value.startsWith(FE_BRARY_PREFIX)) {
-    if (!root.usesFeBraryVars) {
-      root.usesFeBraryVars = true;
-    }
+  let values;
 
-    const [, name] = decl.value.split(FE_BRARY_PREFIX);
-    const [field, ...varNameSegs] = name.split('-');
-    const varName = camelCase(varNameSegs.join('-'));
-    return `\${vars.${field}.${varName}}`;
+  if (decl.value.includes(',')) {
+    values = list.comma(decl.value);
+  } else if (decl.value.includes(' ')) {
+    values = list.space(decl.value);
+  } else {
+    values = [decl.value];
   }
 
-  if (decl.value.startsWith('$')) {
-    const varName = camelCase(decl.value.slice(1));
+  return values
+    .map((string) => {
+      if (string.startsWith(FE_BRARY_PREFIX)) {
+        if (!root.usesFeBraryVars) {
+          root.usesFeBraryVars = true;
+        }
 
-    if (isNestedInMixin(root, decl) || root.nodes.some(node => node.prop === decl.value)) {
-      return `\${${varName}}`;
-    }
+        const [, name] = string.split(FE_BRARY_PREFIX);
+        const [field, ...varNameSegs] = name.split('-');
+        const varName = camelCase(varNameSegs.join('-'));
+        return `\${vars.${field}.${varName}}`;
+      }
 
-    if (!root.usesCustomVars) {
-      root.usesCustomVars = true;
-    }
+      if (string.startsWith('$')) {
+        const varName = camelCase(string.slice(1));
 
-    return `\${customVars.${varName}}`;
-  }
+        if (isNestedInMixin(root, decl) || root.nodes.some(node => node.prop === string)) {
+          return `\${${varName}}`;
+        }
 
-  return decl.value;
+        if (!root.usesCustomVars) {
+          root.usesCustomVars = true;
+        }
+
+        return `\${customVars.${varName}}`;
+      }
+
+      return string;
+    })
+    .join(' ');
 }
 
 function handleSassVarUnescaped(value) {
@@ -243,7 +258,9 @@ module.exports = (cssString, filePath) => {
   processRoot(root);
 
   // e.g styles.scss
-  const isJustSassImports = root.nodes.every(node => node.type === 'atrule' && node.name === 'import');
+  const isJustSassImports = root.nodes.every(
+    node => node.type === 'atrule' && node.name === 'import',
+  );
   if (isJustSassImports) return null;
 
   let fileIsJustVarExports = true;
