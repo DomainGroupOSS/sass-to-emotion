@@ -114,7 +114,7 @@ function mixinParamsToFunc(str) {
   return `${camelCase(funcName)}(${inputs.replace(/\$/g, '')}`;
 }
 
-const processRoot = (root) => {
+const processRoot = (root, filePath) => {
   root.helpers = [];
   root.classes = new Map();
   root.usesFeBraryVars = false;
@@ -172,6 +172,18 @@ const processRoot = (root) => {
     }
 
     decl.value = handleSassVar(decl, root);
+  });
+
+  root.walkRules(/^(?!(\.|%))/, (rule) => {
+    if (rule.parent !== root) return;
+    const msg = `Found a global selector "${
+      rule.selector
+    }". Do you need this? If so use "import { Global } from '@emotion/core'".`;
+    if (global.sassToEmotionWarnings[filePath]) {
+      global.sassToEmotionWarnings[filePath].push(msg);
+    } else {
+      global.sassToEmotionWarnings[filePath] = [msg];
+    }
   });
 
   // flattens nested rules
@@ -261,10 +273,10 @@ const processRoot = (root) => {
   });
 };
 
-module.exports = (cssString, filePath) => {
+module.exports = (cssString, filePath, pathToVariables) => {
   const root = postcss.parse(cssString, { from: filePath });
 
-  processRoot(root);
+  processRoot(root, filePath);
 
   // e.g styles.scss
   const isJustSassImports = root.nodes.every(
@@ -284,9 +296,9 @@ module.exports = (cssString, filePath) => {
       }
 
       if (type === 'mixin') {
-        return `${
+        return `${acc}\n${
           isUsedInFile ? '' : 'export '
-        }${acc}\nfunction ${name} {\n  return css\`${contents}\n  \`;\n}\n`;
+        }function ${name} {\n  return css\`${contents}\n  \`;\n}\n`;
       }
 
       if (type === 'constVar') {
@@ -312,7 +324,7 @@ module.exports = (cssString, filePath) => {
     !root.usesFeBraryVars && root.helpers.length
       ? `import { ${root.helpers.join(', ')} } from '@domain-group/fe-brary';\n`
       : ''
-  }${root.usesCustomVars ? "import customVars from '../variables';\n" : ''}${emotionExports}
+  }${root.usesCustomVars ? `import customVars from '${pathToVariables}';\n` : ''}${emotionExports}
 `;
 
   return format({ text: js, filePath, prettierOptions: { parser: 'babylon' } });
