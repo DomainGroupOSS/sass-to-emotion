@@ -101,6 +101,30 @@ export const foo = css\`
 "
 `;
 
+exports[`transform imports fe-brary helpers 1`] = `
+"import { css } from '@emotion/core';
+import { buttonNormalize } from '@domain-group/fe-brary';
+
+export const agentDetailsRightArrow = css\`
+  \${buttonNormalize};
+
+  position: absolute;
+\`;
+"
+`;
+
+exports[`transform imports fe-brary helpers and vars 1`] = `
+"import { css } from '@emotion/core';
+import { variables as vars, buttonNormalize } from '@domain-group/fe-brary';
+
+export const agentDetailsRightArrow = css\`
+  \${buttonNormalize};
+
+  color: \${vars.colour.primaryDark};
+\`;
+"
+`;
+
 exports[`transform mixin exported when not refrenced in file 1`] = `
 "import { css } from '@emotion/core';
 import { variables as vars } from '@domain-group/fe-brary';

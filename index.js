@@ -23,7 +23,6 @@ const transform = require('./transform');
   processedFiles.forEach(([filePath, js]) => {
     const newFilePath = filePath.replace('/scss/', '/style/').replace('.scss', '.js');
     const filenewFilePathDir = path.dirname(newFilePath);
-    console.log('filenewFilePathDir:', filenewFilePathDir);
     const filenewFilePathBase = path.basename(newFilePath);
 
     // remove the Sass underscore _ (what a silly design decision)

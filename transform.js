@@ -115,11 +115,20 @@ function mixinParamsToFunc(str) {
 }
 
 const processRoot = (root) => {
+  root.helpers = [];
   root.classes = new Map();
   root.usesFeBraryVars = false;
   // move all three below to global scope and use stringify
   root.walkAtRules('extend', (atRule) => {
     atRule.originalParams = atRule.params;
+    let hasRefInFile;
+    root.walkRules(atRule.params, () => {
+      hasRefInFile = true;
+    });
+
+    if (!hasRefInFile) {
+      root.helpers.push(placeHolderToVar(atRule.params));
+    }
     atRule.params = placeHolderToVarRef(atRule.params);
   });
 
@@ -294,7 +303,15 @@ module.exports = (cssString, filePath) => {
     }, '');
 
   const js = `${fileIsJustVarExports ? '' : "import { css } from '@emotion/core'"};\n${
-    root.usesFeBraryVars ? "import { variables as vars } from '@domain-group/fe-brary';\n" : ''
+    root.usesFeBraryVars
+      ? `import { variables as vars${
+        root.helpers.length ? `, ${root.helpers.join(', ')}` : ''
+      } } from '@domain-group/fe-brary';\n`
+      : ''
+  }${
+    !root.usesFeBraryVars && root.helpers.length
+      ? `import { ${root.helpers.join(', ')} } from '@domain-group/fe-brary';\n`
+      : ''
   }${root.usesCustomVars ? "import customVars from '../variables';\n" : ''}${emotionExports}
 `;
 
