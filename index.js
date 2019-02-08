@@ -50,7 +50,7 @@ function scssFileToJs(filePath) {
 
   const hasWarnings = Object.keys(global.sassToEmotionWarnings).length;
 
-  console.log(`Finished successfully${hasWarnings ? ' with warnings' : ''}!'\n\n`);
+  console.log(`Finished successfully${hasWarnings ? ' but has warnings' : ''}!\n\n`);
 
   if (hasWarnings) {
     console.warn('The following files have warnings...\n\n');

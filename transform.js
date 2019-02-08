@@ -43,9 +43,9 @@ function isNestedInPseudo(root, node) {
 function handleSassVar(decl, root) {
   let values;
 
-  if (decl.value.includes(',')) {
+  if (decl.value.includes(',') && list.comma(decl.value)[0] !== decl.value) {
     values = list.comma(decl.value);
-  } else if (decl.value.includes(' ')) {
+  } else if (decl.value.includes(' ') && list.space(decl.value)[0] !== decl.value) {
     values = list.space(decl.value);
   } else {
     values = [decl.value];
@@ -178,7 +178,7 @@ const processRoot = (root, filePath) => {
     if (rule.parent !== root) return;
     const msg = `Found a global selector "${
       rule.selector
-    }". Do you need this? If so use "import { Global } from '@emotion/core'".`;
+    }". Do you need this? If you must use "import { Global } from '@emotion/core'".`;
     if (global.sassToEmotionWarnings[filePath]) {
       global.sassToEmotionWarnings[filePath].push(msg);
     } else {
@@ -273,7 +273,7 @@ const processRoot = (root, filePath) => {
   });
 };
 
-module.exports = (cssString, filePath, pathToVariables) => {
+module.exports = (cssString, filePath, pathToVariables = '../variables') => {
   const root = postcss.parse(cssString, { from: filePath });
 
   processRoot(root, filePath);
@@ -324,7 +324,7 @@ module.exports = (cssString, filePath, pathToVariables) => {
     !root.usesFeBraryVars && root.helpers.length
       ? `import { ${root.helpers.join(', ')} } from '@domain-group/fe-brary';\n`
       : ''
-  }${root.usesCustomVars ? `import customVars from '${pathToVariables}';\n` : ''}${emotionExports}
+  }${root.usesCustomVars ? `import * as customVars from '${pathToVariables}';\n` : ''}${emotionExports}
 `;
 
   return format({ text: js, filePath, prettierOptions: { parser: 'babylon' } });

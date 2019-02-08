@@ -17,11 +17,11 @@
     "prettier-eslint": "^8.8.2"
   },
   "devDependencies": {
-    "eslint": "^5.10.0",
+    "eslint": "^5.13.0",
     "eslint-config-airbnb-base": "^13.1.0",
-    "eslint-plugin-import": "^2.14.0",
-    "eslint-plugin-jest": "^22.1.2",
-    "jest": "^23.6.0"
+    "eslint-plugin-import": "^2.16.0",
+    "eslint-plugin-jest": "^22.2.2",
+    "jest": "^24.1.0"
   },
   "engines": {
     "node": ">10.12.0"
