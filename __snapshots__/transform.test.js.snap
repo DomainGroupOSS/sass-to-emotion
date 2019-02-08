@@ -220,6 +220,25 @@ export const foo = css\`
 "
 `;
 
+exports[`transform pesudo elements/classes class nested in pseudo becomes a ref 1`] = `
+"import { css } from '@emotion/core';
+
+export const buttonCopy = css\`
+  display: flex;
+  cursor: pointer;
+
+  &:hover {
+    \${buttonIcon}
+  }
+\`;
+
+export const buttonIcon = css\`
+  opacity: 1;
+  transform: translateX(0);
+\`;
+"
+`;
+
 exports[`transform pesudo elements/classes nested 1`] = `
 "import { css } from '@emotion/core';
 
@@ -240,21 +259,20 @@ export const domainIcon = css\`
 "
 `;
 
-exports[`transform pesudo elements/classes nested pseudo 1`] = `
+exports[`transform pesudo elements/classes nested pseudos are kept 1`] = `
 "import { css } from '@emotion/core';
 
-export const buttonCopy = css\`
-  display: flex;
-  cursor: pointer;
+export const additionalLink = css\`
+  margin-left: auto;
 
-  &:hover {
-    \${buttonIcon}
+  &:not(:last-of-type) {
+    padding-right: 12px;
+
+    &::after {
+      height: 18px;
+      content: '';
+    }
   }
-\`;
-
-export const buttonIcon = css\`
-  opacity: 1;
-  transform: translateX(0);
 \`;
 "
 `;

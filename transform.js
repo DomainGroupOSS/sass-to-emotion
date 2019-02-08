@@ -211,7 +211,14 @@ const processRoot = (root, filePath) => {
     postcss.stringify(rule, (string, node, startOrEnd) => {
       if (node && node === rule && startOrEnd) return;
 
-      if (node && node.type === 'rule' && startOrEnd === 'start' && isNestedInPseudo(root, node)) {
+      // ref class if nested
+      if (
+        node
+        && node.type === 'rule'
+        && startOrEnd === 'start'
+        && !node.selector.startsWith('&:')
+        && isNestedInPseudo(root, node)
+      ) {
         contents += `\${${selectorToLiteral(node.selector)}}`;
         return;
       }
@@ -324,7 +331,9 @@ module.exports = (cssString, filePath, pathToVariables = '../variables') => {
     !root.usesFeBraryVars && root.helpers.length
       ? `import { ${root.helpers.join(', ')} } from '@domain-group/fe-brary';\n`
       : ''
-  }${root.usesCustomVars ? `import * as customVars from '${pathToVariables}';\n` : ''}${emotionExports}
+  }${
+    root.usesCustomVars ? `import * as customVars from '${pathToVariables}';\n` : ''
+  }${emotionExports}
 `;
 
   return format({ text: js, filePath, prettierOptions: { parser: 'babylon' } });

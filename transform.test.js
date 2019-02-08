@@ -203,7 +203,7 @@ describe('transform', () => {
       ).toMatchSnapshot();
     });
 
-    it('nested pseudo', () => {
+    it('class nested in pseudo becomes a ref', () => {
       expect(
         transform(`
           .listing-details__button-copy {
@@ -218,6 +218,25 @@ describe('transform', () => {
             }
           }
           `),
+      ).toMatchSnapshot();
+    });
+
+    it('nested pseudos are kept', () => {
+      expect(
+        transform(`
+          .listing-details__additional-link {
+            margin-left: auto;
+
+            &:not(:last-of-type) {
+              padding-right: 12px;
+
+              &::after {
+                height: 18px;
+                content: '';
+              }
+            }
+          }
+        `),
       ).toMatchSnapshot();
     });
   });
