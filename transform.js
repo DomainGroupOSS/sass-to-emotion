@@ -188,12 +188,18 @@ const processRoot = (root, filePath) => {
 
   // flattens nested rules
   root.walkRules(/^(\.|%)/, (rule) => {
-    let selector;
+    let { selector } = rule;
+    let pseudoPostfix;
+
+    if (rule.selector.includes(':')) {
+      [selector, pseudoPostfix] = rule.selector.split(':');
+    }
+
     const isPlaceHolder = rule.selector[0] === '%';
 
     let isUsedInFile = false;
     if (isPlaceHolder) {
-      selector = placeHolderToVar(rule.selector);
+      selector = placeHolderToVar(selector);
       // search to see if placeholder is used
       root.walkAtRules('extend', (atRule) => {
         // note atRule.params has already been modified
@@ -202,7 +208,7 @@ const processRoot = (root, filePath) => {
         }
       });
     } else {
-      selector = selectorToLiteral(rule.selector);
+      selector = selectorToLiteral(selector);
     }
 
     if (isNestedInMixin(root, rule)) return;
@@ -245,7 +251,7 @@ const processRoot = (root, filePath) => {
     root.classes.set(selector, {
       type: isPlaceHolder ? 'placeholder' : 'class',
       isUsedInFile,
-      contents,
+      contents: pseudoPostfix ? `&:${pseudoPostfix} { ${contents} }` : contents,
       node: rule,
     });
   });

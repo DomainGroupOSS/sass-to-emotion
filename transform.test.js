@@ -239,6 +239,16 @@ describe('transform', () => {
         `),
       ).toMatchSnapshot();
     });
+
+    it('top level pseudo classes', () => {
+      expect(
+        transform(`
+          .listing-details__agent-details-right-arrow:first-of-type {
+            color: black;
+          }
+        `),
+      ).toMatchSnapshot();
+    });
   });
 
   describe('custom include-media', () => {
