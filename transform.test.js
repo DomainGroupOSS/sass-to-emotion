@@ -375,4 +375,24 @@ describe('transform', () => {
       `),
     ).toMatchSnapshot();
   });
+
+  it('ref nested classes', () => {
+    expect(
+      transform(`
+        .listing-details__agent-details-right-arrow {
+          color: $fe-brary-colour-primary-dark;
+
+          &.with-big-agents {
+            .listing-details__agent-details-agent {
+              text-align: center;
+            }
+          }
+        }
+
+        .listing-details__agent-details-agent {
+          color: blue;
+        }
+      `),
+    ).toMatchSnapshot();
+  });
 });

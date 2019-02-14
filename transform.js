@@ -27,11 +27,13 @@ function isNestedInMixin(root, node) {
   return nestedInMixin;
 }
 
-function isNestedInPseudo(root, node) {
+// asumption here is if a class is nested in a pseudo ::hover or state &.is-small-agent
+// we need to behave differently and can't bring flat
+function isNestedInAmpersand(root, node) {
   let nestedInPseudo = false;
   let parentNode = node.parent;
   do {
-    if (parentNode !== root && parentNode.type === 'rule' && parentNode.selector.startsWith('&:')) {
+    if (parentNode !== root && parentNode.type === 'rule' && parentNode.selector.startsWith('&')) {
       nestedInPseudo = true;
     }
     parentNode = parentNode.parent;
@@ -222,19 +224,20 @@ const processRoot = (root, filePath) => {
         node
         && node.type === 'rule'
         && startOrEnd === 'start'
-        && !node.selector.startsWith('&:')
-        && isNestedInPseudo(root, node)
+        && !node.selector.startsWith('&')
+        && isNestedInAmpersand(root, node)
       ) {
-        contents += `\${${selectorToLiteral(node.selector)}}`;
+        contents += `css-\${${selectorToLiteral(node.selector)}.name} {`;
         return;
       }
 
       // ignore nested classes
-      if (node && node.type === 'rule' && node.selector.startsWith('.')) return;
+      if (node && node.type === 'rule' && node.selector.startsWith('.') && !isNestedInAmpersand(root, node)) return;
 
       if (
         node
         && node.type === 'decl'
+        && !isNestedInAmpersand(root, node)
         && node.parent !== rule
         && node.parent.type === 'rule'
         && node.parent.selector.startsWith('.')

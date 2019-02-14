@@ -228,7 +228,10 @@ export const buttonCopy = css\`
   cursor: pointer;
 
   &:hover {
-    \${buttonIcon}
+    css-\${buttonIcon.name} {
+      opacity: 1;
+      transform: translateX(0);
+    }
   }
 \`;
 
@@ -305,6 +308,26 @@ export const success = css\`
   \${messageShared};
 
   border-color: green;
+\`;
+"
+`;
+
+exports[`transform ref nested classes 1`] = `
+"import { css } from '@emotion/core';
+import { variables as vars } from '@domain-group/fe-brary';
+
+export const agentDetailsRightArrow = css\`
+  color: \${vars.colour.primaryDark};
+
+  &.with-big-agents {
+    css-\${agentDetailsAgent.name} {
+      text-align: center;
+    }
+  }
+\`;
+
+export const agentDetailsAgent = css\`
+  color: blue;
 \`;
 "
 `;
