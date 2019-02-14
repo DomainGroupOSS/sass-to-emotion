@@ -117,7 +117,8 @@ function mixinParamsToFunc(str) {
 }
 
 const processRoot = (root, filePath) => {
-  root.helpers = [];
+  root.feBraryHelpers = [];
+  root.externalImports = [];
   root.classes = new Map();
   root.usesFeBraryVars = false;
   // move all three below to global scope and use stringify
@@ -129,7 +130,12 @@ const processRoot = (root, filePath) => {
     });
 
     if (!hasRefInFile) {
-      root.helpers.push(placeHolderToVar(atRule.params));
+      // use fe-brary export to check and improve once done
+      if (atRule.originalParams === '%button-normalize') {
+        root.feBraryHelpers.push(placeHolderToVar(atRule.params));
+      } else {
+        root.externalImports.push(placeHolderToVar(atRule.params));
+      }
     }
     atRule.params = placeHolderToVarRef(atRule.params);
   });
@@ -333,12 +339,16 @@ module.exports = (cssString, filePath, pathToVariables = '../variables') => {
   const js = `${fileIsJustVarExports ? '' : "import { css } from '@emotion/core'"};\n${
     root.usesFeBraryVars
       ? `import { variables as vars${
-        root.helpers.length ? `, ${root.helpers.join(', ')}` : ''
+        root.feBraryHelpers.length ? `, ${root.feBraryHelpers.join(', ')}` : ''
       } } from '@domain-group/fe-brary';\n`
       : ''
   }${
-    !root.usesFeBraryVars && root.helpers.length
-      ? `import { ${root.helpers.join(', ')} } from '@domain-group/fe-brary';\n`
+    !root.usesFeBraryVars && root.feBraryHelpers.length
+      ? `import { ${root.feBraryHelpers.join(', ')} } from '@domain-group/fe-brary';\n`
+      : ''
+  }${
+    root.externalImports.length
+      ? `import { ${root.externalImports.join(', ')} } from '../utils';\n`
       : ''
   }${
     root.usesCustomVars ? `import * as customVars from '${pathToVariables}';\n` : ''

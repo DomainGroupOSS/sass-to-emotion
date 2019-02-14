@@ -125,6 +125,18 @@ export const agentDetailsRightArrow = css\`
 "
 `;
 
+exports[`transform imports non-fe-brary helpers and vars 1`] = `
+"import { css } from '@emotion/core';
+import { fePaListingDetailsWrapper } from '../utils';
+
+export const notesContainer = css\`
+  \${fePaListingDetailsWrapper};
+
+  margin-top: -54px;
+\`;
+"
+`;
+
 exports[`transform mixin exported when not refrenced in file 1`] = `
 "import { css } from '@emotion/core';
 import { variables as vars } from '@domain-group/fe-brary';

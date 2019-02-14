@@ -376,6 +376,18 @@ describe('transform', () => {
     ).toMatchSnapshot();
   });
 
+  it('imports non-fe-brary helpers and vars', () => {
+    expect(
+      transform(`
+        .listing-details__notes-container {
+          @extend %fe-pa-listing-details-wrapper;
+
+          margin-top: -54px;
+        }
+      `),
+    ).toMatchSnapshot();
+  });
+
   it('ref nested classes', () => {
     expect(
       transform(`
