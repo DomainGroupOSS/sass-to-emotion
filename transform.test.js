@@ -372,6 +372,9 @@ describe('transform', () => {
           @extend %button-normalize;
           color: $fe-brary-colour-primary-dark;
         }
+        .another-ref {
+          @extend %button-normalize;
+        }
       `),
     ).toMatchSnapshot();
   });

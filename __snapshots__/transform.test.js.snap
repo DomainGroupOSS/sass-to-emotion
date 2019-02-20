@@ -122,6 +122,10 @@ export const agentDetailsRightArrow = css\`
 
   color: \${vars.colour.primaryDark};
 \`;
+
+export const anotherRef = css\`
+  \${buttonNormalize};
+\`;
 "
 `;
 

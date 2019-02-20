@@ -132,9 +132,11 @@ const processRoot = (root, filePath) => {
     if (!hasRefInFile) {
       // use fe-brary export to check and improve once done
       if (atRule.originalParams === '%button-normalize') {
-        root.feBraryHelpers.push(placeHolderToVar(atRule.params));
+        const ref = placeHolderToVar(atRule.params);
+        if (!root.feBraryHelpers.includes(ref)) root.feBraryHelpers.push(ref);
       } else {
-        root.externalImports.push(placeHolderToVar(atRule.params));
+        const ref = placeHolderToVar(atRule.params);
+        if (!root.externalImports.includes(ref)) root.externalImports.push(ref);
       }
     }
     atRule.params = placeHolderToVarRef(atRule.params);
