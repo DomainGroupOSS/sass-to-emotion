@@ -410,4 +410,21 @@ describe('transform', () => {
       `),
     ).toMatchSnapshot();
   });
+
+  it('handle mixins without args', () => {
+    expect(
+      transform(`
+        %message {
+          @include reset-top-margin;
+          margin-bottom: 20px;
+        }
+
+        @mixin reset-top-margin {
+          > *:first-child {
+            margin-top: 0;
+          }
+        }
+      `),
+    ).toMatchSnapshot();
+  });
 });

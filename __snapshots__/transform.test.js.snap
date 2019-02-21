@@ -91,6 +91,25 @@ export const fePaListingDetailsMain = css\`
 "
 `;
 
+exports[`transform handle mixins without args 1`] = `
+"import { css } from '@emotion/core';
+
+export const message = css\`
+  \${resetTopMargin}
+
+  margin-bottom: 20px;
+\`;
+
+function resetTopMargin() {
+  return css\`
+    > *:first-child {
+      margin-top: 0;
+    }
+  \`;
+}
+"
+`;
+
 exports[`transform handles multi value var refrences 1`] = `
 "import { css } from '@emotion/core';
 import { variables as vars } from '@domain-group/fe-brary';

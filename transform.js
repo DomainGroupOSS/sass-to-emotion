@@ -112,6 +112,10 @@ function placeHolderToVarRef(params) {
 }
 
 function mixinParamsToFunc(str) {
+  if (!str.includes('(')) {
+    return `${camelCase(str.trim())}()`;
+  }
+
   const [funcName, inputs] = str.split('(');
   return `${camelCase(funcName)}(${inputs.replace(/\$/g, '')}`;
 }
@@ -143,6 +147,8 @@ const processRoot = (root, filePath) => {
   });
 
   root.walkAtRules('include', (atRule) => {
+    atRule.originalParams = atRule.params;
+
     // check for https://github.com/eduardoboucas/include-media
     if (atRule.nodes && atRule.nodes.length && atRule.params.trim().startsWith('media(')) {
       atRule.name = 'media';
@@ -151,11 +157,15 @@ const processRoot = (root, filePath) => {
       return;
     }
 
+    if (!atRule.params.includes('(')) {
+      atRule.params = `\${${camelCase(atRule.params.trim())}}`;
+      return;
+    }
+
     const [funcName, inputs] = atRule.params.split('(');
     const inputsWithoutBraces = inputs.slice(0, -1);
     const args = inputsWithoutBraces.split(',').map(arg => handleSassVarUnescaped(arg.trim()));
 
-    atRule.originalParams = atRule.params;
     atRule.params = `\${${camelCase(funcName.trim())} (${args.join(', ')})}`;
   });
 
@@ -240,7 +250,12 @@ const processRoot = (root, filePath) => {
       }
 
       // ignore nested classes
-      if (node && node.type === 'rule' && node.selector.startsWith('.') && !isNestedInAmpersand(root, node)) return;
+      if (
+        node
+        && node.type === 'rule'
+        && node.selector.startsWith('.')
+        && !isNestedInAmpersand(root, node)
+      ) return;
 
       if (
         node
