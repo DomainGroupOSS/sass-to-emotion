@@ -4,7 +4,7 @@ exports[`transform custom include-media max-width 1`] = `
 "import { css } from '@emotion/core';
 import { variables as vars } from '@domain-group/fe-brary';
 
-export const auctionsLabel = css\`
+export default css\`
              display: none;
 
              @media media(max-width: \${vars.global.desktopMinWidth - 1}) {
@@ -19,7 +19,7 @@ exports[`transform custom include-media min-width 1`] = `
 "import { css } from '@emotion/core';
 import { variables as vars } from '@domain-group/fe-brary';
 
-export const auctionsLabel = css\`
+export default css\`
              display: none;
 
              @media media(min-width: \${vars.global.desktopMinWidth}) {
@@ -34,7 +34,7 @@ exports[`transform custom vars 1`] = `
 "import { css } from '@emotion/core';
 import * as customVars from '../variables';
 
-export const auctionsLabel = css\`
+export default css\`
   display: none;
   color: \${customVars.fooBarBazWhizz};
 \`;
@@ -45,7 +45,7 @@ exports[`transform custom vars in include 1`] = `
 "import { css } from '@emotion/core';
 import * as customVars from '../variables';
 
-export const mapMarker = css\`
+export default css\`
             $map-marker-arrow-size: 8px;
 
             &::after {
@@ -59,6 +59,45 @@ export const mapMarker = css\`
               margin-left: \${customVars.mapMarkerArrowSize};
             }
           
+\`;
+"
+`;
+
+exports[`transform default export for one only 1`] = `
+"import { css } from '@emotion/core';
+
+export default css\`
+  color: blue;
+\`;
+"
+`;
+
+exports[`transform default export for one only class 1`] = `
+"import { css } from '@emotion/core';
+
+export default css\`
+  color: blue;
+\`;
+"
+`;
+
+exports[`transform default export for one only mixin 1`] = `
+"import { css } from '@emotion/core';
+
+export default function adExact(width, height) {
+  return css\`
+    width: \${width};
+    height: \${height};
+  \`;
+}
+"
+`;
+
+exports[`transform default export for one only placeholder 1`] = `
+"import { css } from '@emotion/core';
+
+export default css\`
+  margin-bottom: 20px;
 \`;
 "
 `;
@@ -82,7 +121,7 @@ export const foo = css\`
 exports[`transform exports placeholder if its not being used in the file 1`] = `
 "import { css } from '@emotion/core';
 
-export const fePaListingDetailsMain = css\`
+export default css\`
   padding: 18px 0;
   flex: 1 1 auto;
   min-width: 0;
@@ -114,7 +153,7 @@ exports[`transform handles multi value var refrences 1`] = `
 "import { css } from '@emotion/core';
 import { variables as vars } from '@domain-group/fe-brary';
 
-export const foo = css\`
+export default css\`
   border-bottom: 1px solid \${vars.colour.neutral300};
 \`;
 "
@@ -124,7 +163,7 @@ exports[`transform imports fe-brary helpers 1`] = `
 "import { css } from '@emotion/core';
 import { buttonNormalize } from '@domain-group/fe-brary';
 
-export const agentDetailsRightArrow = css\`
+export default css\`
   \${buttonNormalize};
 
   position: absolute;
@@ -152,7 +191,7 @@ exports[`transform imports non-fe-brary helpers and vars 1`] = `
 "import { css } from '@emotion/core';
 import { fePaListingDetailsWrapper } from '../utils';
 
-export const notesContainer = css\`
+export default css\`
   \${fePaListingDetailsWrapper};
 
   margin-top: -54px;
@@ -164,7 +203,7 @@ exports[`transform mixin exported when not refrenced in file 1`] = `
 "import { css } from '@emotion/core';
 import { variables as vars } from '@domain-group/fe-brary';
 
-export function adExact(width, height) {
+export default function adExact(width, height) {
   return css\`
     width: \${width};
     height: \${height};
@@ -197,7 +236,7 @@ exports[`transform mixins nested 1`] = `
 "import { css } from '@emotion/core';
 import { variables as vars } from '@domain-group/fe-brary';
 
-export function adExact(width, height) {
+export default function adExact(width, height) {
   return css\`
     width: \${width};
     height: \${height};
@@ -300,7 +339,7 @@ export const domainIcon = css\`
 exports[`transform pesudo elements/classes nested pseudos are kept 1`] = `
 "import { css } from '@emotion/core';
 
-export const additionalLink = css\`
+export default css\`
   margin-left: auto;
 
   &:not(:last-of-type) {
@@ -318,7 +357,7 @@ export const additionalLink = css\`
 exports[`transform pesudo elements/classes top level pseudo classes 1`] = `
 "import { css } from '@emotion/core';
 
-export const agentDetailsRightArrow = css\`
+export default css\`
   &:first-of-type {
     color: black;
   }
@@ -385,7 +424,7 @@ export const bar = css\`
 exports[`transform simple class no vars 1`] = `
 "import { css } from '@emotion/core';
 
-export const button = css\`
+export default css\`
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -394,7 +433,7 @@ export const button = css\`
 `;
 
 exports[`transform top level vars 1`] = `
-"export const fooBarBaz = '42px';
+"export default '42px';
 "
 `;
 
@@ -413,7 +452,7 @@ export const foo = css\`
 exports[`transform vanilla css media query 1`] = `
 "import { css } from '@emotion/core';
 
-export const auctionsLabel = css\`
+export default css\`
   display: none;
 
   @media (min-width: 100px) {

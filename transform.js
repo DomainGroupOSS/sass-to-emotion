@@ -325,6 +325,8 @@ module.exports = (cssString, filePath, pathToVariables = '../variables') => {
 
   let fileIsJustVarExports = true;
 
+  const oneDefault = root.classes.size === 1;
+
   const emotionExports = Array.from(root.classes.entries())
     .sort(([, { node: a }], [, { node: b }]) => a.source.start.line - b.source.start.line)
     .reduce((acc, [name, {
@@ -335,22 +337,24 @@ module.exports = (cssString, filePath, pathToVariables = '../variables') => {
       }
 
       if (type === 'mixin') {
-        return `${acc}\n${
-          isUsedInFile ? '' : 'export '
+        return `${acc}\n${isUsedInFile ? '' : 'export '}${
+          oneDefault ? ' default ' : ''
         }function ${name} {\n  return css\`${contents}\n  \`;\n}\n`;
       }
 
       if (type === 'constVar') {
-        return `${acc}\n${isUsedInFile ? '' : 'export '}const ${placeHolderToVar(node.prop)} = ${
+        return `${acc}\n${isUsedInFile ? '' : 'export '}${
+          oneDefault ? ' default ' : ` const ${placeHolderToVar(node.prop)} = `
+        } ${
           node.value.includes("'")
             ? `"${node.value.replace('\n', ' ')}"`
             : `'${node.value.replace('\n', ' ')}'`
         }`;
       }
 
-      return `${acc}\n${
-        type === 'class' || !isUsedInFile ? 'export ' : ''
-      }const ${name} = css\`${contents}\n\`;\n`;
+      return `${acc}\n${type === 'class' || !isUsedInFile ? 'export ' : ''}${
+        oneDefault ? 'default ' : `const ${name} = `
+      }css\`${contents}\n\`;\n`;
     }, '');
 
   const js = `${fileIsJustVarExports ? '' : "import { css } from '@emotion/core'"};\n${

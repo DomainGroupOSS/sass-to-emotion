@@ -427,4 +427,35 @@ describe('transform', () => {
       `),
     ).toMatchSnapshot();
   });
+
+  it('default export for one only class', () => {
+    expect(
+      transform(`
+        .listing-details__agent-details-agent {
+          color: blue;
+        }
+      `),
+    ).toMatchSnapshot();
+  });
+
+  it('default export for one only mixin', () => {
+    expect(
+      transform(`
+        @mixin ad-exact($width, $height) {
+          width: $width;
+          height: $height;
+        }
+      `),
+    ).toMatchSnapshot();
+  });
+
+  it('default export for one only placeholder', () => {
+    expect(
+      transform(`
+        %message {
+          margin-bottom: 20px;
+        }
+      `),
+    ).toMatchSnapshot();
+  });
 });
