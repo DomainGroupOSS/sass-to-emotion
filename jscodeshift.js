@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign, no-console */
 const glob = require('glob');
 const path = require('path');
-const selectorToLiteral = require('./selector-to-literal');
+const selectorToLiteral = require('./selector-to-variable-identifier');
 // TODO make CLI option
 
 const STYLES_IMPORT_NAME = 'styles';

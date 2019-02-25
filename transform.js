@@ -5,17 +5,13 @@ const { list, comment } = require('postcss');
 const { camelCase } = require('lodash');
 const format = require('prettier-eslint');
 const feBrary = require('@domain-group/fe-brary');
-const selectorToLiteral = require('./selector-to-literal');
+const selectorToLiteral = require('./selector-to-variable-identifier');
 const includeMedia = require('./include-media');
 
 // TODO make CLI option
 const FE_BRARY_PREFIX = '$fe-brary-';
 
 const OPERATORS = [' + ', ' - ', ' / ', ' * ', ' % ', ' < ', ' > ', ' == ', ' != ', ' <= ', ' >= '];
-
-function placeHolderToVar(str) {
-  return camelCase(str.slice(1));
-}
 
 function isNestedInMixin(root, node) {
   let nestedInMixin = false;
@@ -70,7 +66,7 @@ function handleSassVar(decl, root) {
       }
 
       if (string.startsWith('$')) {
-        const varName = camelCase(string.slice(1));
+        const varName = selectorToLiteral(string.slice(1));
 
         if (isNestedInMixin(root, decl) || root.nodes.some(node => node.prop === string)) {
           return `\${${varName}}`;
@@ -97,7 +93,7 @@ function handleSassVarUnescaped(value) {
   }
 
   if (value.startsWith('$')) {
-    const varName = camelCase(value.slice(1));
+    const varName = selectorToLiteral(value.slice(1));
     return `customVars.${varName}`;
   }
 
@@ -111,16 +107,16 @@ function handleSassVarUnescaped(value) {
 }
 
 function placeHolderToVarRef(params) {
-  return `\${${placeHolderToVar(params)}};`;
+  return `\${${selectorToLiteral(params)}};`;
 }
 
 function mixinParamsToFunc(str) {
   if (!str.includes('(')) {
-    return `${camelCase(str.trim())}()`;
+    return `${selectorToLiteral(str.trim())}()`;
   }
 
   const [funcName, inputs] = str.split('(');
-  return `${camelCase(funcName)}(${inputs.replace(/\$/g, '')}`;
+  return `${selectorToLiteral(funcName)}(${inputs.replace(/\$/g, '')}`;
 }
 
 const processRoot = (root, filePath) => {
@@ -136,7 +132,7 @@ const processRoot = (root, filePath) => {
       hasRefInFile = true;
     });
 
-    const ref = placeHolderToVar(atRule.params);
+    const ref = selectorToLiteral(atRule.params);
 
     if (!hasRefInFile) {
       // use fe-brary export to check and improve once done
@@ -168,19 +164,23 @@ const processRoot = (root, filePath) => {
 
     if (!hasRefInFile) {
       if (feBrary[funcName] && typeof feBrary[funcName] === 'function') {
-        if (!root.feBraryHelpers.includes(camelCase(funcName))) root.feBraryHelpers.push(camelCase(funcName));
-      } else if (!root.externalImports.includes(camelCase(funcName))) root.externalImports.push(camelCase(funcName));
+        if (!root.feBraryHelpers.includes(selectorToLiteral(funcName))) {
+          root.feBraryHelpers.push(selectorToLiteral(funcName));
+        }
+      } else if (!root.externalImports.includes(selectorToLiteral(funcName))) {
+        root.externalImports.push(selectorToLiteral(funcName));
+      }
     }
 
     if (!atRule.params.includes('(')) {
-      atRule.params = `\${${camelCase(atRule.params.trim())}()}`;
+      atRule.params = `\${${selectorToLiteral(atRule.params.trim())}()}`;
       return;
     }
 
     const inputsWithoutBraces = inputs.slice(0, -1);
     const args = inputsWithoutBraces.split(',').map(arg => handleSassVarUnescaped(arg.trim()));
 
-    atRule.params = `\${${camelCase(funcName.trim())} (${args.join(', ')})}`;
+    atRule.params = `\${${selectorToLiteral(funcName.trim())} (${args.join(', ')})}`;
   });
 
   root.walkDecls((decl) => {
@@ -242,7 +242,7 @@ const processRoot = (root, filePath) => {
 
     let isUsedInFile = false;
     if (isPlaceHolder) {
-      selector = placeHolderToVar(selector);
+      selector = selectorToLiteral(selector);
       // search to see if placeholder is used
       root.walkAtRules('extend', (atRule) => {
         // note atRule.params has already been modified
@@ -367,7 +367,7 @@ module.exports = (cssString, filePath, pathToVariables = '../variables') => {
 
       if (type === 'constVar') {
         return `${acc}\n${isUsedInFile ? '' : 'export '}${
-          oneDefault ? ' default ' : ` const ${placeHolderToVar(node.prop)} = `
+          oneDefault ? ' default ' : ` const ${selectorToLiteral(node.prop)} = `
         } ${
           node.value.includes("'")
             ? `"${node.value.replace('\n', ' ')}"`

@@ -104,7 +104,7 @@ export default css\`
 exports[`transform does not export placeholder if its being used in the file 1`] = `
 "import { css } from '@emotion/core';
 
-const fePaListingDetailsMain = css\`
+const detailsMain = css\`
   padding: 18px 0;
   flex: 1 1 auto;
   min-width: 0;
@@ -112,7 +112,7 @@ const fePaListingDetailsMain = css\`
 \`;
 
 export const foo = css\`
-  \${fePaListingDetailsMain};
+  \${detailsMain};
 \`;
 "
 `;
@@ -437,6 +437,30 @@ export const agentDetailsRightArrow = css\`
 
 export const agentDetailsAgent = css\`
   color: blue;
+\`;
+"
+`;
+
+exports[`transform removes pre double underscore text 1`] = `
+"import { css } from '@emotion/core';
+import { detailsMain } from '../utils';
+
+const detailsMain = css\`
+  padding: 18px 0;
+  flex: 1 1 auto;
+  min-width: 0;
+  width: 100%;
+\`;
+
+export function detailsContainer() {
+  return css\`
+    color: black;
+  \`;
+}
+
+export const foo = css\`
+  \${detailsMain};
+  \${detailsMain()}
 \`;
 "
 `;

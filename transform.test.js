@@ -321,7 +321,7 @@ describe('transform', () => {
   it('does not export placeholder if its being used in the file', () => {
     expect(
       transform(`
-        %fe-pa-listing-details-main {
+        %fe-pa-listing__details-main {
           padding: 18px 0;
           flex: 1 1 auto;
           min-width: 0;
@@ -329,7 +329,7 @@ describe('transform', () => {
         }
 
         .foo {
-          @extend %fe-pa-listing-details-main;
+          @extend %fe-pa-listing__details-main;
         }
       `),
     ).toMatchSnapshot();
@@ -338,7 +338,7 @@ describe('transform', () => {
   it('exports placeholder if its not being used in the file', () => {
     expect(
       transform(`
-        %fe-pa-listing-details-main {
+        %fe-pa-listing__details-main {
           padding: 18px 0;
           flex: 1 1 auto;
           min-width: 0;
@@ -507,6 +507,28 @@ describe('transform', () => {
           @extend %a-tag;
           position: static;
           cursor: pointer;
+        }
+      `),
+    ).toMatchSnapshot();
+  });
+
+  it('removes pre double underscore text', () => {
+    expect(
+      transform(`
+        %fe-pa-listing__details-main {
+          padding: 18px 0;
+          flex: 1 1 auto;
+          min-width: 0;
+          width: 100%;
+        }
+
+        @mixin fe-pa-listing__details-container {
+          color: black;
+        }
+
+        .fe-pa-listing__foo {
+          @extend %fe-pa-listing__details-main;
+          @include fe-pa-listing__details-main;
         }
       `),
     ).toMatchSnapshot();
