@@ -138,7 +138,7 @@ const processRoot = (root, filePath) => {
 
     if (!hasRefInFile) {
       // use fe-brary export to check and improve once done
-      if (feBrary[ref]) {
+      if (feBrary[ref] && typeof feBrary[ref] === 'object') {
         if (!root.feBraryHelpers.includes(ref)) root.feBraryHelpers.push(ref);
       } else if (!root.externalImports.includes(ref)) root.externalImports.push(ref);
     }
@@ -148,6 +148,7 @@ const processRoot = (root, filePath) => {
 
   root.walkAtRules('include', (atRule) => {
     atRule.originalParams = atRule.params;
+    const [funcName, inputs] = atRule.params.split('(');
 
     // check for https://github.com/eduardoboucas/include-media
     if (atRule.nodes && atRule.nodes.length && atRule.params.trim().startsWith('media(')) {
@@ -157,12 +158,23 @@ const processRoot = (root, filePath) => {
       return;
     }
 
+    let hasRefInFile;
+    root.walkAtRules('mixin', (mixinDeclRule) => {
+      const [mixinFuncName] = mixinDeclRule.params.split('(');
+      if (mixinFuncName === funcName) hasRefInFile = true;
+    });
+
+    if (!hasRefInFile) {
+      if (feBrary[funcName] && typeof feBrary[funcName] === 'function') {
+        if (!root.feBraryHelpers.includes(camelCase(funcName))) root.feBraryHelpers.push(camelCase(funcName));
+      } else if (!root.externalImports.includes(camelCase(funcName))) root.externalImports.push(camelCase(funcName));
+    }
+
     if (!atRule.params.includes('(')) {
-      atRule.params = `\${${camelCase(atRule.params.trim())}}`;
+      atRule.params = `\${${camelCase(atRule.params.trim())}()}`;
       return;
     }
 
-    const [funcName, inputs] = atRule.params.split('(');
     const inputsWithoutBraces = inputs.slice(0, -1);
     const args = inputsWithoutBraces.split(',').map(arg => handleSassVarUnescaped(arg.trim()));
 

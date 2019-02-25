@@ -43,6 +43,7 @@ export default css\`
 
 exports[`transform custom vars in include 1`] = `
 "import { css } from '@emotion/core';
+import { simpleArrow } from '../utils';
 import * as customVars from '../variables';
 
 export default css\`
@@ -125,7 +126,7 @@ exports[`transform handle mixins without args 1`] = `
 "import { css } from '@emotion/core';
 
 export const message = css\`
-  \${resetTopMargin}
+  \${resetTopMargin()}
 
   margin-bottom: 20px;
 \`;
@@ -162,7 +163,7 @@ export default css\`
 "
 `;
 
-exports[`transform imports fe-brary helpers and vars 1`] = `
+exports[`transform imports fe-brary helpers with @extend 1`] = `
 "import { css } from '@emotion/core';
 import { variables as vars, buttonNormalize } from '@domain-group/fe-brary';
 
@@ -178,6 +179,30 @@ export const anotherRef = css\`
 "
 `;
 
+exports[`transform imports fe-brary helpers with @include 1`] = `
+"import { css } from '@emotion/core';
+import { resetTopMargin } from '../utils';
+
+export default css\`
+  \${resetTopMargin()}
+
+  position: absolute;
+\`;
+"
+`;
+
+exports[`transform imports fe-brary helpers with @include 2`] = `
+"import { css } from '@emotion/core';
+import { fooBar } from '../utils';
+
+export default css\`
+  \${fooBar()}
+
+  position: absolute;
+\`;
+"
+`;
+
 exports[`transform imports non-fe-brary helpers and vars 1`] = `
 "import { css } from '@emotion/core';
 import { fePaListingDetailsWrapper } from '../utils';
@@ -186,6 +211,18 @@ export default css\`
   \${fePaListingDetailsWrapper};
 
   margin-top: -54px;
+\`;
+"
+`;
+
+exports[`transform imports non-fe-brary helpers with @include 1`] = `
+"import { css } from '@emotion/core';
+import { fooBar } from '../utils';
+
+export default css\`
+  \${fooBar()}
+
+  position: absolute;
 \`;
 "
 `;

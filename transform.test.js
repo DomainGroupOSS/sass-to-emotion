@@ -365,7 +365,7 @@ describe('transform', () => {
     ).toMatchSnapshot();
   });
 
-  it('imports fe-brary helpers and vars', () => {
+  it('imports fe-brary helpers with @extend', () => {
     expect(
       transform(`
         .listing-details__agent-details-right-arrow {
@@ -374,6 +374,28 @@ describe('transform', () => {
         }
         .another-ref {
           @extend %button-normalize;
+        }
+      `),
+    ).toMatchSnapshot();
+  });
+
+  it('imports fe-brary helpers with @include', () => {
+    expect(
+      transform(`
+        .listing-details__agent-details-right-arrow {
+          @include %reset-top-margin;
+          position: absolute;
+        }
+      `),
+    ).toMatchSnapshot();
+  });
+
+  it('imports non-fe-brary helpers with @include', () => {
+    expect(
+      transform(`
+        .listing-details__agent-details-right-arrow {
+          @include %foo-bar;
+          position: absolute;
         }
       `),
     ).toMatchSnapshot();
