@@ -21,8 +21,7 @@ export default css\`
              @media media(max-width: \${vars.global.desktopMinWidth - 1}) {
                display: inline;
              }
-          
-\`;
+          \`;
 "
 `;
 
@@ -36,8 +35,7 @@ export default css\`
              @media media(min-width: \${vars.global.desktopMinWidth}) {
                display: inline;
              }
-          
-\`;
+          \`;
 "
 `;
 
@@ -67,11 +65,9 @@ export default css\`
     'down',
     vars.colour.white,
   )}
-
               margin-left: \${customVars.mapMarkerArrowSize};
             }
-          
-\`;
+          \`;
 "
 `;
 
@@ -138,7 +134,6 @@ exports[`transform handle mixins without args 1`] = `
 
 export const message = css\`
   \${resetTopMargin()}
-
   margin-bottom: 20px;
 \`;
 
@@ -168,7 +163,6 @@ import { buttonNormalize } from '@domain-group/fe-brary';
 
 export default css\`
   \${buttonNormalize};
-
   position: absolute;
 \`;
 "
@@ -180,7 +174,6 @@ import { variables as vars, buttonNormalize } from '@domain-group/fe-brary';
 
 export const agentDetailsRightArrow = css\`
   \${buttonNormalize};
-
   color: \${vars.colour.primaryDark};
 \`;
 
@@ -196,7 +189,6 @@ import { resetTopMargin } from '../utils';
 
 export default css\`
   \${resetTopMargin()}
-
   position: absolute;
 \`;
 "
@@ -220,7 +212,6 @@ import { fooBar } from '../utils';
 
 export default css\`
   \${fooBar()}
-
   position: absolute;
 \`;
 "
@@ -296,6 +287,24 @@ export const button = css\`
 
 export const foo = css\`
   display: block;
+\`;
+"
+`;
+
+exports[`transform no new line breaks 1`] = `
+"import { css } from '@emotion/core';
+import { aTag } from '@domain-group/fe-brary';
+import { fePaListingDetailsWrapper } from '../utils';
+
+export const aboutDevelopment = css\`
+  \${fePaListingDetailsWrapper};
+  margin-bottom: 24px;
+\`;
+
+export const aboutDevelopmentLink = css\`
+  \${aTag};
+  position: static;
+  cursor: pointer;
 \`;
 "
 `;
@@ -407,7 +416,6 @@ export const message = css\`
 
 export const success = css\`
   \${messageShared};
-
   border-color: green;
 \`;
 "

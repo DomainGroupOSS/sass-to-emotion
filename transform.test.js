@@ -494,4 +494,21 @@ describe('transform', () => {
       `),
     ).toMatchSnapshot();
   });
+
+  it('no new line breaks', () => {
+    expect(
+      transform(`
+        .listing-details__about-development {
+          @extend %fe-pa-listing-details-wrapper;
+          margin-bottom: 24px;
+        }
+
+        .listing-details__about-development-link {
+          @extend %a-tag;
+          position: static;
+          cursor: pointer;
+        }
+      `),
+    ).toMatchSnapshot();
+  });
 });

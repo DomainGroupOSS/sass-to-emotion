@@ -60,7 +60,7 @@ function scssFileToJs(filePath) {
       value.forEach((msg) => {
         console.log(`- ${msg}\n`);
       });
-      console.log('\n\n');
+      console.log();
     });
   }
 

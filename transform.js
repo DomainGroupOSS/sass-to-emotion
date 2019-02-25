@@ -207,7 +207,10 @@ const processRoot = (root, filePath) => {
 
     if (OPERATORS.some(operator => decl.value.includes(operator))) {
       global.sassToEmotionWarnings[filePath] = global.sassToEmotionWarnings[filePath] || [];
-      global.sassToEmotionWarnings[filePath].push("Sass maths detected, find the FIXME's in this file and manually fix.");
+      const msg = "Sass maths detected, find the FIXME's in this file and manually fix.";
+      if (!global.sassToEmotionWarnings[filePath].includes(msg)) {
+        global.sassToEmotionWarnings[filePath].push(msg);
+      }
       decl.parent.insertBefore(decl, comment({ text: 'FIXME: Sass maths was detected in the line below.' }));
     }
 
@@ -287,7 +290,7 @@ const processRoot = (root, filePath) => {
       ) return;
 
       if (node && ['extend', 'include'].includes(node.name)) {
-        contents += `${node.params}\n`;
+        contents += node.params;
         return;
       }
 
@@ -374,7 +377,7 @@ module.exports = (cssString, filePath, pathToVariables = '../variables') => {
 
       return `${acc}\n${type === 'class' || !isUsedInFile ? 'export ' : ''}${
         oneDefault ? 'default ' : `const ${name} = `
-      }css\`${contents}\n\`;\n`;
+      }css\`${contents}\`;\n`;
     }, '');
 
   const js = `${fileIsJustVarExports ? '' : "import { css } from '@emotion/core'"};\n${
