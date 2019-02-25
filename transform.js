@@ -4,6 +4,7 @@ const postcss = require('postcss-scss');
 const { list } = require('postcss');
 const { camelCase } = require('lodash');
 const format = require('prettier-eslint');
+const feBrary = require('@domain-group/fe-brary');
 const selectorToLiteral = require('./selector-to-literal');
 const includeMedia = require('./include-media');
 
@@ -133,16 +134,15 @@ const processRoot = (root, filePath) => {
       hasRefInFile = true;
     });
 
+    const ref = placeHolderToVar(atRule.params);
+
     if (!hasRefInFile) {
       // use fe-brary export to check and improve once done
-      if (atRule.originalParams === '%button-normalize') {
-        const ref = placeHolderToVar(atRule.params);
+      if (feBrary[ref]) {
         if (!root.feBraryHelpers.includes(ref)) root.feBraryHelpers.push(ref);
-      } else {
-        const ref = placeHolderToVar(atRule.params);
-        if (!root.externalImports.includes(ref)) root.externalImports.push(ref);
-      }
+      } else if (!root.externalImports.includes(ref)) root.externalImports.push(ref);
     }
+
     atRule.params = placeHolderToVarRef(atRule.params);
   });
 

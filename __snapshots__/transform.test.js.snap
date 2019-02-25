@@ -63,15 +63,6 @@ export default css\`
 "
 `;
 
-exports[`transform default export for one only 1`] = `
-"import { css } from '@emotion/core';
-
-export default css\`
-  color: blue;
-\`;
-"
-`;
-
 exports[`transform default export for one only class 1`] = `
 "import { css } from '@emotion/core';
 
