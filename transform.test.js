@@ -1,6 +1,10 @@
 const transform = require('./transform');
 
 describe('transform', () => {
+  beforeAll(() => {
+    global.sassToEmotionWarnings = {};
+  });
+
   it('simple class no vars', () => {
     expect(
       transform(
@@ -476,6 +480,16 @@ describe('transform', () => {
       transform(`
         %message {
           margin-bottom: 20px;
+        }
+      `),
+    ).toMatchSnapshot();
+  });
+
+  it('adds a FIXME comment', () => {
+    expect(
+      transform(`
+        .leaderboard {
+          height: 90px + $listing-details-ad-spacing * 2;
         }
       `),
     ).toMatchSnapshot();

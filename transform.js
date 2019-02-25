@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /* eslint-disable no-param-reassign */
 const postcss = require('postcss-scss');
-const { list } = require('postcss');
+const { list, comment } = require('postcss');
 const { camelCase } = require('lodash');
 const format = require('prettier-eslint');
 const feBrary = require('@domain-group/fe-brary');
@@ -10,6 +10,8 @@ const includeMedia = require('./include-media');
 
 // TODO make CLI option
 const FE_BRARY_PREFIX = '$fe-brary-';
+
+const OPERATORS = [' + ', ' - ', ' / ', ' * ', ' % ', ' < ', ' > ', ' == ', ' != ', ' <= ', ' >= '];
 
 function placeHolderToVar(str) {
   return camelCase(str.slice(1));
@@ -201,6 +203,12 @@ const processRoot = (root, filePath) => {
         isUsedInFile,
       });
       return;
+    }
+
+    if (OPERATORS.some(operator => decl.value.includes(operator))) {
+      global.sassToEmotionWarnings[filePath] = global.sassToEmotionWarnings[filePath] || [];
+      global.sassToEmotionWarnings[filePath].push("Sass maths detected, find the FIXME's in this file and manually fix.");
+      decl.parent.insertBefore(decl, comment({ text: 'FIXME: Sass maths was detected in the line below.' }));
     }
 
     decl.value = handleSassVar(decl, root);

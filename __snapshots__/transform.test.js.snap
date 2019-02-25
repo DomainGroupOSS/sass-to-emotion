@@ -1,5 +1,16 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`transform adds a FIXME comment 1`] = `
+"import { css } from '@emotion/core';
+import * as customVars from '../variables';
+
+export default css\`
+  /* FIXME: Sass maths was detected in the line below. */
+  height: 90px + \${customVars.listingDetailsAdSpacing} * 2;
+\`;
+"
+`;
+
 exports[`transform custom include-media max-width 1`] = `
 "import { css } from '@emotion/core';
 import { variables as vars } from '@domain-group/fe-brary';
@@ -185,18 +196,6 @@ import { resetTopMargin } from '../utils';
 
 export default css\`
   \${resetTopMargin()}
-
-  position: absolute;
-\`;
-"
-`;
-
-exports[`transform imports fe-brary helpers with @include 2`] = `
-"import { css } from '@emotion/core';
-import { fooBar } from '../utils';
-
-export default css\`
-  \${fooBar()}
 
   position: absolute;
 \`;
