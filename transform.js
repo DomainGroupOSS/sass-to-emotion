@@ -271,7 +271,7 @@ const processRoot = (root, filePath) => {
         return;
       }
 
-      // ref class if nested
+      // ref class if nested in ampersand
       if (
         node
         && node.type === 'rule'
@@ -286,14 +286,16 @@ const processRoot = (root, filePath) => {
       // ignore nested classes
       if (node && node.type === 'rule' && node.selector.startsWith('.') && !nestedInAmpersand) return;
 
+      // don't print nested decls
       if (
         node
+        && node.parent.type === 'rule'
         && !nestedInAmpersand
         && node.parent !== rule
-        && node.parent.type === 'rule'
         && node.parent.selector.startsWith('.')
       ) return;
 
+      // handle mixins and placeholder's
       if (node && ['extend', 'include'].includes(node.name)) {
         contents += node.params;
         return;
