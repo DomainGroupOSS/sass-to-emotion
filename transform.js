@@ -12,32 +12,17 @@ const FE_BRARY_PREFIX = '$fe-brary-';
 
 const OPERATORS = [' + ', ' - ', ' / ', ' * ', ' % ', ' < ', ' > ', ' == ', ' != ', ' <= ', ' >= '];
 
-function isNestedInMixin(root, node) {
+function checkUpTree(root, node, checkerFunc) {
   let nestedInMixin = false;
   let parentNode = node.parent;
   do {
-    if (parentNode !== root && parentNode.type === 'atrule' && parentNode.name === 'mixin') {
+    if (parentNode !== root && checkerFunc(parentNode)) {
       nestedInMixin = true;
     }
     parentNode = parentNode.parent;
   } while (parentNode && parentNode !== root && !nestedInMixin);
 
   return nestedInMixin;
-}
-
-// asumption here is if a class is nested in a pseudo ::hover or state &.is-small-agent
-// we need to behave differently and can't bring flat
-function isNestedInAmpersand(root, node) {
-  let nestedInPseudo = false;
-  let parentNode = node.parent;
-  do {
-    if (parentNode !== root && parentNode.type === 'rule' && parentNode.selector.startsWith('&')) {
-      nestedInPseudo = true;
-    }
-    parentNode = parentNode.parent;
-  } while (parentNode && parentNode !== root && !nestedInPseudo);
-
-  return nestedInPseudo;
 }
 
 function handleSassVar(decl, root) {
@@ -67,7 +52,14 @@ function handleSassVar(decl, root) {
       if (string.startsWith('$')) {
         const varName = selectorToLiteral(string.slice(1));
 
-        if (isNestedInMixin(root, decl) || root.nodes.some(node => node.prop === string)) {
+        if (
+          checkUpTree(
+            root,
+            decl,
+            nodeToCheck => nodeToCheck.type === 'atrule' && nodeToCheck.name === 'mixin',
+          )
+          || root.nodes.some(node => node.prop === string)
+        ) {
           return `\${${varName}}`;
         }
 
@@ -258,13 +250,24 @@ const processRoot = (root, filePath) => {
       selector = selectorToLiteral(selector);
     }
 
-    if (isNestedInMixin(root, rule)) return;
+    if (
+      checkUpTree(
+        root,
+        rule,
+        nodeToCheck => nodeToCheck.type === 'atrule' && nodeToCheck.name === 'mixin',
+      )
+    ) return;
 
     let contents = '';
     postcss.stringify(rule, (string, node, startOrEnd) => {
       if (node && node === rule && startOrEnd) return;
 
-      const nestedInAmpersand = node && isNestedInAmpersand(root, node);
+      const nestedInAmpersand = node
+        && checkUpTree(
+          root,
+          node,
+          nodeToCheck => nodeToCheck.type === 'rule' && nodeToCheck.selector.startsWith('&'),
+        );
 
       if (node && node.name === '__MEDIA_HELPER__' && startOrEnd === 'start') {
         contents += `${node.params} {`;
