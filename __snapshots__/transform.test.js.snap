@@ -5,7 +5,7 @@ exports[`transform adds a FIXME comment 1`] = `
 import * as customVars from '../variables';
 
 export default css\`
-  /* FIXME: Sass maths was detected in the line below. */
+  /* FIXME: Sass maths was detected in the line below, you must fix manually. */
   height: 90px + \${customVars.listingDetailsAdSpacing} * 2;
 \`;
 "
@@ -13,29 +13,29 @@ export default css\`
 
 exports[`transform custom include-media max-width 1`] = `
 "import { css } from '@emotion/core';
-import { variables as vars } from '@domain-group/fe-brary';
+import { media } from '@domain-group/fe-brary';
 
 export default css\`
-             display: none;
+  display: none;
 
-             @media media(max-width: \${vars.global.desktopMinWidth - 1}) {
-               display: inline;
-             }
-          \`;
+  \${media('<desktop')} {
+    display: inline;
+  }
+\`;
 "
 `;
 
 exports[`transform custom include-media min-width 1`] = `
 "import { css } from '@emotion/core';
-import { variables as vars } from '@domain-group/fe-brary';
+import { media } from '@domain-group/fe-brary';
 
 export default css\`
-             display: none;
+  display: none;
 
-             @media media(min-width: \${vars.global.desktopMinWidth}) {
-               display: inline;
-             }
-          \`;
+  \${media('>=desktop')} {
+    display: inline;
+  }
+\`;
 "
 `;
 

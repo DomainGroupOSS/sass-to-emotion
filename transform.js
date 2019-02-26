@@ -6,7 +6,6 @@ const { camelCase } = require('lodash');
 const format = require('prettier-eslint');
 const feBrary = require('@domain-group/fe-brary');
 const selectorToLiteral = require('./selector-to-variable-identifier');
-const includeMedia = require('./include-media');
 
 // TODO make CLI option
 const FE_BRARY_PREFIX = '$fe-brary-';
@@ -150,9 +149,9 @@ const processRoot = (root, filePath) => {
 
     // check for https://github.com/eduardoboucas/include-media
     if (atRule.nodes && atRule.nodes.length && atRule.params.trim().startsWith('media(')) {
-      atRule.name = 'media';
-      atRule.params = includeMedia(atRule.params);
-      if (atRule.params.includes('vars.')) root.usesFeBraryVars = true;
+      atRule.name = '__IGNORE__';
+      atRule.params = `\${${atRule.params.trim()}}`;
+      if (!root.feBraryHelpers.includes('media')) root.feBraryHelpers.push('media');
       return;
     }
 
@@ -211,7 +210,12 @@ const processRoot = (root, filePath) => {
       if (!global.sassToEmotionWarnings[filePath].includes(msg)) {
         global.sassToEmotionWarnings[filePath].push(msg);
       }
-      decl.parent.insertBefore(decl, comment({ text: 'FIXME: Sass maths was detected in the line below.' }));
+      decl.parent.insertBefore(
+        decl,
+        comment({
+          text: 'FIXME: Sass maths was detected in the line below, you must fix manually.',
+        }),
+      );
     }
 
     decl.value = handleSassVar(decl, root);
@@ -259,6 +263,11 @@ const processRoot = (root, filePath) => {
     let contents = '';
     postcss.stringify(rule, (string, node, startOrEnd) => {
       if (node && node === rule && startOrEnd) return;
+
+      if (string.startsWith('@__IGNORE__')) {
+        contents += string.split('@__IGNORE__')[1];
+        return;
+      }
 
       // ref class if nested
       if (
