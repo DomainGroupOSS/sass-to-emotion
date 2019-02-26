@@ -221,6 +221,10 @@ describe('transform', () => {
               }
             }
           }
+
+          .listing-details__button-icon {
+            color: blue;
+          }
           `),
       ).toMatchSnapshot();
     });

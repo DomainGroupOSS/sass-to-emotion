@@ -258,6 +258,10 @@ const processRoot = (root, filePath) => {
       )
     ) return;
 
+    if (rule.contentsAlreadyPrinted) {
+      return;
+    }
+
     let contents = '';
     postcss.stringify(rule, (string, node, startOrEnd) => {
       if (node && node === rule && startOrEnd) return;
@@ -282,6 +286,7 @@ const processRoot = (root, filePath) => {
         && !node.selector.startsWith('&')
         && nestedInAmpersand
       ) {
+        node.contentsAlreadyPrinted = true;
         contents += `css-\${${selectorToLiteral(node.selector)}.name} {`;
         return;
       }

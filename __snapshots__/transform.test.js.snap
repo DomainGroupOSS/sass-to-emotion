@@ -386,8 +386,7 @@ export const buttonCopy = css\`
 \`;
 
 export const buttonIcon = css\`
-  opacity: 1;
-  transform: translateX(0);
+  color: blue;
 \`;
 "
 `;
