@@ -13,16 +13,16 @@ const FE_BRARY_PREFIX = '$fe-brary-';
 const OPERATORS = [' + ', ' - ', ' / ', ' * ', ' % ', ' < ', ' > ', ' == ', ' != ', ' <= ', ' >= '];
 
 function checkUpTree(root, node, checkerFunc) {
-  let nestedInMixin = false;
+  let passedCheck = false;
   let parentNode = node.parent;
   do {
     if (parentNode !== root && checkerFunc(parentNode)) {
-      nestedInMixin = true;
+      passedCheck = true;
     }
     parentNode = parentNode.parent;
-  } while (parentNode && parentNode !== root && !nestedInMixin);
+  } while (parentNode && parentNode !== root && !passedCheck);
 
-  return nestedInMixin;
+  return passedCheck;
 }
 
 function handleSassVar(decl, root) {
@@ -287,7 +287,23 @@ const processRoot = (root, filePath) => {
       }
 
       // ignore nested classes
-      if (node && node.type === 'rule' && node.selector.startsWith('.') && !nestedInAmpersand) return;
+      if (node && node.type === 'rule' && node.selector.startsWith('.') && !nestedInAmpersand) {
+        return;
+      }
+
+      // don't print ampersand decls twice
+      // if (
+      //   node
+      //   && node.type === 'decl'
+      //   && node.parent
+      //   && node.parent.selector
+      //   && node.parent.selector.startsWith('&')
+      //   && !checkUpTree(
+      //     root,
+      //     node,
+      //     nodeToCheck => nodeToCheck.type === 'rule' && nodeToCheck.isItsOwnCssVar,
+      //   )
+      // ) return;
 
       // don't print nested decls
       if (
