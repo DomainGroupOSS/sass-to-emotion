@@ -539,6 +539,18 @@ describe('transform', () => {
             display: flex;
             position: relative;
           }
+
+          .listing-details__about-development-link {
+            @extend %a-tag;
+            position: static;
+            cursor: pointer;
+
+            &::before {
+              cursor: pointer;
+              bottom: 0;
+              left: 0;
+            }
+          }
         }
       `),
     ).toMatchSnapshot();

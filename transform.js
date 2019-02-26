@@ -149,7 +149,7 @@ const processRoot = (root, filePath) => {
 
     // check for https://github.com/eduardoboucas/include-media
     if (atRule.nodes && atRule.nodes.length && atRule.params.trim().startsWith('media(')) {
-      atRule.name = '__IGNORE__';
+      atRule.name = '__MEDIA_HELPER__';
       atRule.params = `\${${atRule.params.trim()}}`;
       if (!root.feBraryHelpers.includes('media')) root.feBraryHelpers.push('media');
       return;
@@ -266,8 +266,8 @@ const processRoot = (root, filePath) => {
 
       const nestedInAmpersand = node && isNestedInAmpersand(root, node);
 
-      if (string.startsWith('@__IGNORE__')) {
-        contents += string.split('@__IGNORE__')[1];
+      if (node && node.name === '__MEDIA_HELPER__' && startOrEnd === 'start') {
+        contents += `${node.params} {`;
         return;
       }
 
@@ -284,12 +284,7 @@ const processRoot = (root, filePath) => {
       }
 
       // ignore nested classes
-      if (
-        node
-        && node.type === 'rule'
-        && node.selector.startsWith('.')
-        && !nestedInAmpersand
-      ) return;
+      if (node && node.type === 'rule' && node.selector.startsWith('.') && !nestedInAmpersand) return;
 
       if (
         node
