@@ -291,7 +291,6 @@ const processRoot = (root, filePath) => {
 
       if (
         node
-        && node.type === 'decl'
         && !isNestedInAmpersand(root, node)
         && node.parent !== rule
         && node.parent.type === 'rule'

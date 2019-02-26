@@ -520,4 +520,27 @@ describe('transform', () => {
       `),
     ).toMatchSnapshot();
   });
+
+  it('never print nested ', () => {
+    expect(
+      transform(`
+        .listing-details__about-development {
+          @extend %fe-pa-listing-details-wrapper;
+          margin-bottom: 24px;
+
+          .listing-details__about-development-header {
+            @extend %fe-pa-listing-details-heading;
+            display: flex;
+          }
+
+          .listing-details__about-development-container {
+            @extend %font-small;
+            border: 1px solid $fe-brary-colour-neutral-300;
+            display: flex;
+            position: relative;
+          }
+        }
+      `),
+    ).toMatchSnapshot();
+  });
 });

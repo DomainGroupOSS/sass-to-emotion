@@ -291,6 +291,30 @@ export const foo = css\`
 "
 `;
 
+exports[`transform never print nested  1`] = `
+"import { css } from '@emotion/core';
+import { variables as vars, fontSmall } from '@domain-group/fe-brary';
+import { fePaListingDetailsWrapper, fePaListingDetailsHeading } from '../utils';
+
+export const aboutDevelopment = css\`
+  \${fePaListingDetailsWrapper};
+  margin-bottom: 24px;
+\`;
+
+export const aboutDevelopmentHeader = css\`
+  \${fePaListingDetailsHeading};
+  display: flex;
+\`;
+
+export const aboutDevelopmentContainer = css\`
+  \${fontSmall};
+  border: 1px solid \${vars.colour.neutral300};
+  display: flex;
+  position: relative;
+\`;
+"
+`;
+
 exports[`transform no new line breaks 1`] = `
 "import { css } from '@emotion/core';
 import { aTag } from '@domain-group/fe-brary';
