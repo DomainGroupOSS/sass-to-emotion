@@ -264,6 +264,8 @@ const processRoot = (root, filePath) => {
     postcss.stringify(rule, (string, node, startOrEnd) => {
       if (node && node === rule && startOrEnd) return;
 
+      const nestedInAmpersand = node && isNestedInAmpersand(root, node);
+
       if (string.startsWith('@__IGNORE__')) {
         contents += string.split('@__IGNORE__')[1];
         return;
@@ -275,7 +277,7 @@ const processRoot = (root, filePath) => {
         && node.type === 'rule'
         && startOrEnd === 'start'
         && !node.selector.startsWith('&')
-        && isNestedInAmpersand(root, node)
+        && nestedInAmpersand
       ) {
         contents += `css-\${${selectorToLiteral(node.selector)}.name} {`;
         return;
@@ -286,12 +288,12 @@ const processRoot = (root, filePath) => {
         node
         && node.type === 'rule'
         && node.selector.startsWith('.')
-        && !isNestedInAmpersand(root, node)
+        && !nestedInAmpersand
       ) return;
 
       if (
         node
-        && !isNestedInAmpersand(root, node)
+        && !nestedInAmpersand
         && node.parent !== rule
         && node.parent.type === 'rule'
         && node.parent.selector.startsWith('.')
