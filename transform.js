@@ -263,6 +263,7 @@ const processRoot = (root, filePath) => {
     }
 
     let contents = '';
+
     postcss.stringify(rule, (string, node, startOrEnd) => {
       if (node && node === rule && startOrEnd) return;
 
@@ -293,22 +294,23 @@ const processRoot = (root, filePath) => {
 
       // ignore nested classes
       if (node && node.type === 'rule' && node.selector.startsWith('.') && !nestedInAmpersand) {
+        node.isItsOwnCssVar = true;
         return;
       }
 
       // don't print ampersand decls twice
-      // if (
-      //   node
-      //   && node.type === 'decl'
-      //   && node.parent
-      //   && node.parent.selector
-      //   && node.parent.selector.startsWith('&')
-      //   && !checkUpTree(
-      //     root,
-      //     node,
-      //     nodeToCheck => nodeToCheck.type === 'rule' && nodeToCheck.isItsOwnCssVar,
-      //   )
-      // ) return;
+      if (
+        node
+        && node.type === 'decl'
+        && node.parent
+        && node.parent.selector
+        && node.parent.selector.startsWith('&')
+        && checkUpTree(
+          root,
+          node,
+          nodeToCheck => nodeToCheck.type === 'rule' && nodeToCheck.isItsOwnCssVar && nodeToCheck !== rule,
+        )
+      ) return;
 
       // don't print nested decls
       if (

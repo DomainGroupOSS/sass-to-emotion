@@ -299,10 +299,6 @@ import { fePaListingDetailsWrapper, fePaListingDetailsHeading } from '../utils';
 export const aboutDevelopment = css\`
   \${fePaListingDetailsWrapper};
   margin-bottom: 24px;
-
-  cursor: pointer;
-  bottom: 0;
-  left: 0;
 \`;
 
 export const aboutDevelopmentHeader = css\`
