@@ -282,19 +282,6 @@ describe('transform', () => {
         ),
       ).toMatchSnapshot();
     });
-    it('unrecognised', () => {
-      expect(() => {
-        transform(
-          `.search-results__auctions-label {
-             display: none;
-
-             @include media('>=desktop', 'landscape') {
-               display: inline;
-             }
-          }`,
-        );
-      }).toThrow();
-    });
   });
 
   it('top level vars', () => {
