@@ -508,7 +508,7 @@ describe('transform', () => {
     ).toMatchSnapshot();
   });
 
-  it.only('removes pre double underscore text', () => {
+  it('removes pre double underscore text', () => {
     expect(
       transform(`
         %fe-pa-listing__details-main {
@@ -558,6 +558,33 @@ describe('transform', () => {
               cursor: pointer;
               bottom: 0;
               left: 0;
+            }
+          }
+        }
+      `),
+    ).toMatchSnapshot();
+  });
+
+  it('never print nested media', () => {
+    expect(
+      transform(`
+        .listing-details__additional-features {
+          @extend %fe-pa-listing-details-wrapper;
+          margin-bottom: 24px;
+
+          @include media('>=mobile') {
+            width: 80%;
+          }
+
+          .listing-details__additional-features-header {
+            @extend %fe-pa-listing-details-heading;
+          }
+
+          .listing-details__additional-features-listing {
+            list-style-type: none;
+
+            @include media('>=tablet') {
+              width: 33.33333%;
             }
           }
         }

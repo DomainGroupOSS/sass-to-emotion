@@ -267,17 +267,14 @@ const processRoot = (root, filePath) => {
     postcss.stringify(rule, (string, node, startOrEnd) => {
       if (node && node === rule && startOrEnd) return;
 
+      // asumption here is that there is some state involved
+      // e.g &:hover or &.is-selected.
       const nestedInAmpersand = node
         && checkUpTree(
           root,
           node,
           nodeToCheck => nodeToCheck.type === 'rule' && nodeToCheck.selector.startsWith('&'),
         );
-
-      if (node && node.name === '__MEDIA_HELPER__' && startOrEnd === 'start') {
-        contents += `${node.params} {`;
-        return;
-      }
 
       // ref class if nested in ampersand
       if (
@@ -298,21 +295,18 @@ const processRoot = (root, filePath) => {
         return;
       }
 
-      // don't print ampersand decls twice
+      // don't print ampersand/media decls twice
       if (
         node
         && node.type === 'decl'
-        && node.parent
-        && node.parent.selector
-        && node.parent.selector.startsWith('&')
         && checkUpTree(
           root,
           node,
+          // nodeToCheck !== rule means not the rule being printed
           nodeToCheck => nodeToCheck.type === 'rule' && nodeToCheck.isItsOwnCssVar && nodeToCheck !== rule,
         )
       ) return;
 
-      // don't print nested decls
       if (
         node
         && node.parent.type === 'rule'
@@ -320,6 +314,11 @@ const processRoot = (root, filePath) => {
         && node.parent !== rule
         && node.parent.selector.startsWith('.')
       ) return;
+
+      if (node && node.type === 'atrule' && node.name === '__MEDIA_HELPER__' && startOrEnd === 'start') {
+        contents += `${node.params} {`;
+        return;
+      }
 
       // handle mixins and placeholder's
       if (node && ['extend', 'include'].includes(node.name)) {

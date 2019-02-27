@@ -331,6 +331,34 @@ export const aboutDevelopmentLink = css\`
 "
 `;
 
+exports[`transform never print nested media 1`] = `
+"import { css } from '@emotion/core';
+import { media } from '@domain-group/fe-brary';
+import { fePaListingDetailsWrapper, fePaListingDetailsHeading } from '../utils';
+
+export const additionalFeatures = css\`
+  \${fePaListingDetailsWrapper};
+  margin-bottom: 24px;
+
+  \${media('>=mobile')} {
+    width: 80%;
+  }
+\`;
+
+export const additionalFeaturesHeader = css\`
+  \${fePaListingDetailsHeading};
+\`;
+
+export const additionalFeaturesListing = css\`
+  list-style-type: none;
+
+  \${media('>=tablet')} {
+    width: 33.33333%;
+  }
+\`;
+"
+`;
+
 exports[`transform no new line breaks 1`] = `
 "import { css } from '@emotion/core';
 import { aTag } from '@domain-group/fe-brary';
