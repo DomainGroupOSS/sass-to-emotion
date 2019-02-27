@@ -615,4 +615,18 @@ describe('transform', () => {
       `),
     ).toMatchSnapshot();
   });
+
+  it('multiple vars', () => {
+    expect(
+      transform(`
+        $agent-name-size: $fe-brary-font-h5-font-size;
+        $company-name-size: $fe-brary-font-h6-font-size;
+        $agent-avatar-border-experiment-color: #979797;
+
+        .listing-details__agent-details-carousel {
+          position: relative;
+        }
+      `),
+    ).toMatchSnapshot();
+  });
 });

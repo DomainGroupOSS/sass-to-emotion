@@ -379,7 +379,7 @@ module.exports = (cssString, filePath, pathToVariables = '../variables') => {
     .sort(([, { node: a }], [, { node: b }]) => a.source.start.line - b.source.start.line)
     .reduce((acc, [name, {
       contents, type, node, isUsedInFile,
-    }]) => {
+    }], currentIndex, sourceArray) => {
       if (type !== 'constVar') {
         fileIsJustVarExports = false;
       }
@@ -397,7 +397,7 @@ module.exports = (cssString, filePath, pathToVariables = '../variables') => {
           node.value.includes("'")
             ? `"${node.value.replace('\n', ' ')}"`
             : `'${node.value.replace('\n', ' ')}'`
-        }\n`;
+        }${sourceArray[currentIndex + 1] && sourceArray[currentIndex + 1][1].type !== 'constVar' ? '\n' : ''}`;
       }
 
       return `${acc}\n${type === 'class' || !isUsedInFile ? 'export ' : ''}${

@@ -305,6 +305,19 @@ export const aboutDevelopmentPolicy = css\`
 "
 `;
 
+exports[`transform multiple vars 1`] = `
+"import { css } from '@emotion/core';
+
+export const agentNameSize = '$fe-brary-font-h5-font-size';
+export const companyNameSize = '$fe-brary-font-h6-font-size';
+export const agentAvatarBorderExperimentColor = '#979797';
+
+export const agentDetailsCarousel = css\`
+  position: relative;
+\`;
+"
+`;
+
 exports[`transform nested class no vars 1`] = `
 "import { css } from '@emotion/core';
 
