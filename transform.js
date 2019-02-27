@@ -287,7 +287,9 @@ const processRoot = (root, filePath) => {
         && nestedInAmpersand
       ) {
         node.contentsAlreadyPrinted = true;
-        node.moveDeclToTopOfFile = true;
+        root.walkRules(node.selector, (refrencedRule) => {
+          refrencedRule.isReferencedMoreThanOnce = true;
+        });
         contents += `css-\${${selectorToLiteral(node.selector)}.name} {`;
         return;
       }
@@ -378,7 +380,16 @@ module.exports = (cssString, filePath, pathToVariables = '../variables') => {
   const oneDefault = root.classes.size === 1;
 
   const emotionExports = Array.from(root.classes.entries())
-    .sort(([, { node: a }], [, { node: b }]) => a.source.start.line - b.source.start.line)
+    .sort(([, { node: a }], [, { node: b }]) => {
+      if (a.isReferencedMoreThanOnce) {
+        return -1;
+      }
+      if (b.isReferencedMoreThanOnce) {
+        return 1;
+      }
+
+      return a.source.start.line - b.source.start.line;
+    })
     .reduce((acc, [name, {
       contents, type, node, isUsedInFile,
     }], currentIndex, sourceArray) => {
