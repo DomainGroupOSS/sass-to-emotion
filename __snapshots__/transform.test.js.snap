@@ -2,11 +2,11 @@
 
 exports[`transform adds a FIXME comment 1`] = `
 "import { css } from '@emotion/core';
-import * as customVars from '../variables';
+import { listingDetailsAdSpacing } from '../variables';
 
 export default css\`
   /* FIXME: Sass maths was detected in the line below, you must fix manually. */
-  height: 90px + \${customVars.listingDetailsAdSpacing} * 2;
+  height: 90px + \${listingDetailsAdSpacing} * 2;
 \`;
 "
 `;
@@ -41,11 +41,11 @@ export default css\`
 
 exports[`transform custom vars 1`] = `
 "import { css } from '@emotion/core';
-import * as customVars from '../variables';
+import { fooBarBazWhizz } from '../variables';
 
 export default css\`
   display: none;
-  color: \${customVars.fooBarBazWhizz};
+  color: \${fooBarBazWhizz};
 \`;
 "
 `;
@@ -53,7 +53,7 @@ export default css\`
 exports[`transform custom vars in include 1`] = `
 "import { css } from '@emotion/core';
 import { simpleArrow } from '../utils';
-import * as customVars from '../variables';
+import { mapMarkerArrowSize } from '../variables';
 
 export default css\`
             $map-marker-arrow-size: 8px;
@@ -65,7 +65,7 @@ export default css\`
     'down',
     vars.colour.white,
   )}
-              margin-left: \${customVars.mapMarkerArrowSize};
+              margin-left: \${mapMarkerArrowSize};
             }
           \`;
 "
@@ -602,13 +602,13 @@ exports[`transform top level vars 1`] = `
 
 exports[`transform top level vars ref 1`] = `
 "import { css } from '@emotion/core';
-import * as customVars from '../variables';
+import { externalVar } from '../variables';
 
 const fooBarBaz = '42px';
 
 export const foo = css\`
   height: \${fooBarBaz};
-  width: \${customVars.externalVar};
+  width: \${externalVar};
 \`;
 "
 `;

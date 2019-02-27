@@ -64,11 +64,11 @@ function handleSassVar(decl, root) {
           return `\${${varName}}`;
         }
 
-        if (!root.usesCustomVars) {
-          root.usesCustomVars = true;
+        if (!root.customVars.includes(varName)) {
+          root.customVars.push(varName);
         }
 
-        return `\${customVars.${varName}}`;
+        return `\${${varName}}`;
       }
 
       return string;
@@ -114,6 +114,7 @@ function mixinParamsToFunc(str) {
 const processRoot = (root, filePath) => {
   root.feBraryHelpers = [];
   root.externalImports = [];
+  root.customVars = [];
   root.classes = new Map();
   root.usesFeBraryVars = false;
   // move all three below to global scope and use stringify
@@ -286,6 +287,7 @@ const processRoot = (root, filePath) => {
         && nestedInAmpersand
       ) {
         node.contentsAlreadyPrinted = true;
+        node.moveDeclToTopOfFile = true;
         contents += `css-\${${selectorToLiteral(node.selector)}.name} {`;
         return;
       }
@@ -420,7 +422,7 @@ module.exports = (cssString, filePath, pathToVariables = '../variables') => {
       ? `import { ${root.externalImports.join(', ')} } from '../utils';\n`
       : ''
   }${
-    root.usesCustomVars ? `import * as customVars from '${pathToVariables}';\n` : ''
+    root.customVars.length ? `import { ${root.customVars.join(', ')} } from '${pathToVariables}';\n` : ''
   }${emotionExports}
 `;
 
