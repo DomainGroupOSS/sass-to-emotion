@@ -12,10 +12,11 @@ const FE_BRARY_PREFIX = '$fe-brary-';
 
 const OPERATORS = [' + ', ' - ', ' / ', ' * ', ' % ', ' < ', ' > ', ' == ', ' != ', ' <= ', ' >= '];
 
-function checkUpTree(root, node, checkerFunc) {
+function checkUpTree(root, node, checkerFunc, rule) {
   let passedCheck = false;
   let parentNode = node.parent;
   do {
+    if (rule === parentNode) return passedCheck;
     if (parentNode !== root && checkerFunc(parentNode)) {
       passedCheck = true;
     }
@@ -303,6 +304,7 @@ const processRoot = (root, filePath) => {
           node,
           // nodeToCheck !== rule means not the rule being printed
           nodeToCheck => nodeToCheck.type === 'rule' && nodeToCheck.isItsOwnCssVar && nodeToCheck !== rule,
+          rule,
         )
       ) return;
 

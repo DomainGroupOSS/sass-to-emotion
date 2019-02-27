@@ -591,4 +591,28 @@ describe('transform', () => {
       `),
     ).toMatchSnapshot();
   });
+
+  it('multiple nested', () => {
+    expect(
+      transform(`
+        .listing-details__about-development {
+          @extend %fe-pa-listing-details-wrapper;
+          margin-bottom: 24px;
+
+          .listing-details__about-development-left {
+            flex: 1;
+            padding: 20px;
+
+            .listing-details__about-development-name {
+              font-size: $fe-brary-font-base-font-size;
+
+              .listing-details__about-development-policy {
+                font-size: 44px;
+              }
+            }
+          }
+        }
+      `),
+    ).toMatchSnapshot();
+  });
 });
