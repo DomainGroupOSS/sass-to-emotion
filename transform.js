@@ -295,24 +295,15 @@ const processRoot = (root, filePath) => {
         return;
       }
 
-      // don't print ampersand/media decls twice
+      // don't print anything that's in it's own css var
       if (
         node
-        && node.type === 'decl'
         && checkUpTree(
           root,
           node,
           // nodeToCheck !== rule means not the rule being printed
           nodeToCheck => nodeToCheck.type === 'rule' && nodeToCheck.isItsOwnCssVar && nodeToCheck !== rule,
         )
-      ) return;
-
-      if (
-        node
-        && node.parent.type === 'rule'
-        && !nestedInAmpersand
-        && node.parent !== rule
-        && node.parent.selector.startsWith('.')
       ) return;
 
       if (node && node.type === 'atrule' && node.name === '__MEDIA_HELPER__' && startOrEnd === 'start') {
