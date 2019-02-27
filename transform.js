@@ -190,6 +190,9 @@ const processRoot = (root, filePath) => {
           isUsedInFile = true;
         }
       });
+
+      if (decl.value.includes(FE_BRARY_PREFIX)) root.usesFeBraryVars = true;
+
       root.classes.set(decl.prop, {
         type: 'constVar',
         node: decl,

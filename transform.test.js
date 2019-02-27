@@ -634,6 +634,7 @@ describe('transform', () => {
     expect(
       transform(`
         $agent-name-size: $fe-brary-font-h5-font-size;
+        $agent-box-box-shadow-left-right: inset -1px 0 0 0 $agent-box-border-color-lighter, inset 1px 0 0 0 $agent-box-border-color-light;
       `),
     ).toMatchSnapshot();
   });
@@ -646,6 +647,22 @@ describe('transform', () => {
         }
 
         $agent-avatar-border-experiment-color: #979797;
+      `),
+    ).toMatchSnapshot();
+  });
+
+  it('nested with state', () => {
+    expect(
+      transform(`
+        .listing-details__agent-details-carousel {
+          position: relative;
+
+          .foo-bar-baz {
+            &.bazzy {
+              color: pink;
+            }
+          }
+        }
       `),
     ).toMatchSnapshot();
   });
