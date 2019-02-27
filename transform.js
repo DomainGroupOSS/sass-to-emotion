@@ -290,7 +290,7 @@ const processRoot = (root, filePath) => {
         root.walkRules(node.selector, (refrencedRule) => {
           refrencedRule.isReferencedMoreThanOnce = true;
         });
-        contents += `css-\${${selectorToLiteral(node.selector)}.name} {`;
+        contents += `[class*='\${${selectorToLiteral(node.selector)}.name}'] {`;
         return;
       }
 
@@ -380,11 +380,17 @@ module.exports = (cssString, filePath, pathToVariables = '../variables') => {
   const oneDefault = root.classes.size === 1;
 
   const emotionExports = Array.from(root.classes.entries())
-    .sort(([, { node: a }], [, { node: b }]) => {
+    .sort(([, { node: a, type: aType }], [, { node: b, type: bType }]) => {
       if (a.isReferencedMoreThanOnce) {
         return -1;
       }
       if (b.isReferencedMoreThanOnce) {
+        return 1;
+      }
+      if (aType === 'constVar') {
+        return -1;
+      }
+      if (bType === 'constVar') {
         return 1;
       }
 

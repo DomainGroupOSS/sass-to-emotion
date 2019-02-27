@@ -11,6 +11,17 @@ export default css\`
 "
 `;
 
+exports[`transform const vars up top 1`] = `
+"import { css } from '@emotion/core';
+
+export const agentAvatarBorderExperimentColor = '#979797';
+
+export const agentDetailsCarousel = css\`
+  position: relative;
+\`;
+"
+`;
+
 exports[`transform custom include-media max-width 1`] = `
 "import { css } from '@emotion/core';
 import { media } from '@domain-group/fe-brary';
@@ -305,7 +316,7 @@ export const aboutDevelopmentPolicy = css\`
 "
 `;
 
-exports[`transform multiple vars 1`] = `
+exports[`transform multiple vars formating 1`] = `
 "import { css } from '@emotion/core';
 
 export const agentNameSize = '$fe-brary-font-h5-font-size';
@@ -444,16 +455,16 @@ export const buttonIcon = css\`
 \`;
 
 export const buttonCopy = css\`
-  display: flex;
-  cursor: pointer;
+            display: flex;
+            cursor: pointer;
 
-  &:hover {
-    css-\${buttonIcon.name} {
-      opacity: 1;
-      transform: translateX(0);
-    }
-  }
-\`;
+            &:hover {
+              [class*='\${buttonIcon.name}'] {
+                opacity: 1;
+                transform: translateX(0);
+              }
+            }
+          \`;
 "
 `;
 
@@ -535,14 +546,14 @@ export const agentDetailsAgent = css\`
 \`;
 
 export const agentDetailsRightArrow = css\`
-  color: \${vars.colour.primaryDark};
+          color: \${vars.colour.primaryDark};
 
-  &.with-big-agents {
-    css-\${agentDetailsAgent.name} {
-      text-align: center;
-    }
-  }
-\`;
+          &.with-big-agents {
+            [class*='\${agentDetailsAgent.name}'] {
+              text-align: center;
+            }
+          }
+        \`;
 "
 `;
 
@@ -623,5 +634,10 @@ export default css\`
     display: inline;
   }
 \`;
+"
+`;
+
+exports[`transform vars refrencing fe-brary variables 1`] = `
+"export default '$fe-brary-font-h5-font-size';
 "
 `;

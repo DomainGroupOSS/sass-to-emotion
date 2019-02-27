@@ -616,7 +616,7 @@ describe('transform', () => {
     ).toMatchSnapshot();
   });
 
-  it('multiple vars', () => {
+  it('multiple vars formating', () => {
     expect(
       transform(`
         $agent-name-size: $fe-brary-font-h5-font-size;
@@ -626,6 +626,26 @@ describe('transform', () => {
         .listing-details__agent-details-carousel {
           position: relative;
         }
+      `),
+    ).toMatchSnapshot();
+  });
+
+  it('vars refrencing fe-brary variables', () => {
+    expect(
+      transform(`
+        $agent-name-size: $fe-brary-font-h5-font-size;
+      `),
+    ).toMatchSnapshot();
+  });
+
+  it('const vars up top', () => {
+    expect(
+      transform(`
+        .listing-details__agent-details-carousel {
+          position: relative;
+        }
+
+        $agent-avatar-border-experiment-color: #979797;
       `),
     ).toMatchSnapshot();
   });
