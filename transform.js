@@ -405,7 +405,7 @@ module.exports = (cssString, filePath, pathToVariables = '../variables') => {
           node.value.includes("'")
             ? `"${node.value.replace('\n', ' ')}"`
             : `'${node.value.replace('\n', ' ')}'`
-        }`;
+        }\n`;
       }
 
       return `${acc}\n${type === 'class' || !isUsedInFile ? 'export ' : ''}${

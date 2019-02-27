@@ -335,6 +335,10 @@ describe('transform', () => {
           min-width: 0;
           width: 100%;
         }
+
+        .foo {
+          color: pink;
+        }
       `),
     ).toMatchSnapshot();
   });
@@ -408,6 +412,7 @@ describe('transform', () => {
     ).toMatchSnapshot();
   });
 
+  // TODO
   it('ref nested classes', () => {
     expect(
       transform(`
@@ -503,7 +508,7 @@ describe('transform', () => {
     ).toMatchSnapshot();
   });
 
-  it('removes pre double underscore text', () => {
+  it.only('removes pre double underscore text', () => {
     expect(
       transform(`
         %fe-pa-listing__details-main {
@@ -519,7 +524,7 @@ describe('transform', () => {
 
         .fe-pa-listing__foo {
           @extend %fe-pa-listing__details-main;
-          @include fe-pa-listing__details-main;
+          @include fe-pa-listing__details-container;
         }
       `),
     ).toMatchSnapshot();

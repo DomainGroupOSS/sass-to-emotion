@@ -120,11 +120,15 @@ export const foo = css\`
 exports[`transform exports placeholder if its not being used in the file 1`] = `
 "import { css } from '@emotion/core';
 
-export default css\`
+export const detailsMain = css\`
   padding: 18px 0;
   flex: 1 1 auto;
   min-width: 0;
   width: 100%;
+\`;
+
+export const foo = css\`
+  color: pink;
 \`;
 "
 `;
@@ -478,7 +482,6 @@ export const agentDetailsAgent = css\`
 
 exports[`transform removes pre double underscore text 1`] = `
 "import { css } from '@emotion/core';
-import { detailsMain } from '../utils';
 
 const detailsMain = css\`
   padding: 18px 0;
@@ -487,7 +490,7 @@ const detailsMain = css\`
   width: 100%;
 \`;
 
-export function detailsContainer() {
+function detailsContainer() {
   return css\`
     color: black;
   \`;
@@ -495,7 +498,7 @@ export function detailsContainer() {
 
 export const foo = css\`
   \${detailsMain};
-  \${detailsMain()}
+  \${detailsContainer()}
 \`;
 "
 `;
@@ -536,6 +539,7 @@ exports[`transform top level vars ref 1`] = `
 import * as customVars from '../variables';
 
 const fooBarBaz = '42px';
+
 export const foo = css\`
   height: \${fooBarBaz};
   width: \${customVars.externalVar};
