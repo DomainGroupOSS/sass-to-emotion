@@ -68,7 +68,7 @@ import { simpleArrow } from '../utils';
 
 const mapMarkerArrowSize = '8px';
 
-export const mapMarker = css\`
+export default css\`
 
             &::after {
               \${simpleArrow(
@@ -132,7 +132,7 @@ const detailsMain = css\`
   width: 100%;
 \`;
 
-export const foo = css\`
+export default css\`
   \${detailsMain};
 \`;
 "
@@ -157,7 +157,7 @@ export const foo = css\`
 exports[`transform handle mixins without args 1`] = `
 "import { css } from '@emotion/core';
 
-export const message = css\`
+export default css\`
   \${resetTopMargin()}
   margin-bottom: 20px;
 \`;
@@ -187,7 +187,7 @@ exports[`transform handles nested vars 1`] = `
 
 const avatarSize = '72px';
 
-export const agentDetailsAgentAvatar = css\`
+export default css\`
   color: \${avatarSize};
 \`;
 "
@@ -198,7 +198,7 @@ exports[`transform handles non-nested vars 1`] = `
 
 const avatarSize = '72px';
 
-export const agentDetailsAgentAvatar = css\`
+export default css\`
   color: \${avatarSize};
 \`;
 "
@@ -290,7 +290,7 @@ function adExact(width, height) {
   \`;
 }
 
-export const adspot468X60728X90Pos1Container = css\`
+export default css\`
   color: blue;
   \${adExact('125px', '700px')}
 \`;
@@ -621,7 +621,7 @@ function detailsContainer() {
   \`;
 }
 
-export const foo = css\`
+export default css\`
   \${detailsMain};
   \${detailsContainer()}
 \`;
@@ -717,7 +717,7 @@ import { externalVar } from '../variables';
 
 const fooBarBaz = '42px';
 
-export const foo = css\`
+export default css\`
   height: \${fooBarBaz};
   width: \${externalVar};
 \`;

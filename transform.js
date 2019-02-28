@@ -443,9 +443,11 @@ module.exports = (cssString, filePath, pathToVariables = '../variables') => {
 
   let fileIsJustVarExports = true;
 
-  const oneDefault = root.classes.size === 1;
+  const classesEntries = Array.from(root.classes.entries());
 
-  const emotionExports = Array.from(root.classes.entries())
+  const oneDefault = classesEntries.filter(([, { isUsedInFile }]) => !isUsedInFile).length === 1;
+
+  const emotionExports = classesEntries
     .sort(([, { node: a, type: aType }], [, { node: b, type: bType }]) => {
       if (a.isReferencedMoreThanOnce && bType !== 'constVar') {
         return -1;
@@ -481,13 +483,13 @@ module.exports = (cssString, filePath, pathToVariables = '../variables') => {
 
       if (type === 'mixin') {
         return `${acc}\n${isUsedInFile ? '' : 'export '}${
-          oneDefault ? ' default ' : ''
+          oneDefault && !isUsedInFile ? ' default ' : ''
         }function ${name} {\n  return css\`${contents}\n  \`;\n}\n`;
       }
 
       if (type === 'constVar') {
         return `${acc}\n${isUsedInFile ? '' : 'export '}${
-          oneDefault ? ' default ' : ` const ${selectorToLiteral(node.prop)} = `
+          oneDefault && !isUsedInFile ? ' default ' : ` const ${selectorToLiteral(node.prop)} = `
         } ${
           node.value.includes("'")
             ? `"${node.value.replace('\n', ' ')}"`
@@ -496,7 +498,7 @@ module.exports = (cssString, filePath, pathToVariables = '../variables') => {
       }
 
       return `${acc}\n${type === 'class' || !isUsedInFile ? 'export ' : ''}${
-        oneDefault ? 'default ' : `const ${name} = `
+        oneDefault && !isUsedInFile ? 'default ' : `const ${name} = `
       }css\`${contents}\`;\n`;
     }, '');
 
