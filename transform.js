@@ -440,16 +440,16 @@ module.exports = (cssString, filePath, pathToVariables = '../variables') => {
 
   const emotionExports = Array.from(root.classes.entries())
     .sort(([, { node: a, type: aType }], [, { node: b, type: bType }]) => {
-      if (a.isReferencedMoreThanOnce) {
+      if (a.isReferencedMoreThanOnce && bType !== 'constVar') {
         return -1;
       }
-      if (b.isReferencedMoreThanOnce) {
+      if (b.isReferencedMoreThanOnce && aType !== 'constVar') {
         return 1;
       }
-      if (aType === 'constVar') {
+      if (aType === 'constVar' && b.isReferencedMoreThanOnce) {
         return -1;
       }
-      if (bType === 'constVar') {
+      if (bType === 'constVar' && a.isReferencedMoreThanOnce) {
         return 1;
       }
 
