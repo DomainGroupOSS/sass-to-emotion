@@ -678,6 +678,24 @@ describe('transform', () => {
     ).toMatchSnapshot();
   });
 
+  it('selector for multiple classes with existing at top level', () => {
+    expect(
+      transform(`
+        .listing-details__key-features--key,
+          .listing-details__key-features--value {
+            width: 50%;
+          }
+
+          .listing-details__key-features--key {
+            @include media('>=desktop') {
+              padding-right: 25px;
+              font-weight: 600;
+            }
+          }
+        `),
+    ).toMatchSnapshot();
+  });
+
 
   it('selector for an element with multiple classes', () => {
     expect(

@@ -148,11 +148,21 @@ const processRoot = (root, filePath) => {
     rule.selector = newSelector;
 
     classes.forEach((selector) => {
-      const ruleWithPlaceholder = postcss.rule({ selector });
       const placeHolderAtRule = postcss.atRule({ name: 'extend', params: newSelector });
-      ruleWithPlaceholder.append(placeHolderAtRule);
 
-      root.append(ruleWithPlaceholder);
+      let foundTheTopLevelClass = false;
+      root.walkRules(selector, (ruleToFind) => {
+        if (ruleToFind.parent === root) {
+          foundTheTopLevelClass = true;
+          ruleToFind.prepend(placeHolderAtRule);
+        }
+      });
+
+      if (!foundTheTopLevelClass) {
+        const ruleWithPlaceholder = postcss.rule({ selector });
+        ruleWithPlaceholder.append(placeHolderAtRule);
+        root.append(ruleWithPlaceholder);
+      }
     });
   });
 
