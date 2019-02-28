@@ -259,14 +259,14 @@ const processRoot = (root, filePath) => {
 
     if (OPERATORS.some(operator => decl.value.includes(operator))) {
       global.sassToEmotionWarnings[filePath] = global.sassToEmotionWarnings[filePath] || [];
-      const msg = "Sass maths detected, find the FIXME's in this file and manually fix.";
+      const msg = 'Sass maths detected, find the FIXME\'s in this file and manually fix.';
       if (!global.sassToEmotionWarnings[filePath].includes(msg)) {
         global.sassToEmotionWarnings[filePath].push(msg);
       }
       decl.parent.insertBefore(
         decl,
         postcss.comment({
-          text: 'FIXME: Sass maths was detected in the line below, you must fix manually.',
+          text: `FIXME: Sass maths was detected in the line below, you must fix manually.\n Original was '${decl.value}'`,
         }),
       );
     }
