@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /* eslint-disable no-param-reassign */
-const postcss = require('postcss-scss');
-const { list, comment } = require('postcss');
+const postcssScss = require('postcss-scss');
+const postcss = require('postcss');
 const { camelCase } = require('lodash');
 const format = require('prettier-eslint');
 const feBrary = require('@domain-group/fe-brary');
@@ -29,10 +29,10 @@ function checkUpTree(root, node, checkerFunc, rule) {
 function handleSassVar(decl, root) {
   let values;
 
-  if (decl.value.includes(',') && list.comma(decl.value)[0] !== decl.value) {
-    values = list.comma(decl.value);
-  } else if (decl.value.includes(' ') && list.space(decl.value)[0] !== decl.value) {
-    values = list.space(decl.value);
+  if (decl.value.includes(',') && postcss.list.comma(decl.value)[0] !== decl.value) {
+    values = postcss.list.comma(decl.value);
+  } else if (decl.value.includes(' ') && postcss.list.space(decl.value)[0] !== decl.value) {
+    values = postcss.list.space(decl.value);
   } else {
     values = [decl.value];
   }
@@ -209,7 +209,7 @@ const processRoot = (root, filePath) => {
       }
       decl.parent.insertBefore(
         decl,
-        comment({
+        postcss.comment({
           text: 'FIXME: Sass maths was detected in the line below, you must fix manually.',
         }),
       );
@@ -269,7 +269,7 @@ const processRoot = (root, filePath) => {
 
     let contents = '';
 
-    postcss.stringify(rule, (string, node, startOrEnd) => {
+    postcssScss.stringify(rule, (string, node, startOrEnd) => {
       if (node && node === rule && startOrEnd) return;
 
       // asumption here is that there is some state involved
@@ -342,7 +342,7 @@ const processRoot = (root, filePath) => {
     const selector = mixinParamsToFunc(params);
 
     let contents = '';
-    postcss.stringify(atRule, (string, node, startOrEnd) => {
+    postcssScss.stringify(atRule, (string, node, startOrEnd) => {
       // if node.type === decl skip when doing this above
       // stops first and last part entering the string e.g "@mixin ad-exact($width, $height) {"
       if (node && node === atRule && startOrEnd) return;
@@ -368,7 +368,7 @@ const processRoot = (root, filePath) => {
 };
 
 module.exports = (cssString, filePath, pathToVariables = '../variables') => {
-  const root = postcss.parse(cssString, { from: filePath });
+  const root = postcssScss.parse(cssString, { from: filePath });
 
   processRoot(root, filePath);
 
