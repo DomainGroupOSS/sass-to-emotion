@@ -122,6 +122,12 @@ const processRoot = (root, filePath) => {
   root.classes = new Map();
   root.usesFeBraryVars = false;
 
+  root.walkComments((comment) => {
+    if (comment.text.includes('scss-lint')) {
+      comment.remove();
+    }
+  });
+
   root.walkRules(/^\..+\./, (rule) => {
     const classes = rule.selector.split('.').filter(Boolean);
 

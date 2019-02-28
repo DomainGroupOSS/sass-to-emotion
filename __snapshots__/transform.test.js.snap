@@ -112,6 +112,15 @@ export default css\`
 "
 `;
 
+exports[`transform delete scss lint comments 1`] = `
+"import { css } from '@emotion/core';
+
+export default css\`
+  font-size: 68%;
+\`;
+"
+`;
+
 exports[`transform does not export placeholder if its being used in the file 1`] = `
 "import { css } from '@emotion/core';
 

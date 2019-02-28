@@ -710,4 +710,16 @@ describe('transform', () => {
         `),
     ).toMatchSnapshot();
   });
+
+  it('delete scss lint comments', () => {
+    expect(
+      transform(`
+        .foo {
+          // scss-lint:disable NestingDepth
+          font-size: 68%; // scss-lint:disable VariableForProperty
+          // scss-lint:enable NestingDepth
+        }
+        `),
+    ).toMatchSnapshot();
+  });
 });
