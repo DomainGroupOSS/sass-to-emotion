@@ -122,6 +122,13 @@ const processRoot = (root, filePath) => {
   root.classes = new Map();
   root.usesFeBraryVars = false;
 
+  root.walkRules(/^\..+\./, (rule) => {
+    const classes = rule.selector.split('.').filter(Boolean);
+
+    // need to pick a winning class, going to arbitrarily pick the last
+    rule.selector = `.${classes[classes.length - 1]}`;
+  });
+
   // duplicate comma rules e.g .foo,.bar { color: pink }
   root.walkRules(/,/, (rule) => {
     if (rule.selector.includes('&')) return;
@@ -143,7 +150,6 @@ const processRoot = (root, filePath) => {
       const placeHolderAtRule = postcss.atRule({ name: 'extend', params: newSelector });
       ruleWithPlaceholder.append(placeHolderAtRule);
 
-      console.log('ruleWithPlaceholder.toString():', ruleWithPlaceholder.toString());
       root.append(ruleWithPlaceholder);
     });
   });

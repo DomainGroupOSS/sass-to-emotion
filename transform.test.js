@@ -677,4 +677,19 @@ describe('transform', () => {
       `),
     ).toMatchSnapshot();
   });
+
+
+  it('selector for an element with multiple classes', () => {
+    expect(
+      transform(`
+          .bar {
+            color: purple;
+          }
+
+          .foo__bar-baz.foo__whizz-bar {
+            color: pink;
+          }
+        `),
+    ).toMatchSnapshot();
+  });
 });

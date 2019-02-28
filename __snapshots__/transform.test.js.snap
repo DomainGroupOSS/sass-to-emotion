@@ -611,6 +611,19 @@ export const bar = css\`
 "
 `;
 
+exports[`transform selector for an element with multiple classes 1`] = `
+"import { css } from '@emotion/core';
+
+export const bar = css\`
+  color: purple;
+\`;
+
+export const whizzBar = css\`
+  color: pink;
+\`;
+"
+`;
+
 exports[`transform selector for multiple classes 1`] = `
 "import { css } from '@emotion/core';
 
