@@ -111,12 +111,44 @@ function mixinParamsToFunc(str) {
   return `${selectorToLiteral(funcName)}(${inputs.replace(/\$/g, '')}`;
 }
 
+function capitalizeFirstLetter(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
 const processRoot = (root, filePath) => {
   root.feBraryHelpers = [];
   root.externalImports = [];
   root.customVars = [];
   root.classes = new Map();
   root.usesFeBraryVars = false;
+
+  // duplicate comma rules e.g .foo,.bar { color: pink }
+  root.walkRules(/,/, (rule) => {
+    if (rule.selector.includes('&')) return;
+
+    const classes = postcss.list.comma(rule.selector);
+
+    const sharedPlaceholder = classes.map(selectorToLiteral).map((str, index) => {
+      if (index === 0) return str;
+
+      return capitalizeFirstLetter(str);
+    }).join('');
+
+    const newSelector = `%${sharedPlaceholder}`;
+
+    rule.selector = newSelector;
+
+    classes.forEach((selector) => {
+      const ruleWithPlaceholder = postcss.rule({ selector });
+      const placeHolderAtRule = postcss.atRule({ name: 'extend', params: newSelector });
+      ruleWithPlaceholder.append(placeHolderAtRule);
+
+      console.log('ruleWithPlaceholder.toString():', ruleWithPlaceholder.toString());
+      root.append(ruleWithPlaceholder);
+    });
+  });
+
+
   // move all three below to global scope and use stringify
   root.walkAtRules('extend', (atRule) => {
     atRule.originalParams = atRule.params;
@@ -396,6 +428,8 @@ module.exports = (cssString, filePath, pathToVariables = '../variables') => {
       if (bType === 'constVar') {
         return 1;
       }
+
+      if (!a.source || !b.source) return 0;
 
       return a.source.start.line - b.source.start.line;
     })

@@ -666,4 +666,15 @@ describe('transform', () => {
       `),
     ).toMatchSnapshot();
   });
+
+  it('multi class selectors ', () => {
+    expect(
+      transform(`
+        .foo__bar-whizz,
+        .foo__whizz-bar {
+          color: pink;
+        }
+      `),
+    ).toMatchSnapshot();
+  });
 });

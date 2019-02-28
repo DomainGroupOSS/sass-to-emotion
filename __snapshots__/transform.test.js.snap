@@ -291,6 +291,23 @@ export default function adExact(width, height) {
 "
 `;
 
+exports[`transform multi class selectors  1`] = `
+"import { css } from '@emotion/core';
+
+const barWhizzWhizzBar = css\`
+  color: pink;
+\`;
+
+export const barWhizz = css\`
+  \${barWhizzWhizzBar};
+\`;
+
+export const whizzBar = css\`
+  \${barWhizzWhizzBar};
+\`;
+"
+`;
+
 exports[`transform multiple nested 1`] = `
 "import { css } from '@emotion/core';
 import { variables as vars } from '@domain-group/fe-brary';
