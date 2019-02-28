@@ -16,12 +16,10 @@ function scssFileToJs(filePath) {
 (() => {
   const files = process.argv.slice(2);
   global.sassToEmotionWarnings = {};
-
+  console.log('Transforming...');
   const processedFiles = files
     .map((filePath) => {
       const css = fs.readFileSync(filePath);
-
-      console.log('Transforming:', filePath);
 
       const pathToVariables = path.relative(
         path.dirname(scssFileToJs(path.resolve(filePath))),

@@ -135,6 +135,8 @@ const processRoot = (root, filePath) => {
 
     const classes = postcss.list.comma(rule.selector);
 
+    if (!classes.every(classStr => classStr.startsWith('.'))) return;
+
     const sharedPlaceholder = classes.map(selectorToLiteral).map((str, index) => {
       if (index === 0) return str;
 
@@ -256,7 +258,7 @@ const processRoot = (root, filePath) => {
     decl.value = handleSassVar(decl, root);
   });
 
-  root.walkRules(/^(?!(\.|%))/, (rule) => {
+  root.walkRules(/^(?!(\.|%|:))/, (rule) => {
     if (rule.parent !== root) return;
     const msg = `Found a global selector "${
       rule.selector
