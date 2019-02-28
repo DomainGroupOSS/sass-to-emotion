@@ -667,7 +667,7 @@ describe('transform', () => {
     ).toMatchSnapshot();
   });
 
-  it('multi class selectors ', () => {
+  it('selector for multiple classes', () => {
     expect(
       transform(`
         .foo__bar-whizz,
