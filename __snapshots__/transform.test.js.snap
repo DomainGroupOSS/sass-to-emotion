@@ -5,7 +5,8 @@ exports[`transform adds a FIXME comment 1`] = `
 import { listingDetailsAdSpacing } from '../variables';
 
 export default css\`
-  /* FIXME: Sass maths was detected in the line below, you must fix manually. */
+  /* FIXME: Sass maths was detected in the line below, you must fix manually.
+ Original was '90px + $listing-details-ad-spacing * 2' */
   height: 90px + \${listingDetailsAdSpacing} * 2;
 \`;
 "
@@ -14,11 +15,11 @@ export default css\`
 exports[`transform const vars up top 1`] = `
 "import { css } from '@emotion/core';
 
+export const agentAvatarBorderExperimentColor = '#979797';
+
 export const agentDetailsCarousel = css\`
   position: relative;
 \`;
-
-export const agentAvatarBorderExperimentColor = '#979797';
 "
 `;
 
@@ -64,10 +65,10 @@ export default css\`
 exports[`transform custom vars in include 1`] = `
 "import { css } from '@emotion/core';
 import { simpleArrow } from '../utils';
-import { mapMarkerArrowSize } from '../variables';
 
-export default css\`
-            $map-marker-arrow-size: 8px;
+const mapMarkerArrowSize = '8px';
+
+export const mapMarker = css\`
 
             &::after {
               \${simpleArrow(
@@ -177,6 +178,28 @@ import { variables as vars } from '@domain-group/fe-brary';
 
 export default css\`
   border-bottom: 1px solid \${vars.colour.neutral300};
+\`;
+"
+`;
+
+exports[`transform handles nested vars 1`] = `
+"import { css } from '@emotion/core';
+
+const avatarSize = '72px';
+
+export const agentDetailsAgentAvatar = css\`
+  color: \${avatarSize};
+\`;
+"
+`;
+
+exports[`transform handles non-nested vars 1`] = `
+"import { css } from '@emotion/core';
+
+const avatarSize = '72px';
+
+export const agentDetailsAgentAvatar = css\`
+  color: \${avatarSize};
 \`;
 "
 `;

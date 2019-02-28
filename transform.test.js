@@ -722,4 +722,26 @@ describe('transform', () => {
         `),
     ).toMatchSnapshot();
   });
+
+  it('handles nested vars', () => {
+    expect(
+      transform(`
+        .listing-details__agent-details-agent-avatar {
+            $avatar-size: 72px;
+            color: $avatar-size;
+          }
+        `),
+    ).toMatchSnapshot();
+  });
+
+  it('handles non-nested vars', () => {
+    expect(
+      transform(`
+        $avatar-size: 72px;
+        .listing-details__agent-details-agent-avatar {
+            color: $avatar-size;
+          }
+        `),
+    ).toMatchSnapshot();
+  });
 });

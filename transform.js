@@ -122,6 +122,13 @@ const processRoot = (root, filePath) => {
   root.classes = new Map();
   root.usesFeBraryVars = false;
 
+  // move nested var declarations to top
+  root.walkDecls(/^\$/, (decl) => {
+    if (decl.parent !== root) {
+      root.prepend(decl.remove());
+    }
+  });
+
   root.walkComments((comment) => {
     if (comment.text.includes('scss-lint')) {
       comment.remove();
@@ -450,6 +457,14 @@ module.exports = (cssString, filePath, pathToVariables = '../variables') => {
         return -1;
       }
       if (bType === 'constVar' && a.isReferencedMoreThanOnce) {
+        return 1;
+      }
+
+      if (aType === 'constVar') {
+        return -1;
+      }
+
+      if (bType === 'constVar') {
         return 1;
       }
 
