@@ -630,11 +630,13 @@ describe('transform', () => {
     ).toMatchSnapshot();
   });
 
-  it('vars refrencing fe-brary variables', () => {
+  it('vars referencing fe-brary variables', () => {
     expect(
       transform(`
         $agent-name-size: $fe-brary-font-h5-font-size;
+        $foo-bar: $foo-bar-baz;
         $agent-box-box-shadow-left-right: inset -1px 0 0 0 $agent-box-border-color-lighter, inset 1px 0 0 0 $agent-box-border-color-light;
+        $agent-avatar-border-experiment-color: #979797;
       `),
     ).toMatchSnapshot();
   });
@@ -681,7 +683,7 @@ describe('transform', () => {
   it('selector for multiple classes with existing at top level', () => {
     expect(
       transform(`
-        .listing-details__key-features--key,
+          .listing-details__key-features--key,
           .listing-details__key-features--value {
             width: 50%;
           }

@@ -256,6 +256,8 @@ const processRoot = (root, filePath) => {
 
       if (decl.value.includes(FE_BRARY_PREFIX)) root.usesFeBraryVars = true;
 
+      decl.value = handleSassVar(decl, root);
+
       root.classes.set(decl.prop, {
         type: 'constVar',
         node: decl,
@@ -488,13 +490,18 @@ module.exports = (cssString, filePath, pathToVariables = '../variables') => {
       }
 
       if (type === 'constVar') {
+        let val;
+
+        if (node.value.includes('\$')) {// eslint-disable-line
+          val = `\`${node.value.replace('\$', '$')}\``;// eslint-disable-line
+        } else if (node.value.includes("'")) {
+          val = `"${node.value.replace('\n', ' ')}"`;
+        } else {
+          val = `'${node.value.replace('\n', ' ')}'`;
+        }
         return `${acc}\n${isUsedInFile ? '' : 'export '}${
           oneDefault && !isUsedInFile ? ' default ' : ` const ${selectorToLiteral(node.prop)} = `
-        } ${
-          node.value.includes("'")
-            ? `"${node.value.replace('\n', ' ')}"`
-            : `'${node.value.replace('\n', ' ')}'`
-        }${sourceArray[currentIndex + 1] && sourceArray[currentIndex + 1][1].type !== 'constVar' ? '\n' : ''}`;
+        } ${val}${sourceArray[currentIndex + 1] && sourceArray[currentIndex + 1][1].type !== 'constVar' ? '\n' : ''}`;
       }
 
       return `${acc}\n${type === 'class' || !isUsedInFile ? 'export ' : ''}${
