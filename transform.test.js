@@ -680,6 +680,21 @@ describe('transform', () => {
     ).toMatchSnapshot();
   });
 
+  it('nested selector for multiple classes', () => {
+    expect(
+      transform(`
+        .bar {
+          color: red;
+
+          .foo__bar-whizz,
+          .foo__whizz-bar {
+            color: pink;
+          }
+        }
+      `),
+    ).toMatchSnapshot();
+  });
+
   it('selector for multiple classes with existing at top level', () => {
     expect(
       transform(`
@@ -744,6 +759,84 @@ describe('transform', () => {
             color: $avatar-size;
           }
         `),
+    ).toMatchSnapshot();
+  });
+
+  it.skip('no overrides and absence of decls', () => {
+    expect(
+      transform(`
+        .foo {
+          color: pink;
+
+          .listing-details__agent-details-agent-avatar {
+            &.experiment-enabled {
+              border-color: $agent-avatar-border-experiment-color;
+              width: 72px;
+              height: 72px;
+            }
+          }
+        }
+
+        .listing-details__agent-details-agent-avatar {
+          color: black;
+        }
+      `),
+    ).toMatchSnapshot();
+  });
+
+  it('spaced selectors', () => {
+    expect(
+      transform(`
+        .listing-details__agent-details {
+          background-color: $agent-box-background-color;
+
+          .carousel .fe-carousel_forward {
+            width: 50px;
+            background: none;
+          }
+        }
+      `),
+    ).toMatchSnapshot();
+  });
+
+  it('double spaced selectors', () => {
+    expect(
+      transform(`
+        .listing-details__agent-details {
+          background-color: $agent-box-background-color;
+
+          .carousel .fe-carousel_backwards,
+          .carousel .fe-carousel_forward {
+            width: 50px;
+            background: none;
+          }
+        }
+      `),
+    ).toMatchSnapshot();
+  });
+
+  it.skip('foo', () => {
+    expect(
+      transform(`
+        @mixin platinum-button($colour) {
+          .listing-details__agent-details-platinum-button {
+            color: $colour;
+            border: 1px solid $colour;
+
+            .listing-details__cta-icon {
+              color: $colour;
+            }
+
+            &:hover {
+              background-color: rgba($agent-box-contact-button-background-color, 0.1);
+            }
+          }
+        }
+
+        .listing-details__agent-details {
+          @include platinum-button($agent-box-contact-button-background-color);
+        }
+      `),
     ).toMatchSnapshot();
   });
 });

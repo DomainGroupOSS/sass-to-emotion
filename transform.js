@@ -122,6 +122,21 @@ const processRoot = (root, filePath) => {
   root.classes = new Map();
   root.usesFeBraryVars = false;
 
+  // maybe use /S
+  root.walkRules(/ \./, (rule) => {
+    if (rule.selector.includes(',')) return;
+
+    const rules = rule.selector.split(' ');
+    const last = rules[rules.length - 1];
+
+    const { nodes } = rule;
+
+    const newRule = postcss.rule({ selector: last });
+    newRule.append(nodes);
+    root.append(rule, newRule);
+    rule.remove();
+  });
+
   // move nested var declarations to top
   root.walkDecls(/^\$/, (decl) => {
     if (decl.parent !== root) {
@@ -135,7 +150,8 @@ const processRoot = (root, filePath) => {
     }
   });
 
-  root.walkRules(/^\..+\./, (rule) => {
+  // maybe use /S
+  root.walkRules(/^\.[a-zA-Z0-9_-]+\./, (rule) => {
     const classes = rule.selector.split('.').filter(Boolean);
 
     // need to pick a winning class, going to arbitrarily pick the last
@@ -148,7 +164,7 @@ const processRoot = (root, filePath) => {
 
     const classes = postcss.list.comma(rule.selector);
 
-    if (!classes.every(classStr => classStr.startsWith('.'))) return;
+    if (!classes.every(classStr => classStr.startsWith('.') && !classStr.includes(' '))) return;
 
     const sharedPlaceholder = classes
       .map(selectorToLiteral)
@@ -162,6 +178,10 @@ const processRoot = (root, filePath) => {
     const newSelector = `%${sharedPlaceholder}`;
 
     rule.selector = newSelector;
+
+    rule.remove();
+
+    root.prepend(rule);
 
     classes.forEach((selector) => {
       const placeHolderAtRule = postcss.atRule({ name: 'extend', params: newSelector });

@@ -138,6 +138,21 @@ export default css\`
 "
 `;
 
+exports[`transform double spaced selectors 1`] = `
+"import { css } from '@emotion/core';
+import { agentBoxBackgroundColor } from '../variables';
+
+export const agentDetails = css\`
+  background-color: \${agentBoxBackgroundColor};
+\`;
+
+export const carouselFeCarouselBackwardsCarouselFeCarouselForward = css\`
+  width: 50px;
+  background: none;
+\`;
+"
+`;
+
 exports[`transform exports placeholder if its not being used in the file 1`] = `
 "import { css } from '@emotion/core';
 
@@ -373,6 +388,27 @@ export const button = css\`
 
 export const foo = css\`
   display: block;
+\`;
+"
+`;
+
+exports[`transform nested selector for multiple classes 1`] = `
+"import { css } from '@emotion/core';
+
+export const bar = css\`
+  color: red;
+\`;
+
+const barWhizzWhizzBar = css\`
+  color: pink;
+\`;
+
+export const barWhizz = css\`
+  \${barWhizzWhizzBar};
+\`;
+
+export const whizzBar = css\`
+  \${barWhizzWhizzBar};
 \`;
 "
 `;
@@ -702,6 +738,21 @@ export default css\`
   display: inline-flex;
   align-items: center;
   justify-content: center;
+\`;
+"
+`;
+
+exports[`transform spaced selectors 1`] = `
+"import { css } from '@emotion/core';
+import { agentBoxBackgroundColor } from '../variables';
+
+export const agentDetails = css\`
+  background-color: \${agentBoxBackgroundColor};
+\`;
+
+export const feCarouselForward = css\`
+  width: 50px;
+  background: none;
 \`;
 "
 `;
