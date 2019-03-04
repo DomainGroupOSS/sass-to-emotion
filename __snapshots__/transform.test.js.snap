@@ -64,19 +64,16 @@ export default css\`
 
 exports[`transform custom vars in include 1`] = `
 "import { css } from '@emotion/core';
+import { variables as vars } from '@domain-group/fe-brary';
 import { simpleArrow } from '../utils';
+import { mapMarkerArrowSize, mapMarkerArrowSize } from '../variables';
 
 const mapMarkerArrowSize = '8px';
 
 export default css\`
 
             &::after {
-              \${simpleArrow(
-    customVars.mapMarkerArrowSize,
-    customVars.mapMarkerArrowSize,
-    'down',
-    vars.colour.white,
-  )}
+              \${simpleArrow(mapMarkerArrowSize, mapMarkerArrowSize, 'down', vars.colour.white)}
               margin-left: \${mapMarkerArrowSize};
             }
           \`;

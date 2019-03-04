@@ -76,17 +76,21 @@ function handleSassVar(decl, root) {
     .join(' ');
 }
 
-function handleSassVarUnescaped(value) {
+function handleSassVarUnescaped(value, root) {
   if (value.startsWith(FE_BRARY_PREFIX)) {
     const [, name] = value.split(FE_BRARY_PREFIX);
     const [field, ...varNameSegs] = name.split('-');
     const varName = camelCase(varNameSegs.join('-'));
+    if (!root.usesFeBraryVars) {
+      root.usesFeBraryVars = true;
+    }
     return `vars.${field}.${varName}`;
   }
 
   if (value.startsWith('$')) {
     const varName = selectorToLiteral(value.slice(1));
-    return `customVars.${varName}`;
+    root.customVars.push(varName);
+    return `${varName}`;
   }
 
   const isWrappedInQuotes = ['"', "'"].includes(value[0]);
@@ -256,7 +260,7 @@ const processRoot = (root, filePath) => {
     }
 
     const inputsWithoutBraces = inputs.slice(0, -1);
-    const args = inputsWithoutBraces.split(',').map(arg => handleSassVarUnescaped(arg.trim()));
+    const args = inputsWithoutBraces.split(',').map(arg => handleSassVarUnescaped(arg.trim(), root));
 
     atRule.params = `\${${selectorToLiteral(funcName.trim())} (${args.join(', ')})}`;
   });
