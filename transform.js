@@ -150,11 +150,14 @@ const processRoot = (root, filePath) => {
 
     if (!classes.every(classStr => classStr.startsWith('.'))) return;
 
-    const sharedPlaceholder = classes.map(selectorToLiteral).map((str, index) => {
-      if (index === 0) return str;
+    const sharedPlaceholder = classes
+      .map(selectorToLiteral)
+      .map((str, index) => {
+        if (index === 0) return str;
 
-      return capitalizeFirstLetter(str);
-    }).join('');
+        return capitalizeFirstLetter(str);
+      })
+      .join('');
 
     const newSelector = `%${sharedPlaceholder}`;
 
@@ -178,7 +181,6 @@ const processRoot = (root, filePath) => {
       }
     });
   });
-
 
   // move all three below to global scope and use stringify
   root.walkAtRules('extend', (atRule) => {
@@ -268,14 +270,16 @@ const processRoot = (root, filePath) => {
 
     if (OPERATORS.some(operator => decl.value.includes(operator))) {
       global.sassToEmotionWarnings[filePath] = global.sassToEmotionWarnings[filePath] || [];
-      const msg = 'Sass maths detected, find the FIXME\'s in this file and manually fix.';
+      const msg = "Sass maths detected, find the FIXME's in this file and manually fix.";
       if (!global.sassToEmotionWarnings[filePath].includes(msg)) {
         global.sassToEmotionWarnings[filePath].push(msg);
       }
       decl.parent.insertBefore(
         decl,
         postcss.comment({
-          text: `FIXME: Sass maths was detected in the line below, you must fix manually.\n Original was '${decl.value}'`,
+          text: `FIXME: Sass maths was detected in the line below, you must fix manually.\n Original was '${
+            decl.value
+          }'`,
         }),
       );
     }
@@ -363,7 +367,12 @@ const processRoot = (root, filePath) => {
       }
 
       // ignore nested classes
-      if (node && node.type === 'rule' && node.selector.startsWith('.') && !nestedInAmpersand) {
+      if (
+        node
+        && node.type === 'rule'
+        && node.selector.startsWith('.')
+        && !nestedInAmpersand
+      ) {
         node.isItsOwnCssVar = true;
         return;
       }
@@ -380,7 +389,12 @@ const processRoot = (root, filePath) => {
         )
       ) return;
 
-      if (node && node.type === 'atrule' && node.name === '__MEDIA_HELPER__' && startOrEnd === 'start') {
+      if (
+        node
+        && node.type === 'atrule'
+        && node.name === '__MEDIA_HELPER__'
+        && startOrEnd === 'start'
+      ) {
         contents += `${node.params} {`;
         return;
       }
@@ -492,8 +506,9 @@ module.exports = (cssString, filePath, pathToVariables = '../variables') => {
       if (type === 'constVar') {
         let val;
 
-        if (node.value.includes('\$')) {// eslint-disable-line
-          val = `\`${node.value.replace('\$', '$')}\``;// eslint-disable-line
+        if (node.value.includes('$')) {
+          // eslint-disable-line
+          val = `\`${node.value.replace('$', '$')}\``; // eslint-disable-line
         } else if (node.value.includes("'")) {
           val = `"${node.value.replace('\n', ' ')}"`;
         } else {
@@ -501,7 +516,11 @@ module.exports = (cssString, filePath, pathToVariables = '../variables') => {
         }
         return `${acc}\n${isUsedInFile ? '' : 'export '}${
           oneDefault && !isUsedInFile ? ' default ' : ` const ${selectorToLiteral(node.prop)} = `
-        } ${val}${sourceArray[currentIndex + 1] && sourceArray[currentIndex + 1][1].type !== 'constVar' ? '\n' : ''}`;
+        } ${val}${
+          sourceArray[currentIndex + 1] && sourceArray[currentIndex + 1][1].type !== 'constVar'
+            ? '\n'
+            : ''
+        }`;
       }
 
       return `${acc}\n${type === 'class' || !isUsedInFile ? 'export ' : ''}${
@@ -524,7 +543,9 @@ module.exports = (cssString, filePath, pathToVariables = '../variables') => {
       ? `import { ${root.externalImports.join(', ')} } from '../utils';\n`
       : ''
   }${
-    root.customVars.length ? `import { ${root.customVars.join(', ')} } from '${pathToVariables}';\n` : ''
+    root.customVars.length
+      ? `import { ${root.customVars.join(', ')} } from '${pathToVariables}';\n`
+      : ''
   }${emotionExports}
 `;
 
