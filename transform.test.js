@@ -762,13 +762,15 @@ describe('transform', () => {
     ).toMatchSnapshot();
   });
 
-  it.skip('no overrides and absence of decls', () => {
+  it('no overrides and absence of decls', () => {
     expect(
       transform(`
         .foo {
           color: pink;
 
           .listing-details__agent-details-agent-avatar {
+            color: black;
+
             &.experiment-enabled {
               border-color: $agent-avatar-border-experiment-color;
               width: 72px;

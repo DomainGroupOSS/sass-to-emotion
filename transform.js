@@ -428,10 +428,16 @@ const processRoot = (root, filePath) => {
       contents += string;
     });
 
+    let newContents = pseudoPostfix ? `&:${pseudoPostfix} { ${contents} }` : contents;
+
+    newContents = root.classes.has(selector)
+      ? root.classes.get(selector).contents + newContents
+      : newContents;
+
     root.classes.set(selector, {
       type: isPlaceHolder ? 'placeholder' : 'class',
       isUsedInFile,
-      contents: pseudoPostfix ? `&:${pseudoPostfix} { ${contents} }` : contents,
+      contents: newContents,
       node: rule,
     });
   });

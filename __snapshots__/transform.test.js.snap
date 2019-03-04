@@ -510,6 +510,28 @@ export const aboutDevelopmentLink = css\`
 "
 `;
 
+exports[`transform no overrides and absence of decls 1`] = `
+"import { css } from '@emotion/core';
+import { agentAvatarBorderExperimentColor } from '../variables';
+
+export const foo = css\`
+  color: pink;
+\`;
+
+export const agentDetailsAgentAvatar = css\`
+  color: black;
+
+  &.experiment-enabled {
+    border-color: \${agentAvatarBorderExperimentColor};
+    width: 72px;
+    height: 72px;
+  }
+
+  color: black;
+\`;
+"
+`;
+
 exports[`transform non classname 1`] = `
 "import { css } from '@emotion/core';
 
