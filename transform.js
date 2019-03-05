@@ -229,7 +229,7 @@ const processRoot = (root, filePath) => {
   root.walkAtRules('include', (atRule) => {
     atRule.originalParams = atRule.params;
     const [funcName, inputs] = atRule.params.split('(');
-
+    const literalFuncName = selectorToLiteral(funcName);
     // check for https://github.com/eduardoboucas/include-media
     if (atRule.nodes && atRule.nodes.length && atRule.params.trim().startsWith('media(')) {
       atRule.name = '__MEDIA_HELPER__';
@@ -245,12 +245,12 @@ const processRoot = (root, filePath) => {
     });
 
     if (!hasRefInFile) {
-      if (feBrary[funcName] && typeof feBrary[funcName] === 'function') {
-        if (!root.feBraryHelpers.includes(selectorToLiteral(funcName))) {
-          root.feBraryHelpers.push(selectorToLiteral(funcName));
+      if (feBrary[literalFuncName] && typeof feBrary[literalFuncName] === 'function') {
+        if (!root.feBraryHelpers.includes(literalFuncName)) {
+          root.feBraryHelpers.push(literalFuncName);
         }
-      } else if (!root.externalImports.includes(selectorToLiteral(funcName))) {
-        root.externalImports.push(selectorToLiteral(funcName));
+      } else if (!root.externalImports.includes(literalFuncName)) {
+        root.externalImports.push(literalFuncName);
       }
     }
 

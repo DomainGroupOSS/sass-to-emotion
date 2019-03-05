@@ -216,17 +216,6 @@ export default css\`
 "
 `;
 
-exports[`transform imports fe-brary helpers 1`] = `
-"import { css } from '@emotion/core';
-import { buttonNormalize } from '@domain-group/fe-brary';
-
-export default css\`
-  \${buttonNormalize};
-  position: absolute;
-\`;
-"
-`;
-
 exports[`transform imports fe-brary helpers with @extend 1`] = `
 "import { css } from '@emotion/core';
 import { variables as vars, buttonNormalize } from '@domain-group/fe-brary';
@@ -244,7 +233,7 @@ export const anotherRef = css\`
 
 exports[`transform imports fe-brary helpers with @include 1`] = `
 "import { css } from '@emotion/core';
-import { resetTopMargin } from '../utils';
+import { resetTopMargin } from '@domain-group/fe-brary';
 
 export default css\`
   \${resetTopMargin()}

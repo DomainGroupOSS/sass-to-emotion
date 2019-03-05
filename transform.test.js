@@ -353,16 +353,6 @@ describe('transform', () => {
     ).toMatchSnapshot();
   });
 
-  it('imports fe-brary helpers', () => {
-    expect(
-      transform(`
-        .listing-details__agent-details-right-arrow {
-          @extend %button-normalize;
-          position: absolute;
-        }
-      `),
-    ).toMatchSnapshot();
-  });
 
   it('imports fe-brary helpers with @extend', () => {
     expect(
