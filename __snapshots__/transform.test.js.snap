@@ -640,6 +640,22 @@ export const success = css\`
 "
 `;
 
+exports[`transform print all contents of placeholders 1`] = `
+"import { css } from '@emotion/core';
+
+const removeAdBorder = css\`
+  .adspot__inner iframe {
+    // The ad brings in a border that we want to forcibly remove
+    border: none !important;
+  }
+\`;
+
+export default css\`
+  \${removeAdBorder};
+\`;
+"
+`;
+
 exports[`transform ref nested classes 1`] = `
 "import { css } from '@emotion/core';
 import { variables as vars } from '@domain-group/fe-brary';

@@ -374,6 +374,10 @@ const processRoot = (root, filePath) => {
           nodeToCheck => nodeToCheck.type === 'rule' && nodeToCheck.selector.startsWith('&'),
         );
 
+      if (node && isPlaceHolder) {
+        node.contentsAlreadyPrinted = true;
+      }
+
       // ref class if nested in ampersand
       if (
         node
@@ -396,6 +400,7 @@ const processRoot = (root, filePath) => {
         && node.type === 'rule'
         && node.selector.startsWith('.')
         && !nestedInAmpersand
+        && !isPlaceHolder
       ) {
         node.isItsOwnCssVar = true;
         return;

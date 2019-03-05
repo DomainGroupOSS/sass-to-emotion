@@ -816,4 +816,21 @@ describe('transform', () => {
       `),
     ).toMatchSnapshot();
   });
+
+  it('print all contents of placeholders', () => {
+    expect(
+      transform(`
+        %search-results__remove-ad-border {
+          .adspot__inner iframe {
+            // The ad brings in a border that we want to forcibly remove
+            border: none !important; // scss-lint:disable ImportantRule
+          }
+        }
+
+        .adspot-300x25-pos-1-container {
+          @extend %search-results__remove-ad-border;
+        }
+      `),
+    ).toMatchSnapshot();
+  });
 });
