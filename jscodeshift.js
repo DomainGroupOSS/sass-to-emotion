@@ -45,8 +45,12 @@ module.exports = (file, api) => {
 
   if (!hasClassName) return null;
 
-  let moduleName;
+  const jsEmotionFiles = glob.sync(
+    path.join(file.path.split('/js/')[0], 'style', '**', '*.js'),
+    { absolute: true },
+  );
 
+  let moduleName;
   // rename className="foo__bar-baz" => className={styles.barBaz}
   root
     .find(j.JSXAttribute, {
@@ -62,23 +66,18 @@ module.exports = (file, api) => {
 
       const identifier = selectorToLiteral(selector);
 
-      const jsEmotionFiles = glob.sync(
-        path.join(file.path.split('/js/')[0], 'style', '**', '*.js'),
-        { absolute: true },
-      );
-
-      const pathToEmotionFile = jsEmotionFiles.find(
-        // eslint-disable-next-line import/no-dynamic-require, global-require
-        jsEmotionFile => !!require(jsEmotionFile)[identifier],
-      );
-
-      if (!pathToEmotionFile) throw new Error();
-
       if (!moduleName) {
-        moduleName = path.join(
-          path.relative(path.dirname(file.path), path.dirname(pathToEmotionFile)),
-          path.basename(pathToEmotionFile),
-        ).replace('.js', '');
+        const pathToEmotionFile = jsEmotionFiles.find(
+          // eslint-disable-next-line import/no-dynamic-require, global-require
+          jsEmotionFile => !!require(jsEmotionFile)[identifier],
+        );
+
+        if (pathToEmotionFile) {
+          moduleName = path.join(
+            path.relative(path.dirname(file.path), path.dirname(pathToEmotionFile)),
+            path.basename(pathToEmotionFile),
+          ).replace('.js', '');
+        }
       }
 
       jsxPath.value.name = 'css';
@@ -104,7 +103,7 @@ module.exports = (file, api) => {
 
   const stylesImportStatement = j.importDeclaration(
     [j.importNamespaceSpecifier(j.identifier(STYLES_IMPORT_NAME))],
-    j.literal(moduleName),
+    j.literal(moduleName || '../../style/FIXME'),
   );
 
   // e.g import foo from 'foo';

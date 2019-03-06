@@ -823,4 +823,118 @@ describe('transform', () => {
       `),
     ).toMatchSnapshot();
   });
+
+  it.skip('dont lose comments', () => {
+    expect(
+      transform(`
+        // asdasd
+        .foo {
+          color: black;
+        }
+      `),
+    ).toMatchSnapshot();
+  });
+
+  it.skip('pseduo elements complicated', () => {
+    expect(
+      transform(`
+        // scss-lint:disable MergeableSelector
+.search-results__featured-properties > .adspot_300x50_pos-4-container:only-child {
+  margin-bottom: 0;
+}
+
+      `),
+    ).toMatchSnapshot();
+  });
+
+  it.skip('+ ', () => {
+    expect(
+      transform(`
+        .search-results__save-search-summary-item {
+          display: inline;
+          color: $fe-brary-colour-neutral-500;
+
+          &.is-mode {
+            font-weight: bold;
+          }
+
+          + .search-results__save-search-summary-item::before {
+            content: 'foo';
+            margin: 0 6px;
+          }
+        }
+      `),
+    ).toMatchSnapshot();
+  });
+
+  it.skip('media query vars', () => {
+    expect(
+      transform(`
+        @media (min-width: $fe-brary-global-tablet-min-width) {
+          display: block;
+        }
+      `),
+    ).toMatchSnapshot();
+  });
+
+  it.skip('math in media query vars', () => {
+    expect(
+      transform(`
+        @media (
+          min-width: $search-results-max-sidebar-width + $search-results-max-main-width + (2 * $search-results-gutter)
+        ) {
+          padding-left: 0;
+        }
+      `),
+    ).toMatchSnapshot();
+  });
+
+  it.skip('keyframes', () => {
+    expect(
+      transform(`
+        @keyframes fadeIn {
+          0% {
+            opacity: 0;
+            transform: translateY(250px);
+          }
+
+          30% {
+            opacity: 0;
+          }
+
+          100% {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+      `),
+    ).toMatchSnapshot();
+  });
+
+  it.skip('order when comments', () => {
+    expect(
+      transform(`
+        .bar {
+          color: pink;
+        }
+
+        // Keeping the tab label to INSPECTIONS only for tablet & mobile view.
+        // this will avoid part of the text being hidden.
+        .search-results__auctions-label {
+          display: none;
+
+          @include media('>=desktop') {
+            display: inline;
+          }
+        }
+
+        .foo {
+          color: black;
+        }
+      `),
+    ).toMatchSnapshot();
+  });
 });
+
+// check inside media queries
+// /Users/albert.still/Documents/Github/fe-pa-search-results/src/scss/search-filters/_search-filters-structure.scss
