@@ -29,7 +29,7 @@ module.exports = (file, api) => {
         type: 'Literal',
       },
     })
-    .filter(declarator => declarator.value.source.value.includes('style'))
+    .filter(declarator => declarator.value.source.value.includes('styles'))
     .size() > 0;
 
   if (hasAStyleImport) return null;
