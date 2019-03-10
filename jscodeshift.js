@@ -103,7 +103,7 @@ module.exports = (file, api) => {
 
   const stylesImportStatement = j.importDeclaration(
     [j.importNamespaceSpecifier(j.identifier(STYLES_IMPORT_NAME))],
-    j.literal(moduleName || '../../style/FIXME'),
+    j.literal(moduleName || '../../styles/FIXME'),
   );
 
   // e.g import foo from 'foo';

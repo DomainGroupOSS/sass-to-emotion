@@ -5,7 +5,7 @@ const path = require('path');
 const transform = require('./transform');
 
 function scssFileToJs(filePath) {
-  const newFilePath = filePath.replace('/scss/', '/style/').replace('.scss', '.js');
+  const newFilePath = filePath.replace('/scss/', '/styles/').replace('.scss', '.js');
   const filenewFilePathDir = path.dirname(newFilePath);
   const filenewFilePathBase = path.basename(newFilePath);
 
