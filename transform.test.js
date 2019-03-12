@@ -824,7 +824,22 @@ describe('transform', () => {
     ).toMatchSnapshot();
   });
 
-  it.skip('dont lose comments', () => {
+  it('media query vars', () => {
+    expect(
+      transform(`
+        .foo {
+          @media (min-width: $fe-brary-global-tablet-min-width) {
+            display: block;
+          }
+          @media (max-width: $fe-brary-global-lrg-desktop-min-width) {
+            display: block;
+          }
+        }
+      `),
+    ).toMatchSnapshot();
+  });
+
+  it.skip('dont lose top level comments', () => {
     expect(
       transform(`
         // asdasd
@@ -862,16 +877,6 @@ describe('transform', () => {
             content: 'foo';
             margin: 0 6px;
           }
-        }
-      `),
-    ).toMatchSnapshot();
-  });
-
-  it.skip('media query vars', () => {
-    expect(
-      transform(`
-        @media (min-width: $fe-brary-global-tablet-min-width) {
-          display: block;
         }
       `),
     ).toMatchSnapshot();
@@ -935,6 +940,3 @@ describe('transform', () => {
     ).toMatchSnapshot();
   });
 });
-
-// check inside media queries
-// /Users/albert.still/Documents/Github/fe-pa-search-results/src/scss/search-filters/_search-filters-structure.scss

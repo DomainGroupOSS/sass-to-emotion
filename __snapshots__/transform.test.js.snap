@@ -264,6 +264,21 @@ export default css\`
 "
 `;
 
+exports[`transform media query vars 1`] = `
+"import { css } from '@emotion/core';
+import { media } from '@domain-group/fe-brary';
+
+export default css\`
+  \${media('>=tablet')} {
+    display: block;
+  }
+  \${media('<=lrg-desktop')} {
+    display: block;
+  }
+\`;
+"
+`;
+
 exports[`transform mixin exported when not refrenced in file 1`] = `
 "import { css } from '@emotion/core';
 import { variables as vars } from '@domain-group/fe-brary';

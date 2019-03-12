@@ -10,6 +10,8 @@ const selectorToLiteral = require('./selector-to-variable-identifier');
 // TODO make CLI option
 const FE_BRARY_PREFIX = '$fe-brary-';
 
+const MEDIA_HELPER = '__MEDIA_HELPER__';
+
 const OPERATORS = [' + ', ' - ', ' / ', ' * ', ' % ', ' < ', ' > ', ' == ', ' != ', ' <= ', ' >= '];
 
 function checkUpTree(root, node, checkerFunc, rule) {
@@ -141,6 +143,38 @@ const processRoot = (root, filePath) => {
     rule.remove();
   });
 
+  root.walkAtRules('media', (atRule) => {
+    let query;
+    switch (atRule.params) {
+      // left out mobile because include-media $breakpoints uses 320px hardcoded for mobile,
+      // not sure why this was done.
+      case '(min-width: $fe-brary-global-tablet-min-width)':
+        query = '>=tablet';
+        break;
+      case '(min-width: $fe-brary-global-desktop-min-width)':
+        query = '>=desktop';
+        break;
+      case '(min-width: $fe-brary-global-lrg-desktop-min-width)':
+        query = '>=lrg-desktop';
+        break;
+      case '(max-width: $fe-brary-global-tablet-min-width)':
+        query = '<=tablet';
+        break;
+      case '(max-width: $fe-brary-global-desktop-min-width)':
+        query = '<=desktop';
+        break;
+      case '(max-width: $fe-brary-global-lrg-desktop-min-width)':
+        query = '<=lrg-desktop';
+        break;
+      default:
+    }
+
+    if (query) {
+      atRule.params = `\${media('${query}')}`;
+      atRule.name = MEDIA_HELPER;
+    }
+  });
+
   // move nested var declarations to top
   root.walkDecls(/^\$/, (decl) => {
     if (decl.parent !== root) {
@@ -232,9 +266,8 @@ const processRoot = (root, filePath) => {
     const literalFuncName = selectorToLiteral(funcName);
     // check for https://github.com/eduardoboucas/include-media
     if (atRule.nodes && atRule.nodes.length && atRule.params.trim().startsWith('media(')) {
-      atRule.name = '__MEDIA_HELPER__';
+      atRule.name = MEDIA_HELPER;
       atRule.params = `\${${atRule.params.trim()}}`;
-      if (!root.feBraryHelpers.includes('media')) root.feBraryHelpers.push('media');
       return;
     }
 
@@ -421,10 +454,12 @@ const processRoot = (root, filePath) => {
       if (
         node
         && node.type === 'atrule'
-        && node.name === '__MEDIA_HELPER__'
+        // this is to omit the @media part
+        && node.name === MEDIA_HELPER
         && startOrEnd === 'start'
       ) {
         contents += `${node.params} {`;
+        if (!root.feBraryHelpers.includes('media')) root.feBraryHelpers.push('media');
         return;
       }
 
