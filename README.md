@@ -25,3 +25,9 @@ jscodeshift --parser flow -t ../sass-to-emotion/jscodeshift.js ./src/js
 ![JS to Emotion example](https://media.giphy.com/media/2xFzMpZAxinybFs4im/giphy.gif)
 
 For example *src/js/components/ads/ad-spot-boilerplate.js* will add a `import styles from '../../../components/ads/ad-spot-boilerplate.js'` and change a BEM like classname from `className="baz-whizz__foo-bar"` to `className={styles.fooBar}`.
+
+### Notes
+
+- think about detecting dep overrides
+- is taking the last in `.foo.bar` smart
+- adding data-testid if class referenced in Enzyme/e2e tests

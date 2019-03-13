@@ -285,22 +285,6 @@ export default css\`
 "
 `;
 
-exports[`transform media query vars 2`] = `
-"import { css } from '@emotion/core';
-import { variables as vars } from '@domain-group/fe-brary';
-import { fooBarBaz } from '../variables';
-
-export default css\`
-  @media (min-width: \${fooBarBaz}) {
-    display: block;
-  }
-  @media (min-width: \${vars.global.desktopMaxWidth}) {
-    display: block;
-  }
-\`;
-"
-`;
-
 exports[`transform media query with sass vars 1`] = `
 "import { css } from '@emotion/core';
 import { variables as vars } from '@domain-group/fe-brary';

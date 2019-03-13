@@ -860,30 +860,7 @@ describe('transform', () => {
     ).toMatchSnapshot();
   });
 
-  it.skip('dont lose top level comments', () => {
-    expect(
-      transform(`
-        // asdasd
-        .foo {
-          color: black;
-        }
-      `),
-    ).toMatchSnapshot();
-  });
-
-  it.skip('pseduo elements complicated', () => {
-    expect(
-      transform(`
-        // scss-lint:disable MergeableSelector
-.search-results__featured-properties > .adspot_300x50_pos-4-container:only-child {
-  margin-bottom: 0;
-}
-
-      `),
-    ).toMatchSnapshot();
-  });
-
-  it.skip('+ ', () => {
+  it.skip('adjactent sibling selectors', () => {
     expect(
       transform(`
         .search-results__save-search-summary-item {
@@ -898,6 +875,27 @@ describe('transform', () => {
             content: 'foo';
             margin: 0 6px;
           }
+        }
+      `),
+    ).toMatchSnapshot();
+  });
+
+  it.skip('dont lose top level comments', () => {
+    expect(
+      transform(`
+        // asdasd
+        .foo {
+          color: black;
+        }
+      `),
+    ).toMatchSnapshot();
+  });
+
+  it.skip('pseduo elements and combinators', () => {
+    expect(
+      transform(`
+        .search-results__featured-properties > .adspot_300x50_pos-4-container:only-child {
+          margin-bottom: 0;
         }
       `),
     ).toMatchSnapshot();
@@ -932,30 +930,6 @@ describe('transform', () => {
             opacity: 1;
             transform: translateY(0);
           }
-        }
-      `),
-    ).toMatchSnapshot();
-  });
-
-  it.skip('order when comments', () => {
-    expect(
-      transform(`
-        .bar {
-          color: pink;
-        }
-
-        // Keeping the tab label to INSPECTIONS only for tablet & mobile view.
-        // this will avoid part of the text being hidden.
-        .search-results__auctions-label {
-          display: none;
-
-          @include media('>=desktop') {
-            display: inline;
-          }
-        }
-
-        .foo {
-          color: black;
         }
       `),
     ).toMatchSnapshot();
