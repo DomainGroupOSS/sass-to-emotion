@@ -834,6 +834,12 @@ describe('transform', () => {
           @media (max-width: $fe-brary-global-lrg-desktop-min-width) {
             display: block;
           }
+          @media (min-width: $tablet-min-width) {
+            display: block;
+          }
+          @media (max-width: $lrg-desktop-min-width) {
+            display: block;
+          }
         }
       `),
     ).toMatchSnapshot();

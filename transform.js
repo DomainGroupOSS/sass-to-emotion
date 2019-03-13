@@ -149,21 +149,27 @@ const processRoot = (root, filePath) => {
       // left out mobile because include-media $breakpoints uses 320px hardcoded for mobile,
       // not sure why this was done.
       case '(min-width: $fe-brary-global-tablet-min-width)':
+      case '(min-width: $tablet-min-width)':
         query = '>=tablet';
         break;
       case '(min-width: $fe-brary-global-desktop-min-width)':
+      case '(min-width: $desktop-min-width)':
         query = '>=desktop';
         break;
       case '(min-width: $fe-brary-global-lrg-desktop-min-width)':
+      case '(min-width: $lrg-desktop-min-width)':
         query = '>=lrg-desktop';
         break;
       case '(max-width: $fe-brary-global-tablet-min-width)':
+      case '(max-width: $tablet-min-width)':
         query = '<=tablet';
         break;
       case '(max-width: $fe-brary-global-desktop-min-width)':
+      case '(max-width: $desktop-min-width)':
         query = '<=desktop';
         break;
       case '(max-width: $fe-brary-global-lrg-desktop-min-width)':
+      case '(max-width: $lrg-desktop-min-width)':
         query = '<=lrg-desktop';
         break;
       default:

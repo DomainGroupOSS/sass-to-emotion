@@ -275,6 +275,12 @@ export default css\`
   \${media('<=lrg-desktop')} {
     display: block;
   }
+  \${media('>=tablet')} {
+    display: block;
+  }
+  \${media('<=lrg-desktop')} {
+    display: block;
+  }
 \`;
 "
 `;
