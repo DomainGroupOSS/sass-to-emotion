@@ -860,7 +860,7 @@ describe('transform', () => {
     ).toMatchSnapshot();
   });
 
-  it.skip('adjactent sibling selectors', () => {
+  it('adjactent sibling selectors', () => {
     expect(
       transform(`
         .search-results__save-search-summary-item {

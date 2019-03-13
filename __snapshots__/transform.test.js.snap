@@ -12,6 +12,26 @@ export default css\`
 "
 `;
 
+exports[`transform adjactent sibling selectors 1`] = `
+"import { css } from '@emotion/core';
+import { variables as vars } from '@domain-group/fe-brary';
+
+export default css\`
+  display: inline;
+  color: \${vars.colour.neutral500};
+
+  &.is-mode {
+    font-weight: bold;
+  }
+
+  + .search-results__save-search-summary-item::before {
+    content: 'foo';
+    margin: 0 6px;
+  }
+\`;
+"
+`;
+
 exports[`transform const vars up top 1`] = `
 "import { css } from '@emotion/core';
 

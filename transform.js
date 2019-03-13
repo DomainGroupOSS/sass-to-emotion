@@ -12,6 +12,8 @@ const FE_BRARY_PREFIX = '$fe-brary-';
 
 const MEDIA_HELPER = '__MEDIA_HELPER__';
 
+const COMBINATORS = ['>', '+', '~'];
+
 const OPERATORS = [' + ', ' - ', ' / ', ' * ', ' % ', ' < ', ' > ', ' == ', ' != ', ' <= ', ' >= '];
 
 function checkUpTree(root, node, checkerFunc, rule) {
@@ -131,6 +133,7 @@ const processRoot = (root, filePath) => {
   // maybe use /S
   root.walkRules(/ \./, (rule) => {
     if (rule.selector.includes(',')) return;
+    if (COMBINATORS.some(combinator => rule.selector.includes(combinator))) return;
 
     const rules = rule.selector.split(' ');
     const last = rules[rules.length - 1];
@@ -464,7 +467,9 @@ const processRoot = (root, filePath) => {
           nodeToCheck => nodeToCheck.type === 'rule' && nodeToCheck.isItsOwnCssVar && nodeToCheck !== rule,
           rule,
         )
-      ) return;
+      ) {
+        return;
+      }
 
       if (
         node
