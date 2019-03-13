@@ -178,6 +178,15 @@ const processRoot = (root, filePath) => {
     if (query) {
       atRule.params = `\${media('${query}')}`;
       atRule.name = MEDIA_HELPER;
+      return;
+    }
+
+    let newParams;
+    (atRule.params.match(/\$[A-Za-z-]+/g) || []).forEach((sassVar) => {
+      newParams = atRule.params.replace(sassVar, `\${${handleSassVarUnescaped(sassVar, root)}}`);
+    });
+    if (newParams) {
+      atRule.params = newParams;
     }
   });
 

@@ -845,6 +845,21 @@ describe('transform', () => {
     ).toMatchSnapshot();
   });
 
+  it('media query with sass vars', () => {
+    expect(
+      transform(`
+        .foo {
+          @media (min-width: $foo-bar-baz) {
+            display: block;
+          }
+          @media (min-width: $fe-brary-global-desktop-max-width) {
+            display: block;
+          }
+        }
+      `),
+    ).toMatchSnapshot();
+  });
+
   it.skip('dont lose top level comments', () => {
     expect(
       transform(`
