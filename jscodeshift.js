@@ -64,25 +64,29 @@ module.exports = (file, api) => {
 
       const selector = jsxPath.value.value.value;
 
-      const identifier = selectorToLiteral(selector);
+      const memberExpressions = selector.split(' ').map((str) => {
+        const identifier = selectorToLiteral(str);
 
-      if (!moduleName) {
-        const pathToEmotionFile = jsEmotionFiles.find(
-          // eslint-disable-next-line import/no-dynamic-require, global-require
-          jsEmotionFile => !!require(jsEmotionFile)[identifier],
-        );
+        if (!moduleName) {
+          const pathToEmotionFile = jsEmotionFiles.find(
+            // eslint-disable-next-line import/no-dynamic-require, global-require
+            jsEmotionFile => !!require(jsEmotionFile)[identifier],
+          );
 
-        if (pathToEmotionFile) {
-          moduleName = path.join(
-            path.relative(path.dirname(file.path), path.dirname(pathToEmotionFile)),
-            path.basename(pathToEmotionFile),
-          ).replace('.js', '');
+          if (pathToEmotionFile) {
+            moduleName = path.join(
+              path.relative(path.dirname(file.path), path.dirname(pathToEmotionFile)),
+              path.basename(pathToEmotionFile),
+            ).replace('.js', '');
+          }
         }
-      }
+
+        return j.memberExpression(j.identifier(STYLES_IMPORT_NAME), j.identifier(identifier));
+      });
 
       jsxPath.value.name = 'css';
       jsxPath.value.value = j.jsxExpressionContainer(
-        j.memberExpression(j.identifier(STYLES_IMPORT_NAME), j.identifier(identifier)),
+        memberExpressions.length > 1 ? j.arrayExpression(memberExpressions) : memberExpressions[0],
       );
     });
 
