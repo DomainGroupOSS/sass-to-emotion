@@ -681,6 +681,34 @@ describe('transform', () => {
   });
 
 
+  it('locate multi comma rule composition ref just after shared css', () => {
+    expect(
+      transform(`
+          .bar {
+            display: block;
+          }
+
+          .listing-details__agent-details-left-arrow,
+          .listing-details__agent-details-right-arrow {
+            @extend %button-normalize;
+            position: absolute;
+            bottom: 6px;
+            cursor: pointer;
+
+            &.experiment-enabled {
+              color: $arrow-color;
+              bottom: 42px;
+              right: 20px;
+            }
+          }
+
+          .foo {
+            display: block;
+          }
+        `),
+    ).toMatchSnapshot();
+  });
+
   it('selector for an element with multiple classes', () => {
     expect(
       transform(`

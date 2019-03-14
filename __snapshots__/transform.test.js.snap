@@ -303,6 +303,42 @@ export default css\`
 "
 `;
 
+exports[`transform locate multi comma rule composition ref just after shared css 1`] = `
+"import { css } from '@emotion/core';
+import { buttonNormalize } from '@domain-group/fe-brary';
+import { arrowColor } from '../variables';
+
+export const bar = css\`
+  display: block;
+\`;
+
+const agentDetailsLeftArrowAgentDetailsRightArrow = css\`
+  \${buttonNormalize};
+  position: absolute;
+  bottom: 6px;
+  cursor: pointer;
+
+  &.experiment-enabled {
+    color: \${arrowColor};
+    bottom: 42px;
+    right: 20px;
+  }
+\`;
+
+export const agentDetailsLeftArrow = css\`
+  \${agentDetailsLeftArrowAgentDetailsRightArrow};
+\`;
+
+export const agentDetailsRightArrow = css\`
+  \${agentDetailsLeftArrowAgentDetailsRightArrow};
+\`;
+
+export const foo = css\`
+  display: block;
+\`;
+"
+`;
+
 exports[`transform media query vars 1`] = `
 "import { css } from '@emotion/core';
 import { media } from '@domain-group/fe-brary';
@@ -797,16 +833,16 @@ const keyFeaturesKeyKeyFeaturesValue = css\`
   width: 50%;
 \`;
 
+export const keyFeaturesValue = css\`
+  \${keyFeaturesKeyKeyFeaturesValue};
+\`;
+
 export const keyFeaturesKey = css\`
   \${keyFeaturesKeyKeyFeaturesValue};
   \${media('>=desktop')} {
     padding-right: 25px;
     font-weight: 600;
   }
-\`;
-
-export const keyFeaturesValue = css\`
-  \${keyFeaturesKeyKeyFeaturesValue};
 \`;
 "
 `;

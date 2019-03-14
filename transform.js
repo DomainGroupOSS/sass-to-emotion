@@ -131,6 +131,9 @@ const processRoot = (root, filePath) => {
     return string.charAt(0).toUpperCase() + string.slice(1);
   }
 
+
+  // WALKING TIME
+
   // maybe use /S
   root.walkRules(/ \./, (rule) => {
     if (rule.selector.includes(',')) return;
@@ -249,7 +252,7 @@ const processRoot = (root, filePath) => {
 
     root.prepend(rule);
 
-    classes.forEach((selector) => {
+    classes.forEach((selector, index) => {
       const placeHolderAtRule = postcss.atRule({ name: 'extend', params: newSelector });
 
       let foundTheTopLevelClass = false;
@@ -263,6 +266,9 @@ const processRoot = (root, filePath) => {
       if (!foundTheTopLevelClass) {
         const ruleWithPlaceholder = postcss.rule({ selector });
         ruleWithPlaceholder.append(placeHolderAtRule);
+        ruleWithPlaceholder.source = {};
+        ruleWithPlaceholder.source.start = {};
+        ruleWithPlaceholder.source.start.line = rule.source.start.line + (index / 1000);
         root.append(ruleWithPlaceholder);
       }
     });
