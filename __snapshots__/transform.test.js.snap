@@ -340,6 +340,29 @@ export default css\`
 "
 `;
 
+exports[`transform mixin and placeholder 1`] = `
+"import { css } from '@emotion/core';
+
+const detailsMain = css\`
+  padding: 18px 0;
+  flex: 1 1 auto;
+  min-width: 0;
+  width: 100%;
+\`;
+
+function detailsContainer() {
+  return css\`
+    color: black;
+  \`;
+}
+
+export default css\`
+  \${detailsMain};
+  \${detailsContainer()}
+\`;
+"
+`;
+
 exports[`transform mixin exported when not refrenced in file 1`] = `
 "import { css } from '@emotion/core';
 import { variables as vars } from '@domain-group/fe-brary';
@@ -588,7 +611,7 @@ export const agentDetailsAgentAvatar = css\`
     height: 72px;
   }
 
-  color: black;
+  display: flex;
 \`;
 "
 `;
@@ -737,29 +760,6 @@ export const agentDetailsRightArrow = css\`
             }
           }
         \`;
-"
-`;
-
-exports[`transform removes pre double underscore text 1`] = `
-"import { css } from '@emotion/core';
-
-const detailsMain = css\`
-  padding: 18px 0;
-  flex: 1 1 auto;
-  min-width: 0;
-  width: 100%;
-\`;
-
-function detailsContainer() {
-  return css\`
-    color: black;
-  \`;
-}
-
-export default css\`
-  \${detailsMain};
-  \${detailsContainer()}
-\`;
 "
 `;
 

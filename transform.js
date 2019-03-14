@@ -215,7 +215,7 @@ const processRoot = (root, filePath) => {
     }
   });
 
-  // maybe use /S
+  // e.g .foo.bar
   root.walkRules(/^\.[a-zA-Z0-9_-]+\./, (rule) => {
     const classes = rule.selector.split('.').filter(Boolean);
 

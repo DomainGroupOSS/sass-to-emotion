@@ -121,6 +121,28 @@ describe('transform', () => {
     ).toMatchSnapshot();
   });
 
+  it('mixin and placeholder', () => {
+    expect(
+      transform(`
+        %fe-pa-listing__details-main {
+          padding: 18px 0;
+          flex: 1 1 auto;
+          min-width: 0;
+          width: 100%;
+        }
+
+        @mixin fe-pa-listing__details-container {
+          color: black;
+        }
+
+        .fe-pa-listing__foo {
+          @extend %fe-pa-listing__details-main;
+          @include fe-pa-listing__details-container;
+        }
+      `),
+    ).toMatchSnapshot();
+  });
+
   it('non classname', () => {
     expect(
       transform(
@@ -400,7 +422,6 @@ describe('transform', () => {
     ).toMatchSnapshot();
   });
 
-  // TODO
   it('ref nested classes', () => {
     expect(
       transform(`
@@ -491,28 +512,6 @@ describe('transform', () => {
           @extend %a-tag;
           position: static;
           cursor: pointer;
-        }
-      `),
-    ).toMatchSnapshot();
-  });
-
-  it('removes pre double underscore text', () => {
-    expect(
-      transform(`
-        %fe-pa-listing__details-main {
-          padding: 18px 0;
-          flex: 1 1 auto;
-          min-width: 0;
-          width: 100%;
-        }
-
-        @mixin fe-pa-listing__details-container {
-          color: black;
-        }
-
-        .fe-pa-listing__foo {
-          @extend %fe-pa-listing__details-main;
-          @include fe-pa-listing__details-container;
         }
       `),
     ).toMatchSnapshot();
@@ -768,7 +767,7 @@ describe('transform', () => {
         }
 
         .listing-details__agent-details-agent-avatar {
-          color: black;
+          display: flex;
         }
       `),
     ).toMatchSnapshot();
