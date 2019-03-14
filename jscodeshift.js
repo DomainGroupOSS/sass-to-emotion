@@ -2,8 +2,8 @@
 const glob = require('glob');
 const path = require('path');
 const selectorToLiteral = require('./selector-to-variable-identifier');
-// TODO make CLI option
 
+// TODO make CLI option
 const STYLES_IMPORT_NAME = 'styles';
 
 module.exports = (file, api) => {
