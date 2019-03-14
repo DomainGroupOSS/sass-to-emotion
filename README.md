@@ -27,6 +27,10 @@ specific classes e.g `&.is-selected`.
 - Multi class selectors `.foo, .bar {}` become two exports and use composition.
 - If multi class selectors are found `.foo.bar`, or a descendant combinator `.foo .bar`, it takes the last as precedence.
 Could be a better way to do this?
+- Merges decls of multiple class blocks of the same selector.
+- If a class selector is referenced inside an & block tree e.g &::hover,
+it leaves the CSS as is. It adds a FIXME comment above this class if it's also
+referenced outside an & block.
 - If a class, mixin or placeholder is not referenced in a file, it is exported, and vice versa.
 - If only one export is generated in the file it will use a `export default`.
 - Adds FIXME comment when Sass maths is detected so a developer can manually fix.

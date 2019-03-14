@@ -446,10 +446,15 @@ const processRoot = (root, filePath) => {
         && nestedInAmpersand
       ) {
         node.contentsAlreadyPrinted = true;
-        root.walkRules(node.selector, (refrencedRule) => {
-          refrencedRule.isReferencedMoreThanOnce = true;
-        });
-        contents += `[class*='\${${selectorToLiteral(node.selector)}.name}'] {`;
+
+        global.sassToEmotionWarnings[filePath] = global.sassToEmotionWarnings[filePath] || [];
+        const msg = `Class "${node.selector}" referenced twice, and once inside a \`&.\`.`;
+        if (!global.sassToEmotionWarnings[filePath].includes(msg)) {
+          global.sassToEmotionWarnings[filePath].push(msg);
+        }
+
+        contents += '// FIXME: Sass class referenced inside a &. block, manual fix required.\n';
+        contents += string;
         return;
       }
 
@@ -564,19 +569,6 @@ module.exports = (cssString, filePath, pathToVariables = '../variables') => {
 
   const emotionExports = classesEntries
     .sort(([, { node: a, type: aType }], [, { node: b, type: bType }]) => {
-      if (a.isReferencedMoreThanOnce && bType !== 'constVar') {
-        return -1;
-      }
-      if (b.isReferencedMoreThanOnce && aType !== 'constVar') {
-        return 1;
-      }
-      if (aType === 'constVar' && b.isReferencedMoreThanOnce) {
-        return -1;
-      }
-      if (bType === 'constVar' && a.isReferencedMoreThanOnce) {
-        return 1;
-      }
-
       if (aType === 'constVar') {
         return -1;
       }

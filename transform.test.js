@@ -227,7 +227,7 @@ describe('transform', () => {
       ).toMatchSnapshot();
     });
 
-    it('class nested in pseudo becomes a ref', () => {
+    it('class nested in & adds FIXME comment', () => {
       expect(
         transform(`
           .listing-details__button-copy {
@@ -417,26 +417,6 @@ describe('transform', () => {
           @extend %fe-pa-listing-details-wrapper;
 
           margin-top: -54px;
-        }
-      `),
-    ).toMatchSnapshot();
-  });
-
-  it('ref nested classes', () => {
-    expect(
-      transform(`
-        .listing-details__agent-details-right-arrow {
-          color: $fe-brary-colour-primary-dark;
-
-          &.with-big-agents {
-            .listing-details__agent-details-agent {
-              text-align: center;
-            }
-          }
-        }
-
-        .listing-details__agent-details-agent {
-          color: blue;
         }
       `),
     ).toMatchSnapshot();
@@ -749,7 +729,7 @@ describe('transform', () => {
     ).toMatchSnapshot();
   });
 
-  it('no overrides and absence of decls', () => {
+  it('merges decls of multiple class blocks of same selector', () => {
     expect(
       transform(`
         .foo {

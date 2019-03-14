@@ -340,6 +340,28 @@ export default css\`
 "
 `;
 
+exports[`transform merges decls of multiple class blocks of same selector 1`] = `
+"import { css } from '@emotion/core';
+import { agentAvatarBorderExperimentColor } from '../variables';
+
+export const foo = css\`
+  color: pink;
+\`;
+
+export const agentDetailsAgentAvatar = css\`
+  color: black;
+
+  &.experiment-enabled {
+    border-color: \${agentAvatarBorderExperimentColor};
+    width: 72px;
+    height: 72px;
+  }
+
+  display: flex;
+\`;
+"
+`;
+
 exports[`transform mixin and placeholder 1`] = `
 "import { css } from '@emotion/core';
 
@@ -594,28 +616,6 @@ export const aboutDevelopmentLink = css\`
 "
 `;
 
-exports[`transform no overrides and absence of decls 1`] = `
-"import { css } from '@emotion/core';
-import { agentAvatarBorderExperimentColor } from '../variables';
-
-export const foo = css\`
-  color: pink;
-\`;
-
-export const agentDetailsAgentAvatar = css\`
-  color: black;
-
-  &.experiment-enabled {
-    border-color: \${agentAvatarBorderExperimentColor};
-    width: 72px;
-    height: 72px;
-  }
-
-  display: flex;
-\`;
-"
-`;
-
 exports[`transform non classname 1`] = `
 "import { css } from '@emotion/core';
 
@@ -637,24 +637,25 @@ export const foo = css\`
 "
 `;
 
-exports[`transform pesudo elements/classes class nested in pseudo becomes a ref 1`] = `
+exports[`transform pesudo elements/classes class nested in & adds FIXME comment 1`] = `
 "import { css } from '@emotion/core';
+
+export const buttonCopy = css\`
+  display: flex;
+  cursor: pointer;
+
+  &:hover {
+    // FIXME: Sass class referenced inside a &. block, manual fix required.
+    .listing-details__button-icon {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+\`;
 
 export const buttonIcon = css\`
   color: blue;
 \`;
-
-export const buttonCopy = css\`
-            display: flex;
-            cursor: pointer;
-
-            &:hover {
-              [class*='\${buttonIcon.name}'] {
-                opacity: 1;
-                transform: translateX(0);
-              }
-            }
-          \`;
 "
 `;
 
@@ -740,26 +741,6 @@ const removeAdBorder = css\`
 export default css\`
   \${removeAdBorder};
 \`;
-"
-`;
-
-exports[`transform ref nested classes 1`] = `
-"import { css } from '@emotion/core';
-import { variables as vars } from '@domain-group/fe-brary';
-
-export const agentDetailsAgent = css\`
-  color: blue;
-\`;
-
-export const agentDetailsRightArrow = css\`
-          color: \${vars.colour.primaryDark};
-
-          &.with-big-agents {
-            [class*='\${agentDetailsAgent.name}'] {
-              text-align: center;
-            }
-          }
-        \`;
 "
 `;
 
