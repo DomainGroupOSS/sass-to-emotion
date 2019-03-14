@@ -16,119 +16,120 @@ const COMBINATORS = ['>', '+', '~'];
 
 const OPERATORS = [' + ', ' - ', ' / ', ' * ', ' % ', ' < ', ' > ', ' == ', ' != ', ' <= ', ' >= '];
 
-function checkUpTree(root, node, checkerFunc, rule) {
-  let passedCheck = false;
-  let parentNode = node.parent;
-  do {
-    if (rule === parentNode) return passedCheck;
-    if (parentNode !== root && checkerFunc(parentNode)) {
-      passedCheck = true;
-    }
-    parentNode = parentNode.parent;
-  } while (parentNode && parentNode !== root && !passedCheck);
+const processRoot = (root, filePath) => {
+  const output = {
+    feBraryHelpers: [],
+    externalImports: [],
+    customVars: [],
+    usesFeBraryVars: false,
+    classes: new Map(),
+  };
 
-  return passedCheck;
-}
+  function checkUpTree(node, checkerFunc, rule) {
+    let passedCheck = false;
+    let parentNode = node.parent;
+    do {
+      if (rule === parentNode) return passedCheck;
+      if (parentNode !== root && checkerFunc(parentNode)) {
+        passedCheck = true;
+      }
+      parentNode = parentNode.parent;
+    } while (parentNode && parentNode !== root && !passedCheck);
 
-function handleSassVar(decl, root) {
-  let values;
-
-  if (decl.value.includes(',') && postcss.list.comma(decl.value)[0] !== decl.value) {
-    values = postcss.list.comma(decl.value);
-  } else if (decl.value.includes(' ') && postcss.list.space(decl.value)[0] !== decl.value) {
-    values = postcss.list.space(decl.value);
-  } else {
-    values = [decl.value];
+    return passedCheck;
   }
 
-  return values
-    .map((string) => {
-      if (string.startsWith(FE_BRARY_PREFIX)) {
-        if (!root.usesFeBraryVars) {
-          root.usesFeBraryVars = true;
+  function handleSassVar(decl) {
+    let values;
+
+    if (decl.value.includes(',') && postcss.list.comma(decl.value)[0] !== decl.value) {
+      values = postcss.list.comma(decl.value);
+    } else if (decl.value.includes(' ') && postcss.list.space(decl.value)[0] !== decl.value) {
+      values = postcss.list.space(decl.value);
+    } else {
+      values = [decl.value];
+    }
+
+    return values
+      .map((string) => {
+        if (string.startsWith(FE_BRARY_PREFIX)) {
+          if (!output.usesFeBraryVars) {
+            output.usesFeBraryVars = true;
+          }
+
+          const [, name] = string.split(FE_BRARY_PREFIX);
+          const [field, ...varNameSegs] = name.split('-');
+          const varName = camelCase(varNameSegs.join('-'));
+          return `\${vars.${field}.${varName}}`;
         }
 
-        const [, name] = string.split(FE_BRARY_PREFIX);
-        const [field, ...varNameSegs] = name.split('-');
-        const varName = camelCase(varNameSegs.join('-'));
-        return `\${vars.${field}.${varName}}`;
-      }
+        if (string.startsWith('$')) {
+          const varName = selectorToLiteral(string.slice(1));
 
-      if (string.startsWith('$')) {
-        const varName = selectorToLiteral(string.slice(1));
+          if (
+            checkUpTree(
+              decl,
+              nodeToCheck => nodeToCheck.type === 'atrule' && nodeToCheck.name === 'mixin',
+            )
+            || root.nodes.some(node => node.prop === string)
+          ) {
+            return `\${${varName}}`;
+          }
 
-        if (
-          checkUpTree(
-            root,
-            decl,
-            nodeToCheck => nodeToCheck.type === 'atrule' && nodeToCheck.name === 'mixin',
-          )
-          || root.nodes.some(node => node.prop === string)
-        ) {
+          if (!output.customVars.includes(varName)) {
+            output.customVars.push(varName);
+          }
+
           return `\${${varName}}`;
         }
 
-        if (!root.customVars.includes(varName)) {
-          root.customVars.push(varName);
-        }
+        return string;
+      })
+      .join(' ');
+  }
 
-        return `\${${varName}}`;
+  function handleSassVarUnescaped(value) {
+    if (value.startsWith(FE_BRARY_PREFIX)) {
+      const [, name] = value.split(FE_BRARY_PREFIX);
+      const [field, ...varNameSegs] = name.split('-');
+      const varName = camelCase(varNameSegs.join('-'));
+      if (!output.usesFeBraryVars) {
+        output.usesFeBraryVars = true;
       }
-
-      return string;
-    })
-    .join(' ');
-}
-
-function handleSassVarUnescaped(value, root) {
-  if (value.startsWith(FE_BRARY_PREFIX)) {
-    const [, name] = value.split(FE_BRARY_PREFIX);
-    const [field, ...varNameSegs] = name.split('-');
-    const varName = camelCase(varNameSegs.join('-'));
-    if (!root.usesFeBraryVars) {
-      root.usesFeBraryVars = true;
+      return `vars.${field}.${varName}`;
     }
-    return `vars.${field}.${varName}`;
+
+    if (value.startsWith('$')) {
+      const varName = selectorToLiteral(value.slice(1));
+      output.customVars.push(varName);
+      return `${varName}`;
+    }
+
+    const isWrappedInQuotes = ['"', "'"].includes(value[0]);
+    if (isWrappedInQuotes) {
+      return value;
+    }
+
+    // wrap in string quotes, e.g 100px => '100px'
+    return `'${value}'`;
   }
 
-  if (value.startsWith('$')) {
-    const varName = selectorToLiteral(value.slice(1));
-    root.customVars.push(varName);
-    return `${varName}`;
+  function placeHolderToVarRef(params) {
+    return `\${${selectorToLiteral(params)}};`;
   }
 
-  const isWrappedInQuotes = ['"', "'"].includes(value[0]);
-  if (isWrappedInQuotes) {
-    return value;
+  function mixinParamsToFunc(str) {
+    if (!str.includes('(')) {
+      return `${selectorToLiteral(str.trim())}()`;
+    }
+
+    const [funcName, inputs] = str.split('(');
+    return `${selectorToLiteral(funcName)}(${inputs.replace(/\$/g, '')}`;
   }
 
-  // wrap in string quotes, e.g 100px => '100px'
-  return `'${value}'`;
-}
-
-function placeHolderToVarRef(params) {
-  return `\${${selectorToLiteral(params)}};`;
-}
-
-function mixinParamsToFunc(str) {
-  if (!str.includes('(')) {
-    return `${selectorToLiteral(str.trim())}()`;
+  function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
   }
-
-  const [funcName, inputs] = str.split('(');
-  return `${selectorToLiteral(funcName)}(${inputs.replace(/\$/g, '')}`;
-}
-
-function capitalizeFirstLetter(string) {
-  return string.charAt(0).toUpperCase() + string.slice(1);
-}
-
-const processRoot = (root, filePath) => {
-  root.feBraryHelpers = [];
-  root.externalImports = [];
-  root.customVars = [];
-  root.usesFeBraryVars = false;
-  root.classes = new Map();
 
   // maybe use /S
   root.walkRules(/ \./, (rule) => {
@@ -186,7 +187,7 @@ const processRoot = (root, filePath) => {
 
     let newParams;
     (atRule.params.match(/\$[A-Za-z-]+/g) || []).forEach((sassVar) => {
-      newParams = atRule.params.replace(sassVar, `\${${handleSassVarUnescaped(sassVar, root)}}`);
+      newParams = atRule.params.replace(sassVar, `\${${handleSassVarUnescaped(sassVar)}}`);
     });
     if (newParams) {
       atRule.params = newParams;
@@ -206,7 +207,7 @@ const processRoot = (root, filePath) => {
     }
 
     if (comment.parent === root) {
-      root.classes.set(
+      output.classes.set(
         `comment:${comment.source.start.line}`, {
           node: comment,
           type: 'jsComment',
@@ -280,8 +281,8 @@ const processRoot = (root, filePath) => {
     if (!hasRefInFile) {
       // use fe-brary export to check and improve once done
       if (feBrary[ref] && typeof feBrary[ref] === 'object') {
-        if (!root.feBraryHelpers.includes(ref)) root.feBraryHelpers.push(ref);
-      } else if (!root.externalImports.includes(ref)) root.externalImports.push(ref);
+        if (!output.feBraryHelpers.includes(ref)) output.feBraryHelpers.push(ref);
+      } else if (!output.externalImports.includes(ref)) output.externalImports.push(ref);
     }
 
     atRule.params = placeHolderToVarRef(atRule.params);
@@ -306,11 +307,11 @@ const processRoot = (root, filePath) => {
 
     if (!hasRefInFile) {
       if (feBrary[literalFuncName] && typeof feBrary[literalFuncName] === 'function') {
-        if (!root.feBraryHelpers.includes(literalFuncName)) {
-          root.feBraryHelpers.push(literalFuncName);
+        if (!output.feBraryHelpers.includes(literalFuncName)) {
+          output.feBraryHelpers.push(literalFuncName);
         }
-      } else if (!root.externalImports.includes(literalFuncName)) {
-        root.externalImports.push(literalFuncName);
+      } else if (!output.externalImports.includes(literalFuncName)) {
+        output.externalImports.push(literalFuncName);
       }
     }
 
@@ -320,7 +321,7 @@ const processRoot = (root, filePath) => {
     }
 
     const inputsWithoutBraces = inputs.slice(0, -1);
-    const args = inputsWithoutBraces.split(',').map(arg => handleSassVarUnescaped(arg.trim(), root));
+    const args = inputsWithoutBraces.split(',').map(arg => handleSassVarUnescaped(arg.trim()));
 
     atRule.params = `\${${selectorToLiteral(funcName.trim())} (${args.join(', ')})}`;
   });
@@ -340,11 +341,11 @@ const processRoot = (root, filePath) => {
         }
       });
 
-      if (decl.value.includes(FE_BRARY_PREFIX)) root.usesFeBraryVars = true;
+      if (decl.value.includes(FE_BRARY_PREFIX)) output.usesFeBraryVars = true;
 
-      decl.value = handleSassVar(decl, root);
+      decl.value = handleSassVar(decl);
 
-      root.classes.set(decl.prop, {
+      output.classes.set(decl.prop, {
         type: 'constVar',
         node: decl,
         isUsedInFile,
@@ -368,7 +369,7 @@ const processRoot = (root, filePath) => {
       );
     }
 
-    decl.value = handleSassVar(decl, root);
+    decl.value = handleSassVar(decl);
   });
 
   root.walkRules(/^(?!(\.|%|:))/, (rule) => {
@@ -410,7 +411,6 @@ const processRoot = (root, filePath) => {
 
     if (
       checkUpTree(
-        root,
         rule,
         nodeToCheck => nodeToCheck.type === 'atrule' && nodeToCheck.name === 'mixin',
       )
@@ -429,7 +429,6 @@ const processRoot = (root, filePath) => {
       // e.g &:hover or &.is-selected.
       const nestedInAmpersand = node
         && checkUpTree(
-          root,
           node,
           nodeToCheck => nodeToCheck.type === 'rule' && nodeToCheck.selector.startsWith('&'),
         );
@@ -470,7 +469,6 @@ const processRoot = (root, filePath) => {
       if (
         node
         && checkUpTree(
-          root,
           node,
           // nodeToCheck !== rule means not the rule being printed
           nodeToCheck => nodeToCheck.type === 'rule' && nodeToCheck.isItsOwnCssVar && nodeToCheck !== rule,
@@ -488,7 +486,7 @@ const processRoot = (root, filePath) => {
         && startOrEnd === 'start'
       ) {
         contents += `${node.params} {`;
-        if (!root.feBraryHelpers.includes('media')) root.feBraryHelpers.push('media');
+        if (!output.feBraryHelpers.includes('media')) output.feBraryHelpers.push('media');
         return;
       }
 
@@ -503,11 +501,11 @@ const processRoot = (root, filePath) => {
 
     let newContents = pseudoPostfix ? `&:${pseudoPostfix} { ${contents} }` : contents;
 
-    newContents = root.classes.has(selector)
-      ? root.classes.get(selector).contents + newContents
+    newContents = output.classes.has(selector)
+      ? output.classes.get(selector).contents + newContents
       : newContents;
 
-    root.classes.set(selector, {
+    output.classes.set(selector, {
       type: isPlaceHolder ? 'placeholder' : 'class',
       isUsedInFile,
       contents: newContents,
@@ -536,19 +534,21 @@ const processRoot = (root, filePath) => {
       }
     });
 
-    root.classes.set(selector, {
+    output.classes.set(selector, {
       type: 'mixin',
       contents,
       isUsedInFile,
       node: atRule,
     });
   });
+
+  return output;
 };
 
 module.exports = (cssString, filePath, pathToVariables = '../variables') => {
   const root = postcssScss.parse(cssString, { from: filePath });
 
-  processRoot(root, filePath);
+  const output = processRoot(root, filePath);
 
   // e.g styles.scss
   const isJustSassImports = root.nodes.every(
@@ -558,7 +558,7 @@ module.exports = (cssString, filePath, pathToVariables = '../variables') => {
 
   let fileIsJustVarExports = true;
 
-  const classesEntries = Array.from(root.classes.entries());
+  const classesEntries = Array.from(output.classes.entries());
 
   const oneDefault = classesEntries.filter(([, { isUsedInFile }]) => !isUsedInFile).length === 1;
 
@@ -635,22 +635,22 @@ module.exports = (cssString, filePath, pathToVariables = '../variables') => {
     }, '');
 
   const js = `${fileIsJustVarExports ? '' : "import { css } from '@emotion/core'"};\n${
-    root.usesFeBraryVars
+    output.usesFeBraryVars
       ? `import { variables as vars${
-        root.feBraryHelpers.length ? `, ${root.feBraryHelpers.join(', ')}` : ''
+        output.feBraryHelpers.length ? `, ${output.feBraryHelpers.join(', ')}` : ''
       } } from '@domain-group/fe-brary';\n`
       : ''
   }${
-    !root.usesFeBraryVars && root.feBraryHelpers.length
-      ? `import { ${root.feBraryHelpers.join(', ')} } from '@domain-group/fe-brary';\n`
+    !output.usesFeBraryVars && output.feBraryHelpers.length
+      ? `import { ${output.feBraryHelpers.join(', ')} } from '@domain-group/fe-brary';\n`
       : ''
   }${
-    root.externalImports.length
-      ? `import { ${root.externalImports.join(', ')} } from '../utils';\n`
+    output.externalImports.length
+      ? `import { ${output.externalImports.join(', ')} } from '../utils';\n`
       : ''
   }${
-    root.customVars.length
-      ? `import { ${root.customVars.join(', ')} } from '${pathToVariables}';\n`
+    output.customVars.length
+      ? `import { ${output.customVars.join(', ')} } from '${pathToVariables}';\n`
       : ''
   }${emotionExports}
 `;
