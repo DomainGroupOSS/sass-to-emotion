@@ -50,8 +50,7 @@ describe('transform', () => {
 
   it('placeholder', () => {
     expect(
-      transform(
-        `// this comment would cause issues using the postcss parser vs postcss-scss
+      transform(`
         %message-shared {
           border: 1px solid #ccc;
           padding: 10px;
@@ -65,8 +64,7 @@ describe('transform', () => {
         .success {
           @extend %message-shared;
           border-color: green;
-        }`,
-      ),
+        }`),
     ).toMatchSnapshot();
   });
 
@@ -880,10 +878,20 @@ describe('transform', () => {
     ).toMatchSnapshot();
   });
 
-  it.skip('dont lose top level comments', () => {
+  it('dont lose top level comments', () => {
     expect(
       transform(`
-        // asdasd
+        /*
+          I wondered why the baseball was getting bigger,
+          and then it hit me.
+         */
+        .bar {
+          color: pink;
+        }
+
+        // foo bar baz
+        // skeleton washing his hair
+        // bear washing clothes
         .foo {
           color: black;
         }

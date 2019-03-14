@@ -127,8 +127,8 @@ const processRoot = (root, filePath) => {
   root.feBraryHelpers = [];
   root.externalImports = [];
   root.customVars = [];
-  root.classes = new Map();
   root.usesFeBraryVars = false;
+  root.classes = new Map();
 
   // maybe use /S
   root.walkRules(/ \./, (rule) => {
@@ -203,6 +203,15 @@ const processRoot = (root, filePath) => {
   root.walkComments((comment) => {
     if (comment.text.includes('scss-lint')) {
       comment.remove();
+    }
+
+    if (comment.parent === root) {
+      root.classes.set(
+        `comment:${comment.source.start.line}`, {
+          node: comment,
+          type: 'jsComment',
+        },
+      );
     }
   });
 
@@ -585,6 +594,13 @@ module.exports = (cssString, filePath, pathToVariables = '../variables') => {
     }], currentIndex, sourceArray) => {
       if (type !== 'constVar') {
         fileIsJustVarExports = false;
+      }
+
+      if (type === 'jsComment') {
+        if (node.text.includes('\n') || node.text.includes('\r')) {
+          return `${acc}/*\n${node.text}\n*/`;
+        }
+        return `${acc}\n// ${node.text}`;
       }
 
       if (type === 'mixin') {

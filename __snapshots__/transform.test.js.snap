@@ -154,6 +154,25 @@ export default css\`
 "
 `;
 
+exports[`transform dont lose top level comments 1`] = `
+"import { css } from '@emotion/core';
+/*
+I wondered why the baseball was getting bigger,
+          and then it hit me.
+*/
+export const bar = css\`
+  color: pink;
+\`;
+
+// foo bar baz
+// skeleton washing his hair
+// bear washing clothes
+export const foo = css\`
+  color: black;
+\`;
+"
+`;
+
 exports[`transform double spaced selectors 1`] = `
 "import { css } from '@emotion/core';
 import { agentBoxBackgroundColor } from '../variables';
