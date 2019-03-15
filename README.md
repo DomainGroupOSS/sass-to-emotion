@@ -36,7 +36,7 @@ referenced outside an & block.
 - Adds FIXME comment when Sass maths is detected so a developer can manually fix.
 - Sass vars in rule blocks get moved to the root level and top of the JS file.
 - Root level Sass comments become JS comments, comments in blocks stay as is.
-- Warns if global type selectors are found.
+- Warns in the CLI for files that need manual FIXME attention.
 - Deletes `scss-lint` comments.
 - Prettier is applied to the JS output.
 
