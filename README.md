@@ -59,7 +59,7 @@ jscodeshift --parser flow -t ../sass-to-emotion/jscodeshift.js ./src/js
 
 ![JS to Emotion example](https://media.giphy.com/media/2xFzMpZAxinybFs4im/giphy.gif)
 
-Changes a BEM like classname from `className="baz-whizz__foo-bar"` to `className={styles.fooBar}` and adds the JS import.
+Changes a BEM like classname from `className="baz-whizz__foo-bar"` to `css={styles.fooBar}` and adds the JS import.
 
 #### Features
 
@@ -72,3 +72,4 @@ Changes a BEM like classname from `className="baz-whizz__foo-bar"` to `className
 - Think about detecting dep overrides
 - Is taking the last in `.foo.bar` and `.foo .bar` smart
 - Adding data-testid if class referenced in Enzyme/e2e tests
+- Handle `classnames` package in jscodeshift
