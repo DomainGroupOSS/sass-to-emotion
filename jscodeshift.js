@@ -46,7 +46,7 @@ module.exports = (file, api) => {
   if (!hasClassName) return null;
 
   const jsEmotionFiles = glob.sync(
-    path.join(file.path.split('/js/')[0], 'style', '**', '*.js'),
+    path.join(file.path.split('/js/')[0], 'styles', '**', '*.js'),
     { absolute: true },
   );
 
