@@ -18,10 +18,12 @@ const OPERATORS = [' + ', ' - ', ' / ', ' * ', ' % ', ' < ', ' > ', ' == ', ' !=
 
 const processRoot = (root, filePath) => {
   const output = {
-    feBraryHelpers: [],
-    externalImports: [],
-    customVars: [],
     usesFeBraryVars: false,
+    feBraryHelpers: [],
+
+    externalHelpers: [],
+    externalVars: [],
+
     classes: new Map(),
   };
 
@@ -76,8 +78,8 @@ const processRoot = (root, filePath) => {
             return `\${${varName}}`;
           }
 
-          if (!output.customVars.includes(varName)) {
-            output.customVars.push(varName);
+          if (!output.externalVars.includes(varName)) {
+            output.externalVars.push(varName);
           }
 
           return `\${${varName}}`;
@@ -101,7 +103,7 @@ const processRoot = (root, filePath) => {
 
     if (value.startsWith('$')) {
       const varName = selectorToLiteral(value.slice(1));
-      output.customVars.push(varName);
+      output.externalVars.push(varName);
       return `${varName}`;
     }
 
@@ -288,7 +290,7 @@ const processRoot = (root, filePath) => {
       // use fe-brary export to check and improve once done
       if (feBrary[ref] && typeof feBrary[ref] === 'object') {
         if (!output.feBraryHelpers.includes(ref)) output.feBraryHelpers.push(ref);
-      } else if (!output.externalImports.includes(ref)) output.externalImports.push(ref);
+      } else if (!output.externalHelpers.includes(ref)) output.externalHelpers.push(ref);
     }
 
     atRule.params = placeHolderToVarRef(atRule.params);
@@ -316,8 +318,8 @@ const processRoot = (root, filePath) => {
         if (!output.feBraryHelpers.includes(literalFuncName)) {
           output.feBraryHelpers.push(literalFuncName);
         }
-      } else if (!output.externalImports.includes(literalFuncName)) {
-        output.externalImports.push(literalFuncName);
+      } else if (!output.externalHelpers.includes(literalFuncName)) {
+        output.externalHelpers.push(literalFuncName);
       }
     }
 
@@ -643,12 +645,12 @@ module.exports = (cssString, filePath, pathToVariables = '../variables') => {
       ? `import { ${output.feBraryHelpers.join(', ')} } from '@domain-group/fe-brary';\n`
       : ''
   }${
-    output.externalImports.length
-      ? `import { ${output.externalImports.join(', ')} } from '../utils';\n`
+    output.externalHelpers.length
+      ? `import { ${output.externalHelpers.join(', ')} } from '../utils';\n`
       : ''
   }${
-    output.customVars.length
-      ? `import { ${output.customVars.join(', ')} } from '${pathToVariables}';\n`
+    output.externalVars.length
+      ? `import { ${output.externalVars.join(', ')} } from '${pathToVariables}';\n`
       : ''
   }${emotionExports}
 `;
