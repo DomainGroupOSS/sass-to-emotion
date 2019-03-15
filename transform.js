@@ -103,7 +103,12 @@ const processRoot = (root, filePath) => {
 
     if (value.startsWith('$')) {
       const varName = selectorToLiteral(value.slice(1));
-      output.externalVars.push(varName);
+
+      if (!root.nodes.some(node => node.prop === value)
+      && !output.externalVars.includes(varName)) {
+        output.externalVars.push(varName);
+      }
+
       return `${varName}`;
     }
 

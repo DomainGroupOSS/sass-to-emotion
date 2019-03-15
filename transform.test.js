@@ -906,6 +906,18 @@ describe('transform', () => {
     ).toMatchSnapshot();
   });
 
+  it('check if var declared locally before importing', () => {
+    expect(
+      transform(`
+        .listing-details__map-marker {
+          $map-marker-arrow-size: 8px;
+          bar: $map-marker-arrow-size;
+          @include simple-arrow($map-marker-arrow-size, $map-marker-arrow-size, 'down', $fe-brary-colour-white);
+        }
+      `),
+    ).toMatchSnapshot();
+  });
+
   it.skip('pseduo elements and combinators', () => {
     expect(
       transform(`

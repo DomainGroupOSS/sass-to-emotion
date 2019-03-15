@@ -32,6 +32,19 @@ export default css\`
 "
 `;
 
+exports[`transform check if var declared locally before importing 1`] = `
+"import { css } from '@emotion/core';
+import { variables as vars, simpleArrow } from '@domain-group/fe-brary';
+
+const mapMarkerArrowSize = '8px';
+
+export default css\`
+  bar: \${mapMarkerArrowSize};
+  \${simpleArrow(mapMarkerArrowSize, mapMarkerArrowSize, 'down', vars.colour.white)}
+\`;
+"
+`;
+
 exports[`transform const vars up top 1`] = `
 "import { css } from '@emotion/core';
 
@@ -85,7 +98,6 @@ export default css\`
 exports[`transform custom vars in include 1`] = `
 "import { css } from '@emotion/core';
 import { variables as vars, simpleArrow } from '@domain-group/fe-brary';
-import { mapMarkerArrowSize, mapMarkerArrowSize } from '../variables';
 
 const mapMarkerArrowSize = '8px';
 
