@@ -5,10 +5,10 @@ There are two parts to this repo, the Sass part and the JavaScript part.
 ### Sass
 
 This contains most of the heavy lifting, give it a glob of .scss files, it will parse them into a
-PostCSS AST and generate an Emotion JS file.
+PostCSS AST and generate an Emotion JS file. To use, clone the repo and execute index.js like so:
 
 ```sh
-yarn global add sass-to-emotion
+../sass-to-emotion/index.js ./src/scss/**/*.scss
 sass-to-emotion ./src/scss/**/*.scss
 ```
 
