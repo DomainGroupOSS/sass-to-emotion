@@ -2,6 +2,7 @@
 /* eslint-disable no-param-reassign, no-console */
 const fs = require('fs');
 const path = require('path');
+const chalk = require('chalk');
 const transform = require('./transform');
 
 function scssFileToJs(filePath) {
@@ -16,7 +17,7 @@ function scssFileToJs(filePath) {
 (() => {
   const files = process.argv.slice(2);
   global.sassToEmotionWarnings = {};
-  console.log(`Transforming ${files.length} files...`);
+  console.log(chalk.bold.magentaBright(`Transforming ${files.length} files...`));
   const processedFiles = files
     .map((filePath) => {
       const css = fs.readFileSync(filePath);
@@ -37,7 +38,7 @@ function scssFileToJs(filePath) {
     })
     .filter(Boolean);
 
-  console.log('Processed all files without errors, writing to disk');
+  console.log(chalk.bold.magentaBright('Processed all files without errors, writing to disk.'));
 
   processedFiles.forEach(([filePath, js]) => {
     const finalFilePath = scssFileToJs(filePath);
@@ -48,15 +49,15 @@ function scssFileToJs(filePath) {
 
   const hasWarnings = Object.keys(global.sassToEmotionWarnings).length;
 
-  console.log(`Finished successfully${hasWarnings ? ' but has warnings' : ''}!\n\n`);
+  console.log(chalk.bold.magentaBright(`Finished successfully${hasWarnings ? ' but has warnings' : ''}!\n\n`));
 
   if (hasWarnings) {
     console.warn('The following files have warnings...\n\n');
 
     Object.entries(global.sassToEmotionWarnings).forEach(([key, value]) => {
-      console.log(`${key}\n`);
+      console.log(chalk.bold.underline(`${key}\n`));
       value.forEach((msg) => {
-        console.log(`- ${msg}\n`);
+        console.log(chalk.red(`- ${msg}\n`));
       });
       console.log();
     });
