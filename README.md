@@ -9,7 +9,6 @@ PostCSS AST and generate an Emotion JS file. To use, clone the repo and execute 
 
 ```sh
 ../sass-to-emotion/index.js ./src/scss/**/*.scss
-sass-to-emotion ./src/scss/**/*.scss
 ```
 
 ![Sass to JS example](https://media.giphy.com/media/82oklJW3X4lQx9show/giphy.gif)
