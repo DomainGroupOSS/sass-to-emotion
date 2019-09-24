@@ -6,10 +6,13 @@ There are two parts to this repo, the Sass part and the JavaScript part.
 
 This contains most of the heavy lifting, give it a glob of .scss files, it will parse them into a
 PostCSS AST and generate an Emotion JS file. To use, clone the repo and execute index.js like so:
+```sh
+../sass-to-emotion/index.js ./src/scss/**/*.scss
+```
 
 ![Sass to JS example](https://media.giphy.com/media/82oklJW3X4lQx9show/giphy.gif)
 
-`foo.scss`:
+For example an input file `foo.scss`:
 
 ```scss
 @mixin ad-exact($width, $height) {
@@ -51,7 +54,7 @@ PostCSS AST and generate an Emotion JS file. To use, clone the repo and execute 
 }
 ```
 
-Is turned into `foo.js`:
+Is turned into a `foo.js`:
 
 ```js
 import { css } from '@emotion/core';
@@ -99,7 +102,6 @@ export const foo = css`
 
 ```
 
-
 #### Features
 
 - Classes become exported Emotion tagged templates css\`\`.
@@ -146,6 +148,37 @@ jscodeshift --parser flow -t ../sass-to-emotion/jscodeshift.js ./src/js
 ![JS to Emotion example](https://media.giphy.com/media/2xFzMpZAxinybFs4im/giphy.gif)
 
 Changes a BEM like classname from `className="baz-whizz__foo-bar"` to `css={styles.fooBar}` and adds the JS import.
+
+For example an input file like below is transformed in-place from:
+
+```js
+import React from 'react';
+
+export default function Bar() {
+  return (
+    <div>
+      <h1 className="listing-details__shortlist-button-icon">Hello</h1>
+      <p className="listing-details__shortlist-aasdas-adasda-icon">Foo Bar Baz</p>
+    </div>
+  );
+}
+```
+
+to:
+
+```js
+import React from 'react';
+import * as styles from '../../styles/FIXME';
+
+export default function Bar() {
+  return (
+    <div>
+      <h1 css={styles.shortlistButtonIcon}>Hello</h1>
+      <p css={styles.shortlistAasdasAdasdaIcon}>Foo Bar Baz</p>
+    </div>
+  );
+}
+```
 
 #### Features
 
