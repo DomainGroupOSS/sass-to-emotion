@@ -7,11 +7,98 @@ There are two parts to this repo, the Sass part and the JavaScript part.
 This contains most of the heavy lifting, give it a glob of .scss files, it will parse them into a
 PostCSS AST and generate an Emotion JS file. To use, clone the repo and execute index.js like so:
 
-```sh
-../sass-to-emotion/index.js ./src/scss/**/*.scss
+![Sass to JS example](https://media.giphy.com/media/82oklJW3X4lQx9show/giphy.gif)
+
+`foo.scss`:
+
+```scss
+@mixin ad-exact($width, $height) {
+  width: $width;
+  height: $height;
+  color: $fe-brary-colour-primary-dark;
+}
+
+.bar {
+  color: blue;
+  @include ad-exact(125px, 700px);
+}
+
+%message-shared {
+  border: 1px solid #ccc;
+  padding: 10px;
+  color: #333;
+}
+
+.message {
+  @extend %message-shared;
+}
+
+.success {
+  @extend %message-shared;
+  border-color: green;
+}
+
+.button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $fe-brary-colour-primary-dark;
+
+  .foo {
+    display: block;
+    font-size: $fe-brary-font-h6-font-size;
+  }
+}
 ```
 
-![Sass to JS example](https://media.giphy.com/media/82oklJW3X4lQx9show/giphy.gif)
+Is turned into `foo.js`:
+
+```js
+import { css } from '@emotion/core';
+import { variables as vars } from '@domain-group/fe-brary';
+
+function adExact(width, height) {
+  return css`
+    width: ${width};
+    height: ${height};
+    color: ${vars.colour.primaryDark};
+  `;
+}
+
+export const bar = css`
+  color: blue;
+  ${adExact('125px', '700px')}
+`;
+
+const messageShared = css`
+  border: 1px solid #ccc;
+  padding: 10px;
+  color: #333;
+`;
+
+export const message = css`
+  ${messageShared};
+`;
+
+export const success = css`
+  ${messageShared};
+  border-color: green;
+`;
+
+export const button = css`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: ${vars.colour.primaryDark};
+`;
+
+export const foo = css`
+  display: block;
+  font-size: ${vars.font.h6FontSize};
+`;
+
+```
+
 
 #### Features
 
