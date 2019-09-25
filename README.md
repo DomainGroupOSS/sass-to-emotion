@@ -6,12 +6,101 @@ There are two parts to this repo, the Sass part and the JavaScript part.
 
 This contains most of the heavy lifting, give it a glob of .scss files, it will parse them into a
 PostCSS AST and generate an Emotion JS file. To use, clone the repo and execute index.js like so:
-
 ```sh
 ../sass-to-emotion/index.js ./src/scss/**/*.scss
 ```
 
 ![Sass to JS example](https://media.giphy.com/media/82oklJW3X4lQx9show/giphy.gif)
+
+For example an input file `foo.scss`:
+
+```scss
+@mixin ad-exact($width, $height) {
+  width: $width;
+  height: $height;
+  color: $fe-brary-colour-primary-dark;
+}
+
+.bar {
+  color: blue;
+  @include ad-exact(125px, 700px);
+}
+
+%message-shared {
+  border: 1px solid #ccc;
+  padding: 10px;
+  color: #333;
+}
+
+.message {
+  @extend %message-shared;
+}
+
+.success {
+  @extend %message-shared;
+  border-color: green;
+}
+
+.button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $fe-brary-colour-primary-dark;
+
+  .foo {
+    display: block;
+    font-size: $fe-brary-font-h6-font-size;
+  }
+}
+```
+
+Is turned into a `foo.js`:
+
+```js
+import { css } from '@emotion/core';
+import { variables as vars } from '@domain-group/fe-brary';
+
+function adExact(width, height) {
+  return css`
+    width: ${width};
+    height: ${height};
+    color: ${vars.colour.primaryDark};
+  `;
+}
+
+export const bar = css`
+  color: blue;
+  ${adExact('125px', '700px')}
+`;
+
+const messageShared = css`
+  border: 1px solid #ccc;
+  padding: 10px;
+  color: #333;
+`;
+
+export const message = css`
+  ${messageShared};
+`;
+
+export const success = css`
+  ${messageShared};
+  border-color: green;
+`;
+
+export const button = css`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: ${vars.colour.primaryDark};
+`;
+
+export const foo = css`
+  display: block;
+  font-size: ${vars.font.h6FontSize};
+`;
+
+```
 
 #### Features
 
@@ -59,6 +148,37 @@ jscodeshift --parser flow -t ../sass-to-emotion/jscodeshift.js ./src/js
 ![JS to Emotion example](https://media.giphy.com/media/2xFzMpZAxinybFs4im/giphy.gif)
 
 Changes a BEM like classname from `className="baz-whizz__foo-bar"` to `css={styles.fooBar}` and adds the JS import.
+
+For example an input file like below is transformed in-place from:
+
+```js
+import React from 'react';
+
+export default function Bar() {
+  return (
+    <div>
+      <h1 className="listing-details__shortlist-button-icon">Hello</h1>
+      <p className="listing-details__shortlist-aasdas-adasda-icon">Foo Bar Baz</p>
+    </div>
+  );
+}
+```
+
+to:
+
+```js
+import React from 'react';
+import * as styles from '../../styles/FIXME';
+
+export default function Bar() {
+  return (
+    <div>
+      <h1 css={styles.shortlistButtonIcon}>Hello</h1>
+      <p css={styles.shortlistAasdasAdasdaIcon}>Foo Bar Baz</p>
+    </div>
+  );
+}
+```
 
 #### Features
 
