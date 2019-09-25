@@ -17,7 +17,7 @@
     "lodash": "^4.17.11",
     "postcss": "^7.0.14",
     "postcss-scss": "^2.0.0",
-    "prettier-eslint": "^8.8.2",
+    "prettier-eslint": "^9.0.0",
     "react": "^16.8.3"
   },
   "devDependencies": {
