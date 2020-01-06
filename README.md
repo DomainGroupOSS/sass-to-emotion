@@ -5,10 +5,15 @@ There are two parts to this repo, the Sass part and the JavaScript part.
 ### Sass
 
 This contains most of the heavy lifting, give it a glob of .scss files, it will parse them into a
-PostCSS AST and generate an Emotion JS file. To use, clone the repo and execute index.js like so:
+PostCSS AST and generate an Emotion JS file. To use, clone the repo, run `npm install` and
+execute index.js like so:
 ```sh
 ../sass-to-emotion/index.js ./src/scss/**/*.scss
 ```
+
+Please note `yarn install` will not work for users outside of Domain because
+it handles the package.json `optional` dependencies differently to npm
+and will error for a private package we use for internal transforms.
 
 ![Sass to JS example](https://media.giphy.com/media/82oklJW3X4lQx9show/giphy.gif)
 
@@ -141,7 +146,7 @@ Clone this repo and link to the transform at `sass-to-emotion/jscodeshift` when 
 For example:
 
 ```sh
-yarn global add jscodeshift
+npm install -g jscodeshift
 jscodeshift --parser flow -t ../sass-to-emotion/jscodeshift.js ./src/js
 ```
 

@@ -4,7 +4,15 @@ const postcssScss = require('postcss-scss');
 const postcss = require('postcss');
 const { camelCase } = require('lodash');
 const format = require('prettier-eslint');
-const feBrary = require('@domain-group/fe-brary');
+
+let feBrary;
+try {
+  // OSS users will not have optional package
+  feBrary = require('@domain-group/fe-brary'); // eslint-disable-line
+} catch (error) {
+  feBrary = null;
+}
+
 const selectorToLiteral = require('./selector-to-variable-identifier');
 
 // TODO make CLI option
@@ -293,7 +301,7 @@ const processRoot = (root, filePath) => {
 
     if (!hasRefInFile) {
       // use fe-brary export to check and improve once done
-      if (feBrary[ref] && typeof feBrary[ref] === 'object') {
+      if (feBrary && feBrary[ref] && typeof feBrary[ref] === 'object') {
         if (!output.feBraryHelpers.includes(ref)) output.feBraryHelpers.push(ref);
       } else if (!output.externalHelpers.includes(ref)) output.externalHelpers.push(ref);
     }
