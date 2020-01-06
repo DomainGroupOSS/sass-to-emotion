@@ -200,7 +200,7 @@ export const carouselFeCarouselBackwardsCarouselFeCarouselForward = css\`
 "
 `;
 
-exports[`transform emtpy classes 1`] = `
+exports[`transform empty classes 1`] = `
 "
 "
 `;
