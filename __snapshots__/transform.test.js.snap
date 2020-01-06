@@ -776,6 +776,23 @@ export const success = css\`
 "
 `;
 
+exports[`transform postfix ampersand 1`] = `
+"import { css } from '@emotion/core';
+
+export const foobar = css\`
+  color: pink;
+\`;
+
+export const fooBaz = css\`
+  color: pink;
+\`;
+
+export const fooBazQuk = css\`
+  color: pink;
+\`;
+"
+`;
+
 exports[`transform print all contents of placeholders 1`] = `
 "import { css } from '@emotion/core';
 

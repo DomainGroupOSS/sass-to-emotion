@@ -918,6 +918,24 @@ describe('transform', () => {
     ).toMatchSnapshot();
   });
 
+  it('postfix ampersand', () => {
+    expect(
+      transform(`
+        .foo {
+          &bar {
+            color: pink;
+          }
+          &-baz {
+            color: pink;
+            &-quk {
+              color: pink;
+            }
+          }
+        }
+      `),
+    ).toMatchSnapshot();
+  });
+
   it.skip('pseduo elements and combinators', () => {
     expect(
       transform(`

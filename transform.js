@@ -405,6 +405,12 @@ const processRoot = (root, filePath) => {
     }
   });
 
+  root.walkRules(/^&[a-zA-Z0-9_-]/, (rule) => {
+    if (rule.parent === root || !rule.parent.selector.startsWith('.')) return;
+
+    rule.selector = `${rule.parent.selector}${rule.selector.slice(1)}`;
+  });
+
   // flattens nested rules
   root.walkRules(/^(\.|%)/, (rule) => {
     let { selector } = rule;
@@ -524,6 +530,8 @@ const processRoot = (root, filePath) => {
 
       contents += string;
     });
+
+    if (contents.trim() === '') return;
 
     let newContents = pseudoPostfix ? `&:${pseudoPostfix} { ${contents} }` : contents;
 
