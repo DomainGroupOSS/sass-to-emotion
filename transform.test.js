@@ -937,7 +937,7 @@ describe('transform', () => {
     ).toMatchSnapshot();
   });
 
-  it('emtpy classes', () => {
+  it('empty classes', () => {
     expect(
       transform(`
         .foo {
