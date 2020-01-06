@@ -918,7 +918,8 @@ describe('transform', () => {
     ).toMatchSnapshot();
   });
 
-  it('postfix ampersand', () => {
+  // https://sass-lang.com/documentation/style-rules/parent-selector#adding-suffixes
+  it('sass suffix', () => {
     expect(
       transform(`
         .foo {
