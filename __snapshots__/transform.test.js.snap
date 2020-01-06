@@ -521,9 +521,9 @@ exports[`transform multiple vars formating 1`] = `
 "import { css } from '@emotion/core';
 import { variables as vars } from '@domain-group/fe-brary';
 
-export const agentNameSize = \`\${vars.font.h5FontSize}\`;
-export const companyNameSize = \`\${vars.font.h6FontSize}\`;
 export const agentAvatarBorderExperimentColor = '#979797';
+export const companyNameSize = \`\${vars.font.h6FontSize}\`;
+export const agentNameSize = \`\${vars.font.h5FontSize}\`;
 
 export const agentDetailsCarousel = css\`
   position: relative;
@@ -920,9 +920,9 @@ exports[`transform vars referencing fe-brary variables 1`] = `
 "import { variables as vars } from '@domain-group/fe-brary';
 import { fooBarBaz } from '../variables';
 
-export const agentNameSize = \`\${vars.font.h5FontSize}\`;
-export const fooBar = \`\${fooBarBaz}\`;
-export const agentBoxBoxShadowLeftRight = 'inset -1px 0 0 0 $agent-box-border-color-lighter inset 1px 0 0 0 $agent-box-border-color-light';
 export const agentAvatarBorderExperimentColor = '#979797';
+export const agentBoxBoxShadowLeftRight = 'inset -1px 0 0 0 $agent-box-border-color-lighter inset 1px 0 0 0 $agent-box-border-color-light';
+export const fooBar = \`\${fooBarBaz}\`;
+export const agentNameSize = \`\${vars.font.h5FontSize}\`;
 "
 `;
