@@ -936,6 +936,19 @@ describe('transform', () => {
     ).toMatchSnapshot();
   });
 
+  it('emtpy classes', () => {
+    expect(
+      transform(`
+        .foo {
+        }
+        .baz {
+
+
+        }
+      `),
+    ).toMatchSnapshot();
+  });
+
   it.skip('pseduo elements and combinators', () => {
     expect(
       transform(`
