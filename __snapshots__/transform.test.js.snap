@@ -200,6 +200,11 @@ export const carouselFeCarouselBackwardsCarouselFeCarouselForward = css\`
 "
 `;
 
+exports[`transform empty classes 1`] = `
+"
+"
+`;
+
 exports[`transform exports placeholder if its not being used in the file 1`] = `
 "import { css } from '@emotion/core';
 
@@ -788,6 +793,23 @@ const removeAdBorder = css\`
 
 export default css\`
   \${removeAdBorder};
+\`;
+"
+`;
+
+exports[`transform sass suffix 1`] = `
+"import { css } from '@emotion/core';
+
+export const foobar = css\`
+  color: pink;
+\`;
+
+export const fooBaz = css\`
+  color: pink;
+\`;
+
+export const fooBazQuk = css\`
+  color: pink;
 \`;
 "
 `;

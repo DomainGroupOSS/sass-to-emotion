@@ -918,6 +918,38 @@ describe('transform', () => {
     ).toMatchSnapshot();
   });
 
+  // https://sass-lang.com/documentation/style-rules/parent-selector#adding-suffixes
+  it('sass suffix', () => {
+    expect(
+      transform(`
+        .foo {
+          &bar {
+            color: pink;
+          }
+          &-baz {
+            color: pink;
+            &-quk {
+              color: pink;
+            }
+          }
+        }
+      `),
+    ).toMatchSnapshot();
+  });
+
+  it('empty classes', () => {
+    expect(
+      transform(`
+        .foo {
+        }
+        .baz {
+
+
+        }
+      `),
+    ).toMatchSnapshot();
+  });
+
   it.skip('pseduo elements and combinators', () => {
     expect(
       transform(`
