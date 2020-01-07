@@ -4,6 +4,7 @@ const postcssScss = require('postcss-scss');
 const postcss = require('postcss');
 const { camelCase } = require('lodash');
 const format = require('prettier-eslint');
+const path = require('path');
 
 let feBrary;
 try {
@@ -676,5 +677,9 @@ module.exports = (cssString, filePath, pathToVariables = '../variables') => {
   }${emotionExports}
 `;
 
-  return format({ text: js, filePath, prettierOptions: { parser: 'babylon' } });
+  return format({
+    text: js,
+    filePath: path.resolve(filePath),
+    prettierOptions: { parser: 'babylon' },
+  });
 };

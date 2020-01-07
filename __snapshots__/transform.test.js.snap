@@ -943,7 +943,7 @@ exports[`transform vars referencing fe-brary variables 1`] = `
 import { fooBarBaz } from '../variables';
 
 export const agentAvatarBorderExperimentColor = '#979797';
-export const agentBoxBoxShadowLeftRight = 'inset -1px 0 0 0 $agent-box-border-color-lighter inset 1px 0 0 0 $agent-box-border-color-light';
+export const agentBoxBoxShadowLeftRight = \`inset -1px 0 0 0 $agent-box-border-color-lighter inset 1px 0 0 0 $agent-box-border-color-light\`;
 export const fooBar = \`\${fooBarBaz}\`;
 export const agentNameSize = \`\${vars.font.h5FontSize}\`;
 "

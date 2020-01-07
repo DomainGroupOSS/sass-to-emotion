@@ -1,4 +1,8 @@
-const transform = require('./transform');
+const transformSass = require('./transform');
+
+function transform(css) {
+  return transformSass(css, './src/scss/foo.scss');
+}
 
 describe('transform', () => {
   beforeAll(() => {
