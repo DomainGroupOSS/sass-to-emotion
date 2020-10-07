@@ -954,6 +954,28 @@ describe('transform', () => {
     ).toMatchSnapshot();
   });
 
+  it('multiple comma separated values', () => {
+    expect(
+      transform(`
+        .element {
+          transition: opacity ease-out 1s, transform ease-in 1s;
+        }
+      `),
+    ).toMatchSnapshot();
+  });
+
+  it('multiple comma separated variables', () => {
+    expect(
+      transform(`
+        $transition1: opacity ease-out 1s;
+        $transition2: transform ease-in 1s;
+        .element {
+          transition: $transition1, $transition2;
+        }
+      `),
+    ).toMatchSnapshot();
+  });
+
   it.skip('pseduo elements and combinators', () => {
     expect(
       transform(`

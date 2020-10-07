@@ -497,6 +497,27 @@ export default function adExact(width, height) {
 "
 `;
 
+exports[`transform multiple comma separated values 1`] = `
+"import { css } from '@emotion/core';
+
+export default css\`
+  transition: opacity ease-out 1s, transform ease-in 1s;
+\`;
+"
+`;
+
+exports[`transform multiple comma separated variables 1`] = `
+"import { css } from '@emotion/core';
+
+const transition2 = 'transform ease-in 1s';
+const transition1 = 'opacity ease-out 1s';
+
+export default css\`
+  transition: \${transition1}, \${transition2};
+\`;
+"
+`;
+
 exports[`transform multiple nested 1`] = `
 "import { css } from '@emotion/core';
 import { variables as vars } from '@domain-group/fe-brary';
@@ -943,7 +964,7 @@ exports[`transform vars referencing fe-brary variables 1`] = `
 import { fooBarBaz } from '../variables';
 
 export const agentAvatarBorderExperimentColor = '#979797';
-export const agentBoxBoxShadowLeftRight = \`inset -1px 0 0 0 $agent-box-border-color-lighter inset 1px 0 0 0 $agent-box-border-color-light\`;
+export const agentBoxBoxShadowLeftRight = \`inset -1px 0 0 0 $agent-box-border-color-lighter, inset 1px 0 0 0 $agent-box-border-color-light\`;
 export const fooBar = \`\${fooBarBaz}\`;
 export const agentNameSize = \`\${vars.font.h5FontSize}\`;
 "

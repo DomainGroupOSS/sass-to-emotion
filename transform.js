@@ -52,9 +52,11 @@ const processRoot = (root, filePath) => {
 
   function handleSassVar(decl) {
     let values;
+    let separator = ' ';
 
     if (decl.value.includes(',') && postcss.list.comma(decl.value)[0] !== decl.value) {
       values = postcss.list.comma(decl.value);
+      separator = ', ';
     } else if (decl.value.includes(' ') && postcss.list.space(decl.value)[0] !== decl.value) {
       values = postcss.list.space(decl.value);
     } else {
@@ -96,7 +98,7 @@ const processRoot = (root, filePath) => {
 
         return string;
       })
-      .join(' ');
+      .join(separator);
   }
 
   function handleSassVarUnescaped(value) {
