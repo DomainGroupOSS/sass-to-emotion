@@ -1,6 +1,6 @@
 # sass-to-emotion
 
-There are two parts to this repo, the Sass part and the JavaScript part.
+An assistive tool for helping devs convert Sass files to Emotion JavaScript files. There are two parts to this repo, the Sass part and the JavaScript part.
 
 ### Sass
 
