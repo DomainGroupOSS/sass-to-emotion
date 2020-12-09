@@ -683,5 +683,6 @@ module.exports = (cssString, filePath, pathToVariables = '../variables') => {
     text: js,
     filePath: path.resolve(filePath),
     prettierOptions: { parser: 'babylon' },
+    prettierPath: require.resolve('prettier'),
   });
 };
