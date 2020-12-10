@@ -8,7 +8,7 @@ This contains most of the heavy lifting, give it a glob of .scss files, it will 
 PostCSS AST and generate an Emotion JS file. To use, clone the repo, run `npm install` and
 execute index.js like so:
 ```sh
-../sass-to-emotion/index.js ./src/scss/**/*.scss
+node ../sass-to-emotion/index.js ./src/scss/**/*.scss
 ```
 
 Please note `yarn install` will not work for users outside of Domain because
