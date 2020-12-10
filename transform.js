@@ -682,7 +682,8 @@ module.exports = (cssString, filePath, pathToVariables = '../variables') => {
   return format({
     text: js,
     filePath: path.resolve(filePath),
-    prettierOptions: { parser: 'babylon' },
+    prettierOptions: { parser: 'babel' },
+    // otherwise it tried to use the prettier local to the target folder
     prettierPath: require.resolve('prettier'),
   });
 };

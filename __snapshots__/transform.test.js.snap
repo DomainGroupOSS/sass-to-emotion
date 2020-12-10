@@ -102,12 +102,11 @@ import { variables as vars, simpleArrow } from '@domain-group/fe-brary';
 const mapMarkerArrowSize = '8px';
 
 export default css\`
-
-            &::after {
-              \${simpleArrow(mapMarkerArrowSize, mapMarkerArrowSize, 'down', vars.colour.white)}
-              margin-left: \${mapMarkerArrowSize};
-            }
-          \`;
+  &::after {
+    \${simpleArrow(mapMarkerArrowSize, mapMarkerArrowSize, 'down', vars.colour.white)}
+    margin-left: \${mapMarkerArrowSize};
+  }
+\`;
 "
 `;
 
@@ -200,10 +199,7 @@ export const carouselFeCarouselBackwardsCarouselFeCarouselForward = css\`
 "
 `;
 
-exports[`transform empty classes 1`] = `
-"
-"
-`;
+exports[`transform empty classes 1`] = `""`;
 
 exports[`transform exports placeholder if its not being used in the file 1`] = `
 "import { css } from '@emotion/core';
