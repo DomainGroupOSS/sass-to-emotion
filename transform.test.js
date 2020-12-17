@@ -976,6 +976,20 @@ describe('transform', () => {
     ).toMatchSnapshot();
   });
 
+  // this could change in the future though
+  it('ignores importing Sass files', () => {
+    expect(
+      transform(`
+        @import 'theme.scss';
+        @import '_variables.scss';
+
+        .foo {
+          display: flex;
+        }
+      `),
+    ).toMatchSnapshot();
+  });
+
   it.skip('pseduo elements and combinators', () => {
     expect(
       transform(`

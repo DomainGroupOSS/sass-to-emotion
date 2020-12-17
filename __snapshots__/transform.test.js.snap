@@ -267,6 +267,24 @@ export default css\`
 "
 `;
 
+exports[`transform ignore Sass imports of paritals 1`] = `
+"import { css } from '@emotion/core';
+
+export default css\`
+  display: flex;
+\`;
+"
+`;
+
+exports[`transform ignores importing Sass files 1`] = `
+"import { css } from '@emotion/core';
+
+export default css\`
+  display: flex;
+\`;
+"
+`;
+
 exports[`transform imports fe-brary helpers with @extend 1`] = `
 "import { css } from '@emotion/core';
 import { variables as vars, buttonNormalize } from '@domain-group/fe-brary';
