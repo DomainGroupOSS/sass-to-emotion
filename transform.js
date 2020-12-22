@@ -398,7 +398,7 @@ const processRoot = (root, filePath) => {
 
   root.walkRules(/^(?!(\.|%|:))/, (rule) => {
     if (rule.parent !== root) return;
-    const msg = `Found a global selector "${
+    const msg = `Skipped a global selector "${
       rule.selector
     }". Do you need this? If you must use "import { Global } from '@emotion/core'".`;
     if (global.sassToEmotionWarnings[filePath]) {

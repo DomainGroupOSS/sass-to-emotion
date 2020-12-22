@@ -20,7 +20,18 @@ module.exports = (file, api) => {
     })
     .size() === 1;
 
-  if (!hasReact) return null;
+  if (!hasReact) { console.info(`Skipping ${file.path} because it doesn't have React`); return null; }
+
+  const hasClassName = root
+    .find(j.JSXAttribute, {
+      name: {
+        type: 'JSXIdentifier',
+        name: 'className',
+      },
+    })
+    .size() > 0;
+
+  if (!hasClassName) { console.info(`Skipping ${file.path} because it has no JSX className attributes`); return null; }
 
   const hasAStyleImport = root
     .find(j.ImportDeclaration, {
@@ -32,18 +43,7 @@ module.exports = (file, api) => {
     .filter(declarator => declarator.value.source.value.includes('styles'))
     .size() > 0;
 
-  if (hasAStyleImport) return null;
-
-  const hasClassName = root
-    .find(j.JSXAttribute, {
-      name: {
-        type: 'JSXIdentifier',
-        name: 'className',
-      },
-    })
-    .size() > 0;
-
-  if (!hasClassName) return null;
+  if (hasAStyleImport) { console.info(`Skipping ${file.path} because it already has a style import`); return null; }
 
   const jsEmotionFiles = glob.sync(
     path.join(file.path.split('/js/')[0], 'styles', '**', '*.js'),
