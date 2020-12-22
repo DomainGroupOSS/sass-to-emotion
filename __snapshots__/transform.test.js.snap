@@ -325,6 +325,27 @@ export default css\`
 "
 `;
 
+exports[`transform keyframes 1`] = `
+"import { css, keyframes } from '@emotion/core';
+
+const burst = keyframes\`
+  from {
+    opacity: 1;
+    transform: translate3d(-50%, -50%, 0) scale(0.8);
+  }
+
+  to {
+    opacity: 0;
+    transform: translate3d(-50%, -50%, 0) scale(2.3);
+  }
+\`;
+
+export const foo = css\`
+  animation: \${burst} cubic-bezier(0.22, 0.61, 0.36, 1) 0.5s;
+\`;
+"
+`;
+
 exports[`transform locate multi comma rule composition ref just after shared css 1`] = `
 "import { css } from '@emotion/core';
 import { buttonNormalize } from '@domain-group/fe-brary';
