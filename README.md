@@ -132,6 +132,7 @@ referenced outside an & block.
 - Warns in the CLI for files that need manual FIXME attention.
 - Deletes `scss-lint` comments.
 - Prettier is applied to the JS output.
+- Keyframe support
 
 ##### Domain specific (OSS release coming soon)
 - fe-brary global vars, mixins and placeholders are imported from fe-brary, if detected on it's export object.
