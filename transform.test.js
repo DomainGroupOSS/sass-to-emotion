@@ -990,6 +990,32 @@ describe('transform', () => {
     ).toMatchSnapshot();
   });
 
+  // note prettier doesnt pick up tagged template expression keyframes`` being css
+  // https://github.com/prettier/prettier/pull/2337#issuecomment-311803127
+  // https://github.com/prettier/prettier/issues/5588
+  // https://github.com/prettier/prettier/pull/2342
+  it('keyframes', () => {
+    expect(
+      transform(`
+@keyframes burst {
+  from {
+    opacity: 1;
+    transform: translate3d(-50%, -50%, 0) scale(0.8);
+  }
+
+  to {
+    opacity: 0;
+    transform: translate3d(-50%, -50%, 0) scale(2.3);
+  }
+}
+
+.foo {
+  animation: burst cubic-bezier(0.22, 0.61, 0.36, 1) 0.5s;
+}
+      `),
+    ).toMatchSnapshot();
+  });
+
   it.skip('pseduo elements and combinators', () => {
     expect(
       transform(`
@@ -1007,28 +1033,6 @@ describe('transform', () => {
           min-width: $search-results-max-sidebar-width + $search-results-max-main-width + (2 * $search-results-gutter)
         ) {
           padding-left: 0;
-        }
-      `),
-    ).toMatchSnapshot();
-  });
-
-  it.skip('keyframes', () => {
-    expect(
-      transform(`
-        @keyframes fadeIn {
-          0% {
-            opacity: 0;
-            transform: translateY(250px);
-          }
-
-          30% {
-            opacity: 0;
-          }
-
-          100% {
-            opacity: 1;
-            transform: translateY(0);
-          }
         }
       `),
     ).toMatchSnapshot();

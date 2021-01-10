@@ -85,6 +85,7 @@ const processRoot = (root, filePath) => {
               nodeToCheck => nodeToCheck.type === 'atrule' && nodeToCheck.name === 'mixin',
             )
             || root.nodes.some(node => node.prop === string)
+            || root.nodes.some(node => node.type === 'atrule' && node.name === 'keyframes' && node.params === varName)
           ) {
             return `\${${varName}}`;
           }
@@ -289,6 +290,29 @@ const processRoot = (root, filePath) => {
         ruleWithPlaceholder.source.start.line = rule.source.start.line + (index / 1000);
         root.append(ruleWithPlaceholder);
       }
+    });
+  });
+
+  root.walkAtRules('keyframes', (atRule) => {
+    let contents = '';
+    postcssScss.stringify(atRule, (string, node, startOrEnd) => {
+      if (node && node === atRule && startOrEnd) return;
+
+      contents += string;
+    });
+
+    root.walkDecls('animation', (decl) => {
+      if (decl.value.includes(atRule.params)) {
+        decl.value = decl.value.replace(atRule.params, `$\{${atRule.params}}`);
+      }
+    });
+
+    if (!output.hasKeyframes) output.hasKeyframes = true;
+
+    output.classes.set(atRule.params, {
+      node: atRule,
+      type: 'keyframe',
+      contents,
     });
   });
 
@@ -627,6 +651,10 @@ module.exports = (cssString, filePath, pathToVariables = '../variables') => {
         return `${acc}\n// ${node.text}`;
       }
 
+      if (type === 'keyframe') {
+        return `${acc}\nconst ${name} = keyframes\`${contents}\`\n`;
+      }
+
       if (type === 'mixin') {
         return `${acc}\n${isUsedInFile ? '' : 'export '}${
           oneDefault && !isUsedInFile ? ' default ' : ''
@@ -658,7 +686,7 @@ module.exports = (cssString, filePath, pathToVariables = '../variables') => {
       }css\`${contents}\`;\n`;
     }, '');
 
-  const js = `${fileIsJustVarExports ? '' : "import { css } from '@emotion/core'"};\n${
+  const js = `${fileIsJustVarExports ? '' : `import { css${output.hasKeyframes ? ', keyframes' : ''} } from '@emotion/core'`};\n${
     output.usesFeBraryVars
       ? `import { variables as vars${
         output.feBraryHelpers.length ? `, ${output.feBraryHelpers.join(', ')}` : ''
